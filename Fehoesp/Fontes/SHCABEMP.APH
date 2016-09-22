@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>    
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title>  
+
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+			
+	<SCRIPT LANGUAGE="JavaScript">
+	function DadosEmp(opc){
+		if (opc > 0)
+		{ 
+			document.getElementById("dadosEmp").style.display ="inline";
+		}else if (opc ==0)
+		{
+			document.getElementById("dadosEmp").style.display ="none";		
+		}else if (opc<0)
+		{
+			if (document.getElementById("dadosEmp").style.display == "none")
+			{
+				document.getElementById("dadosEmp").style.display = "inline";
+			}else
+			{
+				document.getElementById("dadosEmp").style.display = "none";
+			}
+		}
+	}
+
+	function abrejanela1(theURL,winName,features)  
+	{
+		window.open(theURL+'?CGC='+document.forms[0].CGC.value+'&CONTATO='+document.forms[0].CONTATO.value+'&RAZAO='+document.forms[0].RAZAO.value+'&DADOSEC=N',winName,features);
+	}	  		
+	
+</script>
+
+</head>
+
+<body onLoad="javascript:DadosEmp(0)">
+<div id="container">
+
+<form  class="wufoo topLabel page"  method="post">
+
+	<div>
+         <img id="Image1" src="images/<%=HttpPost->LogoFaixa%>" style="border-width:0px; width:100%;" />
+	</div>
+
+<DIV id="d1" name="d1">
+<ul>
+<li class="     ">
+	<label class="Field4" id="title1" for="Field1">
+		CNPJ
+	</label>
+	<span class="full">
+		<%=HTTPPOST->CGC%><input name='CGC' id="CGC" VALUE='<%=HTTPPOST->CGC%>' type="HIDDEN" />
+	</span>
+</li>
+
+<li class="      ">
+	<label class="Field4" id="title3" for="Field3">
+		Razao Social
+	</label>
+	<span class="full">
+		<%=HTTPPOST->RAZAO%><input name="RAZAO" id="RAZAO" VALUE='<%=HTTPPOST->RAZAO%>' type="HIDDEN" />
+	</span>
+</li>
+</ul>
+</div>
+
+<div class="info">
+	<a href="javascript:DadosEmp(-1)">
+		<FONT SIZE="4">Empresa - Dados Cadastrais</FONT>
+		<div></div>
+	</a>
+</div>
+
+<ul>
+
+<DIV id="dadosEmp" name="dadosEmp" style="display:none;">
+
+<li  class="      ">
+	<label for="Field4">CEP</label>
+	<span class="full">
+		<%=HTTPPOST->CEP%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Endereco</label>
+	<span class="full">
+		<%=HTTPPOST->CEND%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Bairro</label>
+	<span class="full">
+		<%=HTTPPOST->BAIRRO%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Cidade</label>
+	<span class="full">
+		<%=HTTPPOST->MUN%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Estado</label>
+	<span class="full">
+		<%=HTTPPOST->EST%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Email(Empresa)</label>
+	<span class="full">
+		<%=HTTPPOST->EMAIL%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Fone (Empresa)</label>
+	<span class="full">
+		<%=HTTPPOST->TEL%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Fax (Empresa)</label>
+	<span class="full">
+		<%=HTTPPOST->FAX%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Capital Social (Empresa)</label>
+	<span class="full">
+		<%=HTTPPOST->CAPITAL%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Inicio das Atividades</label>
+	<span class="full">
+		<%=HTTPPOST->INIATV%>
+	</span>
+</li>
+
+<li  class="      ">
+	<label for="Field4">Contato (Empresa)</label>
+	<span class="full">
+		<%=HTTPPOST->CONTATO%><input id='CONTATO' name="CONTATO" VALUE='<%=HTTPPOST->CONTATO%>' type="HIDDEN" />
+	</span>
+</li>
+
+<li class="       ">
+	<span class="full">
+       	<input id="ButtonAlt" type="button" value="Alterar" onclick="abrejanela1('W_SOLICALT.APW','janela','scrollbars=yes,width=675,height=720')"/>               
+	</span>
+</li>
+
+</div>
+
+</ul>
+</form>
+
+</div><!--container-->
+<img id="bottom" src="images/bottom.png" alt="" />
+
+</body>
+</html>

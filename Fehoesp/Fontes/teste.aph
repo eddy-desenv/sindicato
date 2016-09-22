@@ -1,0 +1,18 @@
+<HTML>
+
+</head>
+<BODY TOPMARGIN="0" LEFTMARGIN="0" BGCOLOR="#FFFFFF" TEXT="#FFFFFF" ALINK="#FFFFFF" LINK="#FFFFFF" VLINK="#FFFFFF">
+<base target="_blank">
+<script language="JavaScript" src='toolbar.js'></script>
+<script language="JavaScript" src='global.js'></script>
+
+<DIV ID="DownLevelDiv">
+<font face="arial, verdana" size="1" color="white">
+</DIV>
+<script language="JavaScript">
+	DownLevelDiv.style.display ='none';
+	setICPBanner("curve.gif","","www.interweb.com.br");
+	drawToolbar();
+</script>
+</BODY>
+</HTML>

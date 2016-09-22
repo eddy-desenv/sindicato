@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>    
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title> 
+
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+	  
+
+  <script language="javascript"> 		 
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro = '';
+		var msg = 'Campo obrigatório:\n';
+		var obj = document.forms[0].CGC.value;
+		var chk = 0;
+		
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CNPJ\n';
+        }
+        
+		if(document.forms[0].RAZAO.value == ''){
+			erro='S';
+			msg += '* Campo Razao Social\n';
+        }             
+                 
+		if(document.forms[0].CEP.value == '' || document.forms[0].CEP.value < 0){
+			erro='S';
+			msg += '* Campo CEP\n';
+        }             
+                 
+		if(document.forms[0].CEND.value == ''){
+			erro='S';
+			msg += '* Campo Endereço\n';
+        }             
+                 
+		if(document.forms[0].EMAIL.value == ''){
+			erro='S';
+			msg += '* Campo E-Mail\n';
+        }             
+                 
+		if(document.forms[0].TEL.value == ''){
+			erro='S';
+			msg += '* Campo Fone\n';
+        }             
+                 
+		if(document.forms[0].CONTATO.value == ''){
+			erro='S';
+			msg += '* Campo Fone\n';
+        }             
+                 
+        if(erro == ''){                        
+			document.forms[0].action="W_FUNCESC.APW";
+			document.forms[0].submit();
+			return true;
+		}         
+		
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	  	
+	function Cancela(){ 
+		document.forms[0].action="W_LIMPAESC.APW";
+		document.forms[0].submit();
+		return true;
+	} 
+	
+	function trimAll(sString){
+	
+		while (sString.substring(0,1) == ' '){
+			sString = sString.substring(1, sString.length);
+		}
+		
+		while (sString.substring(sString.length-1, sString.length) == ' '){
+			sString = sString.substring(0,sString.length-1);
+		}
+
+		return sString;
+
+	}
+	
+	function Confirma(){
+		var erro = '';        
+		var cNumeros = '0123456789';
+		var cEnd = trimAll(document.forms[0].CEND.value);
+		var cFone = trimAll(document.forms[0].TEL.value);
+		var cFax  = trimAll(document.forms[0].FAX.value);
+		var nTam = cEnd.length-1;
+		var cUltimo = cEnd.substr(nTam,1);
+		
+		if(cNumeros.search(cUltimo) == -1){
+
+		    alert('Favor entrar com o número no endereço!');
+		    return false;
+        
+        } else if(cFone.length<13){
+
+		    alert('Favor entrar com todos os digitos do Fone!');
+		    return false;
+        
+        } else if(cFax.length<13){
+
+		    alert('Favor entrar com todos os digitos do Fax!');
+		    return false;
+        
+		} else {
+  
+			document.forms[0].action="W_ATUAESC.APW";
+			document.forms[0].submit();
+			return true;
+		
+		}
+	}
+
+	function Vincula(){
+		document.forms[0].action="W_VINCESC.APW";
+		document.forms[0].submit();
+		return true;
+	}
+		
+	function Mostra(opc){    
+		if (opc > 0)
+	    {                  
+			document.getElementById("label1").style.display = "inline";
+			document.getElementById("label2").style.display = "inline";
+			document.getElementById("label3").style.display = "inline";
+			document.getElementById("label4").style.display = "inline";
+			document.getElementById("label5").style.display = "inline";
+			document.getElementById("label6").style.display = "inline";
+			document.getElementById("label7").style.display = "inline";
+			document.getElementById("label8").style.display = "inline";
+			document.getElementById("label9").style.display = "inline";
+			document.getElementById("label10").style.display = "inline";
+	     	
+	    }
+	    else
+	    {
+			document.getElementById("label1").style.display = "none";	    
+			document.getElementById("label2").style.display = "none";
+			document.getElementById("label3").style.display = "none";
+			document.getElementById("label4").style.display = "none";
+			document.getElementById("label5").style.display = "none";
+			document.getElementById("label6").style.display = "none";
+			document.getElementById("label7").style.display = "none";
+			document.getElementById("label8").style.display = "none";
+			document.getElementById("label9").style.display = "none";
+			document.getElementById("label10").style.display = "none";
+   
+	    }
+
+		<%IF HTTPSESSION->AESCAUX <> NIL .OR. HTTPSESSION->EXIBEAUX == 1%>	                           
+	    if (opc == 3 || opc == -1 || opc == 1 ){
+		    document.getElementById("FORMAUX").style.display = "none";	
+		}
+		<%ENDIF%>	
+		
+	return true;
+	}
+
+	</script>
+
+</head>
+<body onLoad="Mostra(<%=HTTPSESSION->AUXEXIBE%>)">
+<div id="container">
+
+<form class="wufoo topLabel" method="post" >
+
+	<div>
+         <img id="Image1" src="images/header_dados_escr_contab-todos.gif" style="border-width:0px; width:100%;" />
+	</div>
+
+<ul>
+
+<%IF HTTPSESSION->AESCAUX <> NIL .OR. HTTPSESSION->EXIBEAUX == 1%>
+<DIV ID="FORMAUX">
+<li class="     ">
+	<CENTER>
+	<label class="Field4">
+		Alguns dados foram alterados e ainda não foram confirmados pelo Sindicato. 
+		Deseja visualizá-los? 
+	</label>
+	<span class="full">
+		<BR>
+	    <input id="ButtonConfAux" type="button" value="Sim" onclick="Mostra(1)"/>
+	    <input id="ButtonCancAux" type="button" value="Não" onclick="Mostra(0)" />						
+	</span>  
+	</CENTER>
+</li>
+</DIV>
+
+<div class="info">
+	<div></div>
+</div>
+	        	
+<%ENDIF%>
+<li class="     ">
+	<label class="Field4" id="title1" for="Field1">
+		CNPJ/CEI/CPF
+	</label>
+	<span class="full">
+		<%=HTTPSESSION->XCGC%> 
+        <input id="CGC2" name="CGC2" type="hidden" value="<%=HTTPSESSION->XCGC%>"/>
+	</span>
+</li>
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		Razao Social
+	</label>
+	<span class="full">
+        <input name="RAZAO" id="RAZAO" VALUE='<%=HTTPPOST->RAZAO%>' type="text" style="width: 399px" />
+		<LABEL id="label1" style="display:none"><I><%=HTTPPOST->RAZAO2%></I></LABEL>		
+	</span>
+</li>
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		CEP
+	</label>
+	<span class="full">
+        <input name="CEP" id="CEP" VALUE='<%=HTTPPOST->CEP%>' maxlength="8" size='8' type="text" ONBLUR="EscCep()"/>
+		<LABEL id="label2" style="display:none"><I><%=HTTPPOST->CEP2%></I></LABEL>						
+	</span>
+</li>
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		Endereco
+	</label>
+	<span class="full">
+	    <input name="CEND" id="CEND" VALUE='<%=HTTPPOST->CEND%>' type="text" style="width: 403px" />
+		<LABEL id="label3" style="display:none"><I><%=HTTPPOST->CEND2%></I></LABEL>		
+	</span>
+</li>
+                                                            
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		Bairro
+	</label>
+	<span class="full">
+	    <%=HTTPPOST->BAIRRO%>
+		<LABEL id="label4" style="display:none"><I><%=HTTPPOST->BAIRRO2%></I></LABEL>
+		<input  name="BAIRRO" id='BAIRRO' VALUE='<%=HTTPPOST->BAIRRO%>' type="HIDDEN"/>
+	</span>
+</li>
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		Municipio
+	</label>
+	<span class="full">
+		<%=HTTPPOST->MUN%>
+		<LABEL id="label5" style="display:none"><I><%=HTTPPOST->MUN%></I></LABEL>
+		<input  name="MUN" id='MUN' VALUE='<%=HTTPPOST->MUN%>' type="HIDDEN"/>		
+	</span>
+</li>
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		Estado	
+	</label>
+	<span class="full">
+		<%=HTTPPOST->EST%>
+		<LABEL id="label6" style="display:none"><I><%=HTTPPOST->EST%></I></LABEL>
+		<input  name='EST' id='EST' VALUE='<%=HTTPPOST->EST%>' type="HIDDEN"/>
+	</span>
+</li>
+     
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		Email (Contabilidade)	
+	</label>
+	<span class="full">
+		<input id='EMAIL' name="EMAIL"  VALUE='<%=HTTPPOST->EMAIL%>' type="text" style="width: 300px" ONBLUR="ValidaEmail(this)" maxlength="60"  SIZE="60"/>		
+		<LABEL id="label7" style="display:none"><I><%=HTTPPOST->EMAIL2%></I></LABEL>
+	</span>
+</li>	 
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		Fone (Contabilidade)	
+	</label>
+	<span class="full">
+		<input id='TEL' name="TEL" maxlength="13"  type="text" VALUE='<%=HTTPPOST->TEL%>' size="13" onkeypress='return inserirMascara(event, this);' />
+		<LABEL id="label8" style="display:none"><I><%=HTTPPOST->FONE2%></I></LABEL>                            
+        (99)9999-9999
+	</span>
+</li>		 
+	 
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		Fax (Contabilidade)	
+	</label>
+	<span class="full">
+		<input id='FAX' name="FAX" maxlength="13"  type="text" VALUE='<%=HTTPPOST->FAX%>' size="13" onkeypress='return inserirMascara(event, this);' />                
+		<LABEL id="label9" style="display:none" ><I><%=HTTPPOST->FAX2%></I></LABEL>
+        (99)9999-9999
+	</span>
+</li>		 
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+		Contato (Contabilidade)	
+	</label>
+	<span class="full">
+	    <input id='CONTATO' name="CONTATO" VALUE='<%=HTTPPOST->CONTATO%>' type="text" style="width: 402px" maxlength='50' SIZE='50'/>
+		<LABEL id="label10" style="display:none"><I><%=HTTPPOST->CONTATO2%></I></LABEL>
+	</span>
+</li>
+
+<li class="       ">
+	<span class="full">
+		<input id="Button1" type="button" value="Confirmar" onclick="Confirma()"/>
+        <input id="Button6" type="button" value="Cancelar" onclick="Cancela()" />
+	</span>
+</li>
+	
+</ul>
+</form>
+
+</div><!--container-->
+<img id="bottom" src="images/bottom.png" alt="" />
+
+</body>
+</html>

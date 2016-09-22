@@ -1,0 +1,170 @@
+<%LOCAL I %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>   
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title>
+<!-- CSS -->
+<link rel="stylesheet" href="css/structure.css" type="text/css" />
+<link rel="stylesheet" href="css/form.css" type="text/css" />
+
+<!-- JavaScript -->
+<script type="text/javascript" src="scripts/wufoo.js"></script>
+
+	<script type="text/javascript">
+	function GeraSind(anos)
+	{
+
+		var obj, obj2
+		
+		<% If  (Len(HTTPSESSION->AANO) <= 0) /* Radio sem nenhuma opcao */ %>
+
+		       alert("Sem pagamento registrado!");
+		       return false;
+		
+		<% ElseIf (Len(HTTPSESSION->AANO) <= 1) /* Radio com uma opcao nao gera Vetor */ %>
+
+			obj2 = anos.value; 
+		
+		<% Else /* Radio com mais de uma opcao */ %>	
+		
+			for (var i = 0; i < anos.length; i++)
+			{
+				if (anos[ i ].checked) 
+				{              
+	               obj2 = anos[i].value;
+	   			}
+			}
+
+		<% EndIf %>
+		
+		obj = obj2.substr(5,3);
+		if (obj == '.T.')
+		{
+			alert("Pagamento Já Efetuado");
+			return false;
+		}
+		else
+		{   
+			obj = obj2.substr(0,4);
+			
+			document.form1.VerURL.value = document.URL;
+
+			document.getElementById("ANO").value = obj;
+			document.form1.action="W_GERABOL.APW?ANO="+document.getElementById("ANO").value;
+			document.form1.submit();
+			return true;
+		}  
+	}  
+	   
+	
+
+	function ATUALIZA_DTPAGTO(campo)
+	{
+		var obj = campo.options[campo.selectedIndex].value;
+		obj = obj.substr(5,3);
+		if (obj == '.T.')
+		{
+			alert("Pagamento Já Efetuado");
+		}
+		
+	}	
+			
+	</script>
+	
+</head>
+
+<body>
+<div id="container">
+
+<%/*
+<h1 id="logo"/>
+..
+</h1>
+*/%>
+
+<form name="form1" id="form1" class="wufoo topLabel page" method="post" >
+	<input id="VerURL" name="VerURL" type="hidden" value=""/>
+	
+<div class="info">
+	<FONT SIZE="4">Contribuição Sindical</FONT>
+	<div></div>
+</div>
+
+<ul>
+
+<li class="     ">
+	<label class="Field4" id="title1" >
+		Ano do Exercício
+	</label>
+
+   		<input id="ANO" name="ANO" type="hidden" />
+
+	<table>    
+	
+	<tr>
+	   <td>
+
+       	<% For I:= 1 TO Len(HTTPSESSION->AANO) %>
+
+       		<input type=radio name="radio" value='<%=HTTPSESSION->AANO[I][1]%>/<%=HTTPSESSION->AANO[I][2]%>'
+       		<% If  (I == Val(HttpPost->Item)) %>                  
+       			CHECKED
+       		<% EndIf %>	
+       		><%=HTTPSESSION->AANO[I][1]%>
+			</input>
+
+			<% 	If  ((I+1) > Len(HTTPSESSION->AANO))
+					Exit
+			   	EndIf 
+			%>	
+			    
+			</td>
+			<% If  Empty(I%7) %>
+			    </tr>
+			    <tr>
+			<% EndIf %>
+			<td>
+
+       <% Next I %>
+
+      </td>
+    </tr>   
+	</table>
+
+</li>
+
+<li  class="      ">
+	<label for="Field4">Capital Social (Empresa)</label>
+	<span class="full">
+		<LABEL ID="CCAPSOC" NAME="CCAPSOC" VALUE="<%=HTTPSESSION->CCAPSOC%>">
+		<%=HTTPSESSION->CCAPSOC%>
+		</LABEL>
+	</span>
+	<br>	
+</li>
+
+<li  class="      ">
+	<label for="Field4">Início das Atividades</label>
+	<span class="full">
+		<LABEL ID="DATIV" NAME="DATIV" VALUE="<%=HTTPSESSION->DATIV%>">
+		<%=HTTPSESSION->DATIV%>
+		</LABEL>
+	</span>
+	<br>	
+</li>
+
+<li  class="complex      ">
+	<center>
+		<input id="Button1" type="button" value="Gerar Boleto" ONCLICK="GeraSind(radio)" />
+	</center>
+</li>
+
+</ul>
+</form> 
+
+ </div><!--container-->
+<img id="bottom" src="images/bottom.png" alt="" />
+
+</body>
+</html>

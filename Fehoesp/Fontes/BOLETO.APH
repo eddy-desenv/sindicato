@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>SINDHOSP</title>
+
+  <script language="javascript">		 
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro = '';
+		var msg = 'Campos obrigatórios:\n';
+		var obj = document.forms[0].CGC.value;
+		var chk = 0;
+		
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CNPJ\n';
+        }
+        
+		for (var i=0; i < document.forms[0].TPBOLETO.length; i++)
+	   	{
+	   		if (document.forms[0].TPBOLETO[i].checked)
+	      	{
+	     		chk++;
+	      	}
+	   	}	          
+	   	
+		if(chk == 0){ 
+			erro='S';
+			msg += '* Campo TIPO DO BOLETO\n';
+        }
+              
+        if(erro == ''){                        
+			document.forms[0].action="W_CALCBOL.APW";
+			document.forms[0].submit();
+			return true;
+		}         
+		
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	  	
+  	</script>   
+  	
+
+</head>
+<body> 
+	<form class="style13" method="post">
+	    <center>
+	        <table border="2" width="90%">
+	            <tr>
+	                <td style="width: 869px; height: 353px" align="center" colspan="5" valign="middle">
+	                    <strong>BOLETOS<br />
+	                    </strong>
+	                    <br />
+	                    <table>
+	                        <tr>
+	                            <td align="right">
+	                                <input id="TPBOLETO" name="TPBOLETO" type="radio" value='1'/>
+	                            </td>
+	                            <td align="left">
+	                                Contribuição Sindical
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td align="right">
+	                                <input id="TPBOLETO" name="TPBOLETO" type="radio" value='2'/>
+	                            </td>
+	                            <td align="left">
+	                                Contribuição Confederativa
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td align="right">
+	                                <input id="TPBOLETO" name="TPBOLETO" type="radio" value='3' />
+	                            </td>
+	                            <td align="left">
+	                                Contribuição Associativa
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td align="right">
+	                                <input id="TPBOLETO" name="TPBOLETO" type="radio" value='4'/>
+	                            </td>
+	                            <td align="left">
+	                                Contribuição Associativa Confederativa
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td align="right">
+	                                <input id="TPBOLETO" name="TPBOLETO" type="radio" value='5' />
+	                            </td>
+	                            <td align="left">
+	                                Contribuição Assistêncial/Negocial</td>
+	                        </tr>
+	                    </table>
+	                    <br />
+	                    CNPJ:
+	                    <input id="CGC" name="CGC" type="text" size="19"  maxlength="18" onkeyup="FormataCnpj(this,event)" onblur="valida_cnpj(this)" /><br />
+	                    <br />
+	                    <input id="Button1" type="button" value="Enviar" onclick="CampoBranco()" />
+	                    
+		                    <%if empty(httppost->msg)%>
+		                    <div id="MENSAGEM" style="display:none">
+		                    <%else%>
+		                    <div id="MENSAGEM">
+		                    <%endif%>
+								<p style="margin-right: 15px">
+				   					<font face="Tahoma" style="font-size: 15px">
+				   						<span class="style14"><%=HTTPPOST->MSG%></span>
+				   					</font>
+				   				</p>	                    	                    
+		                    </div>
+	                    </td>
+	            </tr>
+	        </table>
+	    </center>
+	</FORM>
+</body>
+</html>
+

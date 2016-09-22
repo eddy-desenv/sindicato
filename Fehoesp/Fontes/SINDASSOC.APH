@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head> 
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title>  
+
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+	             
+
+   <script language="javascript">		 
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro = '';
+		var msg = 'Campos em branco:\n';
+		var obj = document.forms[0].CCGC.value;
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CNPJ\n';
+        }
+        
+		obj = document.forms[0].CRAZAO.value;
+		if(obj == '' || obj == 0){ 
+			erro='S';
+			msg += '* Campo RAZÃO SOCIAL\n';
+        }
+              
+		obj = document.forms[0].CTEL.value;
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo TELEFONE\n';
+        }                        
+        
+		obj = document.forms[0].CEMAIL.value;
+		if(obj == '' || obj == 0){  
+			erro='S';
+			msg += '* Campo EMAIL\n';
+        }
+        
+		obj = document.forms[0].CCONTATO.value;
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CONTATO\n';
+        }
+                                
+		obj = document.forms[0].CMUNIC.value;
+		if(obj == '' || obj == 0){ 
+			erro='S';
+			msg += '* Campo MUNICÍPIO\n';
+        }
+        
+        if(erro == ''){                        
+			document.forms[0].action="W_ASSOCMAIL.APW";
+			document.forms[0].submit();
+			return true;
+		}
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	  	
+  	</script>
+  
+</head>
+<body id="public">
+<div id="container">
+
+<form class="wufoo topLabel page"  method="post" >
+
+	<div>
+         <img id="Image1" src="images/header_associe_se-todos.gif" style="border-width:0px; width:100%;" />
+	</div>
+
+<ul>
+
+<%if HTTPPOST->MENSAGEM == NIL .OR. empty(HTTPPOST->MENSAGEM)%>
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		CNPJ
+	</label>
+	<span class="full">
+		<input id='CCGC' name='CCGC' size="19"  maxlength="18"  onblur="valida_cnpj(this)"/>
+	</span>
+</li>
+	
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Razao Social
+	</label>
+	<span class="full">
+		<input maxlength="50" name='CRAZAO' ID='CRAZAO' size="50" />
+	</span>
+</li>	
+
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Telefone
+	</label>
+	<span class="full">
+		<input id='CTEL' name='CTEL' maxlength="13"  size="13" onkeypress="inserirMascara(window.event.keyCode, this);"  /> (99)9999-9999
+	</span>
+</li>	
+	 
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Email
+	</label>
+	<span class="full">
+		<input id="CEMAIL" name="CEMAIL" size="60" maxlength='60'  ONBLUR="VALIDAEMAIL(this);"/>
+	</span>
+</li>	 
+	     
+	 
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Contato
+	</label>
+	<span class="full">
+		<input id='CCONTATO' maxlength="50" size="50" name='CCONTATO' />
+	</span>
+</li>	 		 
+
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Municipio
+	</label>
+	<span class="full">
+	    <input id="CMUNIC" name="CMUNIC" size="26" />
+	</span>
+</li>	
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Observacao
+	</label>
+	<span class="full">
+		<textarea id='COBS' cols="40" name='COBS' rows="6"></textarea>
+	</span>
+</li>
+
+<li class="COMPLEX     ">
+	<span class="full">
+		<input class="style14" name="Enviar" type="button" value="Enviar" onclick="CampoBranco()"/>	                            	                                    
+	</span>
+</li>
+
+<%ELSE%>
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		<%=HTTPPOST->MENSAGEM%>	
+	</label>
+	<span class="full">
+		<input id="Button1" type="button" value="Voltar" onClick="history.go(-1)" />
+	</span>
+</li>
+
+<%ENDIF%>
+
+</ul>
+</form>
+
+</div><!--container-->
+<img id="bottom" src="images/bottom.png" alt="" />
+
+</body>
+</html>

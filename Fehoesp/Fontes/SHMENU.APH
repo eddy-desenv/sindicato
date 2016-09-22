@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>SINDHOSP</title>
+</head>
+<body>
+    <center>
+       <table border="2" width="90%" >
+        <tr>
+            <td style="width: 869px; height: 353px" align="center" colspan="5">
+                <strong>PERFIL<br />
+                    <br />
+                </strong>
+                <table style="font-weight: bold">
+                    <tr>
+                        <td align="right">
+                            <input id="perfil" name="perfil" type="radio" /></td>
+                        <td align="left">
+                            Contribuinte/Associado</td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <input id="perfil" name="perfil"  type="radio" /></td>
+                        <td align="left">
+                            Funcionário Sindical</td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                        <td align="left">
+                            &nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="2">
+                            <input id="Button1" type="button" value="OK" /></td>
+                    </tr>
+                </table>
+                
+            </td>
+        </tr>
+    </table>
+    </center>
+</body>
+</html>
+

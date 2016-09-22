@@ -1,0 +1,673 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /><!-- /IE7 mode/ -->
+  <meta http-equiv="Content-type" content="text/html; charset=iso-8859-1" />
+    <title>FEHOESP</title> 
+
+	<script type="text/javascript" src="js/popcal_config.js"></script>
+	<script type="text/javascript" src="js/popcal_lang.js"></script>
+	<script type="text/javascript" src="js/popcal.js"></script>
+	<script type="text/javascript" src="funcoes.js"></script>
+	<script type="text/javascript" src="criaobj.js"></script>
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+		
+    
+    <!-- valida o cnpj digitado -->
+      
+  <script language="javascript">		 
+
+  	if (document.all){sender="event.srcElement"}else{sender="e.target"}
+
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro = '';
+		var msg = 'Campo obrigatório:\n';
+		var obj = document.forms[0].CGC.value;
+		var chk = 0;
+		
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CNPJ\n';
+        }
+                                     
+		if(document.forms[0].RAZAO.value == ''){
+			erro='S';
+			msg += '* Campo Razao Social\n';
+        }             
+                 
+		if(document.forms[0].CEP.value == '' || document.forms[0].CEP.value < 0){
+			erro='S';
+			msg += '* Campo CEP\n';
+        }             
+                 
+		if(document.forms[0].CEND.value == ''){
+			erro='S';
+			msg += '* Campo Endereço\n';
+        }             
+                 
+		if(document.forms[0].EMAIL.value == ''){
+			erro='S';
+			msg += '* Campo E-Mail\n';
+        }             
+        
+        if(document.forms[0].DDD.value == ''){
+			erro='S';
+			msg += '* Campo DDD\n';
+        } 
+                 
+		if(document.forms[0].FONE.value == ''){
+			erro='S';
+			msg += '* Campo Fone\n';
+        }             
+                 
+		if(document.forms[0].CAPITAL.value == '' || document.forms[0].CAPITAL.value < 0){
+			erro='S';
+			msg += '* Campo Capital Social\n';
+        }             
+        
+		if(document.forms[0].INIATV.value == ''){
+			erro='S';
+			msg += '* Campo Início das Atividades\n';
+        }             
+        
+		if(document.forms[0].CONTATO.value == ''){
+			erro='S';
+			msg += '* Campo Diretor Administrativo\n';
+        }             
+                 
+        if(erro == ''){                        
+			return true;
+		}         
+		
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	  	
+	function Cancela(){ 
+		document.forms[0].action="W_EMPRESA.APW";
+		document.forms[0].submit();
+		return true;
+	} 
+	
+	function trimAll(sString){
+	
+		while (sString.substring(0,1) == ' '){
+			sString = sString.substring(1, sString.length);
+		}
+		
+		while (sString.substring(sString.length-1, sString.length) == ' '){
+			sString = sString.substring(0,sString.length-1);
+		}
+
+		return sString;
+
+	}
+	
+	function Confirma(){
+		var cNumeros = '0123456789';
+		var cEnd  = trimAll(document.forms[0].CEND.value);
+		var cDDD = trimAll(document.forms[0].DDD.value);
+		var cFone = trimAll(document.forms[0].FONE.value);
+		var cFax  = trimAll(document.forms[0].FAX.value);
+		var nTam  = cEnd.length-1;
+		var cUltimo = cEnd.substr(nTam,1);
+		
+		if(cNumeros.search(cUltimo) == -1){
+
+		    alert('Favor entrar com o número no endereço!');
+		    return false;        
+        } else if(cDDD.length<3){
+
+		    alert('Favor entrar com todos os digitos do DDD!');
+		    return false;
+        } else if(cFone.length<10){
+
+		    alert('Favor entrar com todos os digitos do Fone!');
+		    return false;
+        
+        } else if(cFax.length<13){
+
+		    alert('Favor entrar com todos os digitos do Fax!');
+		    return false;
+        
+		} else {  
+		
+		   if(CampoBranco()){
+			   document.forms[0].action="W_ATUAEMP.APW";
+			   document.forms[0].submit();
+			}   
+		}
+			
+		return true;
+	}   
+	
+	function CadEscr(){ 
+		document.forms[0].action="W_EMPESC.APW";           	
+		document.forms[0].submit();
+		return true;
+	}	
+	  	
+	function EscCont(){      
+		document.forms[0].action='W_BUSCAESC.APW';
+		document.forms[0].submit();
+		return true;
+	}		
+	 		   
+	function Boleto(){ 
+		document.forms[0].action='W_EXTRATO.APW';
+		document.forms[0].submit();
+		return true;
+	}
+	    
+	function abrejanela(theURL,winName,features)  
+	{
+		window.open(theURL+'?CGC='+document.forms[0].CGC.value+'&CONTATO='+document.forms[0].CONTATO.value+'&RAZAO='+document.forms[0].RAZAO.value,winName,features);
+	}	  		
+	
+	function Mostra(opc){ 
+		if (opc > 0)
+	    {                  
+			document.getElementById("label1").style.display ="inline";
+			document.getElementById("label2").style.display = "inline";
+			document.getElementById("label3").style.display = "inline";
+			document.getElementById("label4").style.display = "inline";
+			document.getElementById("label5").style.display = "inline";
+			document.getElementById("label6").style.display = "inline";
+			document.getElementById("label7").style.display = "inline";
+			document.getElementById("label8").style.display = "inline";
+			document.getElementById("label9").style.display = "inline";
+			document.getElementById("label10").style.display = "inline";
+			document.getElementById("label11").style.display = "inline";
+			document.getElementById("label12").style.display = "inline";
+	     	
+	    }
+	    else
+	    {
+			document.getElementById("label1").style.display = "none";	    
+			document.getElementById("label2").style.display = "none";
+			document.getElementById("label3").style.display = "none";
+			document.getElementById("label4").style.display = "none";
+			document.getElementById("label5").style.display = "none";
+			document.getElementById("label6").style.display = "none";
+			document.getElementById("label7").style.display = "none";
+			document.getElementById("label8").style.display = "none";
+			document.getElementById("label9").style.display = "none";
+			document.getElementById("label10").style.display = "none";
+			document.getElementById("label11").style.display = "none";
+			document.getElementById("label12").style.display = "none";	    
+	    }                       
+		
+		<%IF HTTPSESSION->AEMPAUX <> NIL .OR. HTTPSESSION->EXIBEAUX == 1%>
+	    if (opc == 3 || opc == -1 || opc == 1 ){
+		    document.getElementById("FORMAUX").style.display = "none";	
+		}
+		<%ENDIF%>
+	
+	return true;
+	}                        
+	
+
+	function Xdata(e, sender){
+		alvo=eval(sender);
+
+		if(window.event) // IE8 and earlier
+			{
+				x = e.keyCode;
+			}
+		else if(e.which) // IE9/Firefox/Chrome/Opera/Safari
+			{
+				x = e.which;
+			}
+			
+		if (x==8){return true}
+			if (x>47 && x<58){
+				x=x-48
+				valor=alvo.value
+				if (valor.length==0){
+					if (x>3){alvo.value="0"}
+				}
+				if (valor.length==2){
+					if (x>1){alvo.value+="/"}else{alvo.value+="/"}
+				}
+				if (valor.length==5){
+					if (x>3){alvo.value+="/20"}else{alvo.value+="/20"}
+				}
+				return true
+			}
+
+		return false
+	}
+	
+	function XValData(data) {
+	
+		if( !ValData(data.value) ) {
+		   alert('Data inválida!');
+		   return false;
+		}
+		
+		return true;
+	}
+
+	function onblur_eventHandler(evt){
+		var sourceElement;
+		var eventType;
+		
+		if(window.event){ // IE
+			sourceElement= window.event.srcElement;
+			eventType= window.event.type;
+		}else{ // GOOD BROWSER
+			sourceElement= evt.target;
+			eventType= evt.type;
+		}
+		
+		validateField(sourceElement)
+	}
+	
+	var badElement;
+	
+	function validateField(sourceElement){
+	
+	// validate the change however you want
+	// for the example i'm just using the name of the field
+	        
+		if((sourceElement.name == "INIATV") && (!XValData(sourceElement))){
+			badElement= sourceElement;
+			setTimeout("refocusBadElement()",10); // if you make the 10 value big you can watch the callback happen
+		}
+	}
+	
+	
+	function refocusBadElement(){
+		badElement.select();
+		badElement.focus();
+	}
+
+	function cUpper(cObj) 
+	{
+		cObj.value=cObj.value.toUpperCase();
+	}
+	
+	function XformataMoeda(objTextBox,SeparadorMilesimo, SeparadorDecimal,e){   
+    var sep = 0;
+    var key = '';
+    var i = j = 0;
+    var len = len2 = 0;
+    var strCheck = '0123456789';
+    var aux = aux2 = '';
+    var whichCode = (window.Event) ? e.which : e.keyCode;
+    if (whichCode == 13) return true;
+	var t = new String(objTextBox.value);
+	if (whichCode == 8){
+		objTextBox.value = t.substring(0, t.length-1);
+		}                     
+	 if ((whichCode >= 96) && (whichCode <= 105)) whichCode -= 48; //Teclado Numerico da Direita
+	 	
+    key = String.fromCharCode(whichCode); // Valor para o código da Chave
+
+    if (strCheck.indexOf(key) == -1) {
+	    if(e.preventDefault){
+	    	e.preventDefault();                     
+	    } else {	
+	    	e.returnValue=false;
+	    }	
+    	 return false; // Chave inválida
+    }	 
+
+    len = objTextBox.value.length;
+
+    for(i = 0; i < len; i++)
+        if ((objTextBox.value.charAt(i) != '0') && (objTextBox.value.charAt(i) != SeparadorDecimal)) break;
+    aux = '';
+
+    for(; i < len; i++)
+        if (strCheck.indexOf(objTextBox.value.charAt(i))!=-1) aux += objTextBox.value.charAt(i);
+    aux += key;
+
+    len = aux.length;
+    if (len == 0) objTextBox.value = '';
+    if (len == 1) objTextBox.value = '0'+ SeparadorDecimal + '0' + aux;
+    if (len == 2) objTextBox.value = '0'+ SeparadorDecimal + aux;
+    if (len > 2) {
+        aux2 = '';
+        for (j = 0, i = len - 3; i >= 0; i--) {
+            if (j == 3) {
+                aux2 += SeparadorMilesimo;
+                j = 0;
+            }
+            aux2 += aux.charAt(i);
+            j++;
+        }
+        objTextBox.value = '';
+        len2 = aux2.length;
+        for (i = len2 - 1; i >= 0; i--)
+        objTextBox.value += aux2.charAt(i);
+        objTextBox.value += SeparadorDecimal + aux.substr(len - 2, len);
+    }
+                        
+    if(e.preventDefault){
+    	e.preventDefault();                     
+    } else {	
+    	e.returnValue=false;
+    }	
+
+    return false;
+	}
+	
+</script>
+
+</head>
+<body id="public" onLoad="Mostra(<%=HTTPSESSION->AUXEXIBE%>)">
+<div id="container">
+
+<form name="Form1" id="Form1" class="wufoo topLabel page" method="post">
+
+	<div>
+         <img id="Image1" src="images/header_dados_empresas-todos.gif" style="border-width:0px; width:100%;" />
+	</div>
+
+<ul>
+
+<%IF HTTPSESSION->AEMPAUX <> NIL .OR. HTTPSESSION->EXIBEAUX == 1%>
+<DIV ID="FORMAUX">
+<li class="COMPLEX    ">
+	<CENTER>
+	<label class="Field4">
+		Alguns dados foram alterados e ainda não foram confirmados pelo Sindicato. 
+		Deseja visualizá-los? 
+	</label>
+	<span class="full">
+		<BR>
+	    <input id="ButtonConfAux" type="button" value="Sim" onclick="Mostra(1)"/>
+	    <input id="ButtonCancAux" type="button" value="Não" onclick="Mostra(-1)" />						
+	</span>  
+	</CENTER>
+</li>
+
+<div class="info">
+	<div></div>
+</div>
+</DIV>	        	
+<%ENDIF%>
+
+<li class="     ">
+	<label class="Field4" id="title1" for="Field1">
+	CNPJ
+	</label>
+	<span class="full">
+	<%=HTTPSESSION->CGC%><input name='CGC' id="CGC" VALUE='<%=HTTPSESSION->CGC%>' type="HIDDEN" />
+	</span>
+</li>
+
+<li class="      ">
+	<label class="Field4" id="title3" for="Field3">
+	Razao Social
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input name="RAZAO" id="RAZAO" VALUE='<%=HTTPPOST->RAZAO%>' type="Text" style="width: 399px" onKeyUp="cUpper(this);" />
+		<% ELSE %>	
+			<%=HTTPPOST->RAZAO%>
+			<input name="RAZAO" id="RAZAO" VALUE='<%=HTTPPOST->RAZAO%>' type="HIDDEN" style="width: 399px" onKeyUp="cUpper(this);" />
+         <LABEL id="label1" style="display:none"><I><%=HTTPPOST->RAZAO2%></I></LABEL>	
+		<% ENDIF %>	
+	</span>
+</li>
+
+<li class="      ">
+	<label class="Field4" id="title3" for="Field3">
+	CEP
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input name="CEP" id="CEP" size='8' maxlength='8' VALUE='<%=HTTPPOST->CEP%>' type="Text" ONBLUR="EmpCep()" />
+		<% ELSE %>	
+			<%=HTTPPOST->CEP%>
+			<input name="CEP" id="CEP" size='8' maxlength='8' VALUE='<%=HTTPPOST->CEP%>' type="HIDDEN" ONBLUR="EmpCep()" />
+         <LABEL id="label2" style="display:none"><I><%=HTTPPOST->CEP2%></I></LABEL>	
+		<% ENDIF %>	
+	</span>
+</li>
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Endereco
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input name="CEND" id="CEND" VALUE='<%=HTTPPOST->CEND%>' type="Text" style="width: 403px" onKeyUp="cUpper(this);" />
+		<% ELSE %>	
+			<%=HTTPPOST->CEND%>
+			<input name="CEND" id="CEND" VALUE='<%=HTTPPOST->CEND%>' type="HIDDEN" style="width: 403px" onKeyUp="cUpper(this);" />
+         <LABEL id="label3" style="display:none"><I><%=HTTPPOST->CEND2%></I></LABEL >	
+		<% ENDIF %>	
+	</span>
+</li>        		  		      
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Bairro
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input  name="BAIRRO" id='BAIRRO' VALUE='<%=HTTPPOST->BAIRRO%>' type="Text" style="width: 300px" />
+		<% ELSE %>	
+			<%=HTTPPOST->BAIRRO%>
+         <input  name="BAIRRO" id='BAIRRO' VALUE='<%=HTTPPOST->BAIRRO%>' type="HIDDEN" style="width: 300px" />
+         <LABEL id="label4" style="display:none"><I><%=HTTPPOST->BAIRRO2%></I></LABEL>	
+		<% ENDIF %>	
+	</span>
+</li>  
+     
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Cidade
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+        	<input name="MUN" id='MUN' VALUE='<%=HTTPPOST->MUN%>' type="Text" style="width: 299px" />
+		<% ELSE %>	
+			<%=HTTPPOST->MUN%>
+        	<input name="MUN" id='MUN' VALUE='<%=HTTPPOST->MUN%>' type="HIDDEN" style="width: 299px" />
+        	<LABEL id="label5" style="display:none"><I><%=HTTPPOST->MUN2%></I></LABEL>	
+		<% ENDIF %>	
+	</span>
+</li>
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Estado
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+        	<input name="EST" id='EST' VALUE='<%=HTTPPOST->EST%>' type="Text" style="width: 299px" />
+		<% ELSE %>	
+			<%=HTTPPOST->EST%>
+         <input name="EST" id='EST' VALUE='<%=HTTPPOST->EST%>' type="HIDDEN" style="width: 299px" />
+         <LABEL id="label6" style="display:none"><I><%=HTTPPOST->EST2%></I></LABEL>	
+		<% ENDIF %>	
+	</span>
+</li>                                
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Email (Empresa)
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+        	<input id='EMAIL' name="EMAIL"  VALUE='<%=HTTPPOST->EMAIL%>' type="Text" style="width: 300px" maxlength="60"  SIZE="60" ONBLUR="ValidaEmail(this)"/>
+		<% ELSE %>	
+		   <%=HTTPPOST->EMAIL%>
+		   <input id='EMAIL' name="EMAIL"  VALUE='<%=HTTPPOST->EMAIL%>' type="HIDDEN" style="width: 300px" maxlength="60"  SIZE="60" ONBLUR="ValidaEmail(this)"/>
+         <LABEL id="label7" style="display:none"><I><%=HTTPPOST->EMAIL2%></I></LABEL>	
+		<% ENDIF %>	
+	</span>
+</li>                                
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Fone (Empresa)
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+ 		   <input id='DDD' name="DDD" maxlength="3"  type="Text" VALUE='<%=HTTPPOST->FONE%>' size="3"  />
+ 		<% ELSE %>	
+		   <%=HTTPPOST->FONE%>
+		   <input id='DDD' name="DDD" maxlength="3"  type="HIDDEN" VALUE='<%=HTTPPOST->FONE%>' size="3"/>
+         <LABEL id="labelDDD" style="display:none"><I><%=HTTPPOST->DDD%></I></LABEL>
+		<% ENDIF %>	
+      (99)9999-9999	
+	</span>
+</li> 
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Fone (Empresa)
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+ 		   <input id='FONE' name="FONE" maxlength="10"  type="Text" VALUE='<%=HTTPPOST->FONE%>' size="10" onkeypress="return inserirMascara(event, this);"  />
+ 		<% ELSE %>	
+		   <%=HTTPPOST->FONE%>
+		   <input id='FONE' name="FONE" maxlength="10"  type="HIDDEN" VALUE='<%=HTTPPOST->FONE%>' size="10" onkeypress="return inserirMascara(event, this);"  />
+         <LABEL id="label8" style="display:none"><I><%=HTTPPOST->FONE2%></I></LABEL>
+		<% ENDIF %>	
+      (99)9999-9999	
+	</span>
+</li> 
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Fone (Contabilidade)
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input id='FAX' name="FAX" maxlength="13"  type="Text" VALUE='<%=HTTPPOST->FAX%>' size="13" onkeypress="return inserirMascara(event, this);"  />
+ 		<% ELSE %>	
+			<%=HTTPPOST->FAX%>
+			<input id='FAX' name="FAX" maxlength="13"  type="HIDDEN" VALUE='<%=HTTPPOST->FAX%>' size="13" onkeypress="return inserirMascara(event, this);"  />
+	    	<LABEL id="label9" style="display:none"><I><%=HTTPPOST->FAX2%></I></LABEL>
+		<% ENDIF %>	
+      (99)9999-9999	
+	</span>
+</li>
+ 
+ <li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Capital Social (Empresa)
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input id='CAPITAL' style="text-align:right" name="CAPITAL" VALUE='<%=HTTPPOST->CAPITAL%>' type="Text"  
+			  <% If (HTTPSESSION->ROTINA != '3') %>
+			        READONLY
+			  <% Else %>
+			  		onkeypress="XformataMoeda(this,'.',',',event);"      
+			  <% EndIf %>   
+			 /><BR>
+ 		<% ELSE %>	
+			<%=HTTPPOST->CAPITAL%>
+			<input id='CAPITAL' style="text-align:right" name="CAPITAL" VALUE='<%=HTTPPOST->CAPITAL%>' type="HIDDEN" /><BR>
+         <LABEL id="label10" style="display:none; text-align:right"><I><%=HTTPPOST->CAPITAL2%></I></LABEL>	
+		<% ENDIF %>	
+	</span>
+</li>
+
+<li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Início das Atividades
+	</label>
+	<span class="full">                                                           
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input type="Text" id="INIATV" name="INIATV" value="<%=HTTPPOST->INIATV%>" onkeyup="return Xdata(event, this)" onblur="onblur_eventHandler(event);" size="10" maxlength="10" />
+         dd/mm/aaaa
+         <% /*<input id="ButtonDate" type="BUTTON" value="Calendario" onclick="popCal(INIATV)">*/%>
+ 		<% ELSE %>	
+			<%=HTTPPOST->INIATV%>
+			<input type="HIDDEN" id="INIATV" name="INIATV" value="<%=HTTPPOST->INIATV%>" onkeyup="return Xdata(event, this)" onblur="onblur_eventHandler(event);" size="10" maxlength="10" />
+			<LABEL id="label11" style="display:none"><I><%=HTTPPOST->INIATV2%></I></LABEL>	
+		<% ENDIF %>	
+	</span>
+</li>
+
+ <li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Diretor Administrativo (Empresa)
+	</label>
+	<span class="full">                                                
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input id='CONTATO' name="CONTATO" VALUE='<%=HTTPPOST->CONTATO%>' type="Text" style="width: 402px" maxlength='50' SIZE='50'/>
+ 		<% ELSE %>	
+			<%=HTTPPOST->CONTATO%>
+			<input id='CONTATO' name="CONTATO" VALUE='<%=HTTPPOST->CONTATO%>' type="HIDDEN" style="width: 402px" maxlength='50' SIZE='50'/>
+	        <LABEL id="label12" style="display:none"><I><%=HTTPPOST->CONTATO2%></I></LABEL>	
+		<% ENDIF %>	
+	</span>
+</li>
+
+ <li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Número de Leitos
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input id='NLEITOS' name="NLEITOS" VALUE='<%=HTTPPOST->NLEITOS%>' type="Text" style="width: 80px" maxlength='10' SIZE='10'/>
+ 		<% ELSE %>	
+			<%=HTTPPOST->NLEITOS%>
+			<input id='NLEITOS' name="NLEITOS" VALUE='<%=HTTPPOST->NLEITOS%>' type="HIDDEN" style="width: 80px" maxlength='10' SIZE='10'/>
+		<% ENDIF %>	
+	</span>
+</li>
+
+ <li class="       ">
+	<label class="Field4" id="title3" for="Field3">
+	Número de Funcionários
+	</label>
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			<input id='NNUMFUN' name="NNUMFUN" VALUE='<%=HTTPPOST->NNUMFUN%>' type="Text" style="width: 80px" maxlength='10' SIZE='10'/>
+ 		<% ELSE %>	
+			<%=HTTPPOST->NNUMFUN%>
+			<input id='NNUMFUN' name="NNUMFUN" VALUE='<%=HTTPPOST->NNUMFUN%>' type="HIDDEN" style="width: 80px" maxlength='10' SIZE='10'/>
+		<% ENDIF %>	
+	</span>
+</li>
+
+<li class="       ">
+	<span class="full">
+		<%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+
+	        <input id="Button1" type="button" value="Confirmar" onclick="Confirma()"/>
+            <input id="Button6" type="button" value="Cancelar" onclick="Cancela()" />
+
+		<%ELSEIF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '4' %>
+
+           	<input id="ButtonAlt" type="button" value="Alterar" onclick="abrejanela('W_SOLICALT.APW','janela','scrollbars=yes,width=675,height=720')"/>               
+            <input id="ButtonES" type="button" value="Escritório Contábil" onclick="EscCont()"  />
+            <input id="ButtonBol" type="button" value="Boletos/Extratos" onclick="Boleto()" />
+
+        <%ENDIF%>
+	</span>
+</li>
+
+<li class="complex      ">
+	<span class="full"><i><font color="red">
+	    Para alterar o Capital Social favor
+		entrar em contato com o departamento 
+		de Cadastro, através do telefone (11) 3221-9333 
+		ou e-mail: arrecadacao@fehoesp.org.br.
+	</font></i></span>
+</li>
+
+</UL>	
+</FORM>
+       
+</HTML>

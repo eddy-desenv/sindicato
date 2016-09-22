@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>FEHOESP</title>
+
+  <script language="javascript">		 
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro 	= '';  
+		var chkerro = 0;
+		var msg 	= ''; 
+		var item	= '';
+          
+   		for (i=0;i<document.forms[0].perfil.length;i++) 
+      		if(document.forms[0].perfil[i].type == "radio")
+      		{   
+      			if(document.forms[0].perfil[i].checked==true){
+      				chkerro++;	
+					item = document.forms[0].perfil[i].value;      				
+	   			}
+	         }
+		if(chkerro == 0)
+		{
+			erro='S';
+			msg += '* Selecionar um perfil\n';
+        }
+              
+        if(erro == ''){  
+        	if (item == 'A'){
+				document.forms[0].action="W_SHCONTRIB.APW";
+			}else{
+				document.forms[0].action="W_SHFUNC.APW";
+			}			
+			document.forms[0].submit();
+			return true;
+		}
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	 
+
+
+  	</script>
+  
+
+</head>
+
+<BODY TOPMARGIN="0" LEFTMARGIN="0" BGCOLOR="white" TEXT="black" ALINK="#FFFFFF" LINK="#FFFFFF" VLINK="#FFFFFF">
+
+<form class="style13" method="post">
+
+<table border="0" width="90%">
+        <tr>
+            <td style="height: 150px" align="center">
+            </TD>
+        </TR>
+</TABLE>
+
+    <center>
+       <table border="2" width="90%">
+        <tr>
+            <td style="height: 353px" align="center">
+                <strong>PERFIL<br />
+                    <br />
+                </strong>
+                <table>
+                    <tr>
+                        <td align="right">
+                            <input id="perfil" name="perfil" type="radio" value="A"/></td>
+                        <td align="left">
+                            Contribuinte/Associado</td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <input id="perfil" name="perfil"  type="radio" value="F"/></td>
+                        <td align="left">
+                            Funcionário Sindical</td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                        <td align="left">
+                            &nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="2">
+                            <input class="style14" name="Enviar" type="button" value="Ok" onclick="CampoBranco()"/>
+                        </td>
+                    </tr>
+                </table>
+                
+            </td>
+        </tr>
+    </table>  
+     
+    </center> 
+</form>
+
+
+</body>
+</html>
+

@@ -1,0 +1,28 @@
+<html>
+<body>
+<li>
+	CNPJ: <%=HTTPSESSION->CGC%>
+</li>
+<li>
+	Razao Social: <%=HTTPSESSION->AUXRAZAO%>
+</li>
+<li>
+	Nome: <%=HTTPPOST->SOLICNOME%>
+</li>
+<li>
+	Cargo: <%=HTTPPOST->SOLICCARGO%>
+</li>
+<li>
+	Telefone: <%=HTTPPOST->SOLICTEL%>
+</li>
+<li>
+	Municipio: <%=HTTPPOST->SOLICMUN%>
+</li>
+<li>
+	E-Mail: <%=HTTPPOST->SOLICEMAIL%>
+</li>
+<li>
+	Mensagem: <%=HTTPPOST->SOLICTEXTO%>
+</li>
+</body>
+</html>

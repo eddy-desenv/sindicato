@@ -1,0 +1,23 @@
+<HTML>
+
+</head>
+<BODY>
+<center>
+        <table border="2" width="90%">
+            <tr>
+                <td align="center" style="height: 353px">
+                   <center>
+                    <img border="0" height="60" src="http://www.sindhosp.com.br/website/imagens/cab_l2_01.gif"
+                        usemap="#MapHome1" width="289" align="center"/><br />
+                    <img border="0" height="27" src="http://www.sindhosp.com.br/website/imagens/cab_l3_01%282%29.gif"
+                        style="width: 290px" usemap="#MapHome2" align="center"/><br />
+                    <img border="0" height="18" src="http://www.sindhosp.com.br/website/imagens/cab_l4_01%282%29.gif"
+                        style="width: 291px" align="center"/>
+            		</center>
+            	</td>
+                        
+            </tr>
+        </table>
+</center>
+</BODY>
+</HTML>

@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head> 
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title>
+</head>
+<body>
+    <table id="table2" border="0" cellpadding="10" cellspacing="0" width="90%">
+        <tr>
+            <td valign="top" width="395">
+                <p>
+                </p>
+	                <form action="W_ASSOCMAIL.APW" class="style13" method="post">
+	                    <table border="0" width="366">
+	                        <tr>
+	                            <td align="right" width="139">
+	                                <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> CNPJ:</span></font></p>
+	                            </td>
+	                            <td width="217">
+	                                <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"><%=HTTPPOST->CCGC%></span></font></p>
+	                        </tr>
+	                        <tr>
+	                            <td align="right">
+	                                <p style="margin-right: 10px">
+	                                    <span class="style14"><font face="Tahoma" style="font-size: 11px"> Razão Social: </font>
+	                                    </span><span class="style15"></span>
+	                                </p>
+	                            </td>
+	                            <td>
+	                                 <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"><%=HTTPPOST->CRAZAO%></span></font></p>
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td align="right">
+	                                <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> Telefone: </span></font></p>
+	                            </td>
+	                            <td>
+	                                 <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"><%=HTTPPOST->CTEL%></span></font></p>
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td align="right">
+	                                <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> E-mail:</span></font></p>
+	                            </td>
+	                            <td>
+	                                 <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"><%=HTTPPOST->CEMAIL%></span></font></p>
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td align="right">
+	                                <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> Contato:</span></font></p>
+	                            </td>
+	                            <td>
+	                                 <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"><%=HTTPPOST->CCONTATO%></span></font></p>
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td align="right">
+	                                <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> Município:</span></font></p>
+                                </td>
+                                <td>
+                                     <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"><%=HTTPPOST->CMUNIC%></span></font></p>
+                                </td>
+	                        </tr>
+                            <tr>
+                                <td align="right">
+                                    <p style="margin-right: 10px">
+                                        <font face="Tahoma" style="font-size: 11px"><span class="style14">Observação:</span></font></p>
+                                </td>
+                                <td>
+                                     <p style="margin-right: 10px">
+	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"><%=HTTPPOST->COBS%></span></font></p>
+                                </td>
+                            </tr>
+	                    </table>
+	                </form>   
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

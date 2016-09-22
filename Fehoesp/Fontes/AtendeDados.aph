@@ -1,0 +1,457 @@
+<%
+Local ListaCGC  := HTTPSESSION->CBCGC
+Local ListaNome := HTTPSESSION->CBNOME   
+Local nQtd1 := 0  
+Local nQtd2 := 0
+Local nI    := 0
+Local nJ    := 0
+LOCAL i     := 0 
+LOCAL j     := 0
+LOCAL h     := 0
+
+If Valtype(ListaCGC) == "O"   
+	nQtd1 := Len(ListaCGC:OWSSCOMBO)
+EndIF  
+
+If Valtype(ListaNome) == "O"
+	nQtd2 := Len(ListaNome:OWSSCOMBO)
+EndIF  
+
+if(valtype(HTTPPOST->CCGC) == "U")
+   HTTPPOST->MASSOPGO := 'Nenhum titulo'
+   HTTPPOST->MCONFPGO := 'Nenhum titulo'
+   HTTPPOST->MSINDPGO := 'Nenhum titulo'
+endif
+
+HTTPPOST->CSITUAC := If(Empty(HTTPPOST->CSITUAC), '', HTTPPOST->CSITUAC)
+HTTPPOST->CINAT   := If(Empty(HTTPPOST->CINAT), '', HTTPPOST->CINAT)
+                 
+HTTPPOST->ASSOPGO := If(Empty(HTTPPOST->ASSOPGO), {}, HTTPPOST->ASSOPGO)
+HTTPPOST->CONFPGO := If(Empty(HTTPPOST->CONFPGO), {}, HTTPPOST->CONFPGO)
+HTTPPOST->SINDPGO := If(Empty(HTTPPOST->SINDPGO), {}, HTTPPOST->SINDPGO)
+
+%> 
+
+	<script LANGUAGE="JavaScript" TYPE="text/javascript">
+		function start(){
+			CreateStaticMenu("botoes_flutuantes", 5, 10);
+		//	parent.topFrame.location.reload() ;
+		}
+		
+		function PrintPage() {
+			var painel = document.getElementById('botoes_flutuantes');
+			painel.style.visibility = 'hidden';
+			window.print();
+			painel.style.visibility = '';
+		}
+	</script>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html>
+	<head> 
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">	
+		<title>FEHOESP</title> 
+		<!-- CSS -->
+		<link rel="stylesheet" href="css/structure.css" type="text/css" />
+		<link rel="stylesheet" href="css/form.css" type="text/css" /> 
+		<link href="guia.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="funcoes.js"></script>
+<script type="text/javascript" src="xBrowser.js"></script>
+<script type="text/javascript" src="xLayer.js"></script>
+<script type="text/javascript" src="staticMenu.js"></script>
+
+	<script language="javascript1.1">
+	<!-- 
+	function Imprimir()
+	{
+		window.print();
+		return false;
+	}
+	
+	function ValidAtend(nOpc){
+	   	var cCGC = ''
+	  	var cCOD = ''
+	  	var cNOME = ''
+	  	//alert(document.forms[0].listacgc.value);
+	  	//alert(document.forms[0].listacgc.options[selectedIndex].value);
+	  	
+	  	document.forms[0].xNome.value = '';
+	  	
+	  	if(nOpc==1)
+	  	{
+	  	   cCGC = document.forms[0].CGC.value;
+	  	   document.forms[0].NOME.value = '';     
+	  	   document.forms[0].listacgc.value = '';
+	  	   document.forms[0].listanome.value = '';
+	  	}                                                  
+	  	
+	  	if(nOpc==2 && document.forms[0].listacgc.value != '') 
+	  	{
+	  	   cCGC = document.forms[0].listacgc.value; 
+	  	   document.forms[0].CGC.value = cCGC;
+	  	   document.forms[0].NOME.value = '';  
+	  	   document.forms[0].listanome.value = '';
+	  	 }  
+	  	 
+	  	if(nOpc==3)
+	  	{
+	  	   cNOME = document.forms[0].NOME.value;      
+	  	   document.forms[0].listacgc.value  = '';
+	  	   document.forms[0].listanome.value = '';
+	  	}
+	  	
+	    if(nOpc==4 && document.forms[0].listanome.value != '') 
+	  	{
+	  	   cNOME = document.forms[0].listanome.value; 
+	  	   document.forms[0].xNome.value = cNOME;  
+	  	   document.forms[0].listacgc.value  = '';
+	  	   document.forms[0].listanome.value = '';
+	  	 }
+	  	
+	  	if(cCGC != '' || cCOD != '' || cNOME != '')
+	  	{	  	
+			document.forms[0].action="W_MONTADADOS.APW";
+			document.forms[0].submit();  
+		}
+	  //	return cCGC;
+	}	                       
+
+	function cUpper(cObj) 
+	{
+		cObj.value=cObj.value.toUpperCase();
+	}
+	
+	function CheckOut(f){
+		if (f.Usuario.value == ""){
+			alert('Campos Login e Senha são obrigatórios!');
+			f.Usuario.focus()
+			return false;
+		}	
+		if (f.Senha.value == ""){
+			alert('Campos Login e Senha são obrigatórios!');
+			f.Senha.focus()
+			return false;
+		}			
+		else
+			return true;	
+		}   
+	 
+			
+	var pulsado;
+	var posicao;
+	function abrirMenu(posicao,tabela1,tabela2,tabela3,tabela4,tabela5,tabela6,tabela7)
+	{
+		if (posicao)
+		{
+			tabela1.style.display='';
+//			tabela2.style.display='';
+			tabela3.style.display='';
+			tabela4.style.display='';
+			tabela5.style.display='';
+			tabela6.style.display='';
+			tabela7.style.display='';
+		}
+		else
+		{
+			tabela1.style.display='none';
+//			tabela2.style.display='none';
+			tabela3.style.display='none';
+			tabela4.style.display='none';
+			tabela5.style.display='none';
+			tabela6.style.display='none';
+			tabela7.style.display='none';
+		}
+	} 
+	
+nextfield = "CGC"; // name of first box on page
+netscape = "";
+ver = navigator.appVersion; len = ver.length;
+for(iln = 0; iln < len; iln++) if (ver.charAt(iln) == "(") break;
+netscape = (ver.charAt(iln+1).toUpperCase() != "C");
+
+function keyDown(DnEvents) { // handles keypress
+// determines whether Netscape or Internet Explorer
+k = (netscape) ? DnEvents.which : window.event.keyCode;
+if (k == 13) { // enter key pressed
+if (nextfield == 'done') return true; // submit, we finished all fields
+else { // we're not done yet, send focus to next box
+eval('document.form1.' + nextfield + '.focus()');
+return false;
+      }
+   }
+}
+document.onkeydown = keyDown; // work together to analyze keystrokes
+if (netscape) document.captureEvents(Event.KEYDOWN|Event.KEYUP);
+//  End -->
+			
+	//-->
+	</SCRIPT>
+
+ </head>                           
+ 
+<body id="public" onload="start()" topmargin="0"> 
+	
+  <div id="botoes_flutuantes" align="left" style="left: 5; top: 5; width: 36px; height: 55px; position: absolute; z-index:1">
+    <table cellspacing=3 cellpadding=0>
+      <tr>
+        <td align="center"><a href="javascript:PrintPage();"> <img src="images/impressora32x32.jpg" alt="Imprimir" border="0" width="32" height="32"> </a> </td>
+      </tr>
+    </table>
+  </div>
+	
+	<div id="container">
+
+	<form name="form1" id="form1" class="wufoo topLabel page" method="post">
+	
+	<input id="xNome" name="xNome" type="hidden" value=""/>
+	
+	<div>
+         <img id="Image1" src="images/Layout.gif" style="border-width:0px; width:99%;" />
+	</div>
+	<ul>
+<a style="cursor:pointer" onClick="javascript:abrirMenu(true,obj1,obj2,obj3,obj4,obj5,obj6,obj7)"></a>
+<a style="cursor:pointer" onClick="javascript:abrirMenu(false,obj1,obj2,obj3,obj4,obj5,obj6,obj7)"></a> 
+<fieldset>
+<legend>Buscar registros</legend>
+	 <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+		<tr>
+		  <td>CNPJ:<span class="full">
+		  <input id='CGC' name='CGC' type='text' size='20' value="<%=ALLTRIM(HTTPPOST->C1)%>"  maxlength='18'  onblur='ValidAtend(1)' onFocus="nextfield ='listacgc';" /> <!--onkeyup='FormataCnpj(this,event)'-->
+		  <select name="listacgc" id="listacgc" style="width: 200px" onChange="ValidAtend(2)" onFocus="nextfield ='NOME';">
+            <% If  (nQtd1 <= 0) %>
+		       <option value=""></option>
+		    <% EndIf %>   
+		    <%	For nI := 1 To nQtd1 %>
+		    <option value="<%=ALLTRIM(transform(ListaCGC:OWSSCOMBO[nI]:CCVALUE, '@R 99.999.999/9999-99'))%>"
+		    <% If (ALLTRIM(HTTPPOST->C1)==Alltrim(transform(ListaCGC:OWSSCOMBO[nI]:CCVALUE, '@R 99.999.999/9999-99'))) %>
+		        SELECTED
+		    <% EndIf %>
+		    ><%=ALLTRIM(transform(ListaCGC:OWSSCOMBO[nI]:CCVALUE, '@R 99.999.999/9999-99'))%>
+		    </option>
+		    <%Next nI%>
+		  </select>
+		  </span> </td>
+		  </tr>
+			  <tr>
+				<td>Nome fantansia: 
+				  <br />
+				  <input id='NOME' name='NOME' type="text" value="<%=HTTPPOST->C3%>" id="Text11" size="20" onblur='ValidAtend(3)' onFocus="nextfield ='listanome';" onKeyUp="cUpper(this);" />
+				  <select name="listanome" id="listanome" style="width: 400px" onChange="ValidAtend(4)" onFocus="nextfield ='done';">
+            <% If  (nQtd2 <= 0) %>
+		       <option value="">                </option>
+		    <% EndIf %>   
+		    <%	For nJ := 1 To nQtd2 %>
+		    <option value="<%=ListaNome:OWSSCOMBO[nJ]:CCVALUE%>"
+		    <% If (Alltrim(HTTPPOST->CRAZAO)==Alltrim(ListaNome:OWSSCOMBO[nJ]:CCVALUE)) %>
+		        SELECTED
+		    <% EndIf %>
+		    ><%=ListaNome:OWSSCOMBO[nJ]:CCVALUE%>
+		     </option>
+		    <%Next nJ%>
+				  </select></td>
+			</tr>
+	  </table>
+</fieldset><br />
+<fieldset id="obj1">
+<legend>Dados do Cliente</legend>
+	 <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+       <tr>
+         <td><font size="2"><strong>CNPJ:<br />
+         </strong><%=ALLTRIM(transform(HTTPPOST->CCGC, '@R 99.999.999/9999-99'))%></font></td>
+         <td><font size="2"><strong>Contribuinte:</strong><br />
+         <font color="<%=If(('INATIVO' $ Upper(HTTPPOST->CINAT)),'#f40000','#0000ff')%>"><%=HTTPPOST->CINAT%></font></td>         
+         <td><font size="2"><strong>Situa&ccedil;&atilde;o:</strong><br />
+         <font color="<%=If(('SUSPENSO' $ Upper(HTTPPOST->CSITUAC)) .Or. ('INATIVO' $ Upper(HTTPPOST->CSITUAC)) .Or. ('NAO SOCIO' $ Upper(HTTPPOST->CSITUAC)),'#f40000','#0000ff')%>"><%=HTTPPOST->CSITUAC%></font></td>         
+       </tr>
+     </table>
+	 <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+       <tr>
+         <td><font size="2"><strong>&nbsp;</strong></font></td>
+         <td><font size="2">&nbsp;</font></td>
+       </tr>
+       <tr>
+         <td><font size="2"><strong>Raz&atilde;o Social:</strong></font></td>
+         <td><font size="2"><%=HTTPPOST->CRAZAO%></font></td>                           
+       </tr>  
+       <tr>
+         <td><font size="2"><strong>Nome fantasia:</strong></font></td>
+         <td><font size="2"><%=HTTPPOST->CNREDUZ%></font></td>
+       </tr>  
+       <tr>
+         <td><font size="2"><strong>Sindicato:</strong></font></td>
+         <td><font size="2"><%=HTTPPOST->CSINDICA%></font></td>
+       </tr>
+     </table>
+	 <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+       <tr>
+         <td><font size="2"><strong>&nbsp;</font></td>
+       </tr>
+       <tr>
+         <td><font size="2"><strong>Endere&ccedil;o:</strong><br />
+          <%=HTTPPOST->CEND%></font></td>
+         <td><font size="2"><strong>Cidade:</strong><br />
+         <%=HTTPPOST->CMUN%></font></td>
+         <td><font size="2"><strong>UF:</strong><br />
+         <%=HTTPPOST->CEST%></font></td>
+       </tr>
+       <tr>
+         <td><font size="2"><strong>Bairro:</strong><br />
+         <%=HTTPPOST->CBAIRRO%></font></td>
+         <td><font size="2"><strong>Cep:</strong><br />
+         <%=HTTPPOST->CCEP%></font></td>
+         <td><font size="2"><strong>Telefone / Fax:</strong><br />
+         <%=HTTPPOST->CTEL%></font></td>
+       </tr>
+       <tr>
+         <td><font size="2"><strong>Data de abertura:</strong><br />
+         <%=HTTPPOST->DTABERT%></font></td>
+         <td><font size="2"><strong>Data de cadastro:</strong><br />
+         <%=HTTPPOST->DTCADAS%></font></td>
+         <td><font size="2"><strong>E-mail:</strong><br />
+         <%=HTTPPOST->CEMAIL%></font></td>
+       </tr>
+     </table>
+</fieldset> 
+
+<!--
+<br />
+<fieldset id="obj2">
+     <legend>Escritório Contábil</legend>
+	 <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+       <tr>
+         <td><font size="2"><strong>Nome:<br />
+         </strong><%=HTTPPOST->CNOMEE%></font></td>
+         <td><font size="2"><strong>Endere&ccedil;o:<br />
+         </strong><%=HTTPPOST->CENDERECOE%></font></td>
+         <td><font size="2"><strong>Cep:</strong><br />
+         <%=HTTPPOST->CCEPE%></font></td>
+       </tr>
+       <tr>
+         <td><font size="2"><strong>Cidade:</strong><br />
+         <%=HTTPPOST->CMUNE%></font></td>
+         <td><font size="2"><strong>Estado:</strong><br />
+         <%=HTTPPOST->CESTE%></font></td>
+         <td><font size="2"><strong>E-mail:</strong><br />
+		 <%=HTTPPOST->CEMAILE%></font></td>
+       </tr>
+     </table>
+</fieldset>
+-->
+
+<br />
+<fieldset id="obj3">
+<legend>Associados</legend>
+	 <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+       <tr>
+         <td><font size="2"><strong>Sindicato:<br />
+         </strong><%=Left(HTTPPOST->CSINDICA,RAt("-",HTTPPOST->CSINDICA)-1)%></font></td>
+         <td><font size="2"><strong>Cod. Associado:<br />
+         </strong><%=HTTPPOST->CCODASSO%></font></td>
+         <!--<td><font size="2"><strong>Situa&ccedil;&atilde;o:</strong><br />
+         <%=HTTPPOST->CSITUAC%></font></td>-->
+		<td><font size="2"><strong>Dt. Associado:</strong><br />
+         <%=HTTPPOST->DDTINASS%></font></td>         
+		<td><font size="2"><strong>Dt.Fim Assoc.:</strong><br />
+         <%=HTTPPOST->DDTFIMAS%></font></td> 
+       </tr>
+       <tr>
+         <td><font size="2"><strong>Categoria:</strong><br />
+         <%=HTTPPOST->CCATEG1%></font></td>
+         <td><font size="2"><strong>Base:</strong><br />
+         <%=HTTPPOST->CBASE%></font></td>
+         <td><font size="2"><strong>Filantr&oacute;pica:</strong><br />
+		<%=HTTPPOST->CFILANT%></font></td>
+       </tr>
+     </table>
+</fieldset>  <br />
+	<div class="info" id="obj4">
+		<h3>Posição financeira - Títulos pagos</h3>
+	    <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+          <tr>
+            <td colspan="3"><hr size="1" /></td>
+          </tr>
+          <tr>
+            <td width="30%" height="19"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Associativa</strong></font></td>
+            <td width="50%"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Confederativa/assistencial</strong></font></td>
+            <td width="20%"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Sindical</strong></font></td>
+          </tr>
+          <tr>
+            <td  valign="top"><font size="1" face="Verdana, Arial, Helvetica, sans-serif">
+            <% IF EMPTY(HTTPPOST->MASSOPGO) %>
+            </font>
+              <table width="156" border="1" cellpadding="0" cellspacing="0" bordercolor="#999999">
+                <tr bgcolor="#CCCCCC">
+                  <td width="82"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Dt. Baixa </strong></font></td>
+                  <td width="48"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Parcela</strong></font></td>
+                  <td width="58"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Ano</strong></font></td>
+                </tr>
+                <%FOR h := 1 TO LEN(HTTPPOST->ASSOPGO)%>
+                <tr>
+                  <td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><%=HTTPPOST->ASSOPGO[h]:DDPAGTO%></font></td>
+                  <td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><%=HTTPPOST->ASSOPGO[h]:CCMES%></font></td>
+                  <td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">20<%=HTTPPOST->ASSOPGO[h]:CCANO%></font></td>
+                </tr>
+                <%NEXT h %>
+              </table>
+              <font size="1" face="Verdana, Arial, Helvetica, sans-serif">
+<%//ELSE
+//Nenhum titulo pago
+%>
+<%ENDIF%>
+            </font></td>
+            <td  valign="top"><font size="1" face="Verdana, Arial, Helvetica, sans-serif">
+            <% IF EMPTY(HTTPPOST->MCONFPGO) %>
+            </font>
+              <table width="233" border="1" cellpadding="0" cellspacing="0" bordercolor="#999999">
+                <tr bgcolor="#CCCCCC">
+                  <td width="42"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Parcela</strong></font></td>
+                  <td width="82"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Pagamento</strong></font></td>
+                  <td width="95"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Vencimento</strong></font></td>
+                  <td width="63"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Ano</strong></font></td>
+                </tr>
+                <%FOR j := 1 TO LEN(HTTPPOST->CONFPGO)%>
+                <tr>
+                  <td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><%=HTTPPOST->CONFPGO[j]:CCPARCELA%></font></td>
+                  <td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><%=HTTPPOST->CONFPGO[j]:DDPAGTO%></font></td>
+                  <td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><%=HTTPPOST->CONFPGO[j]:DDVENCTO%></font></td>
+                  <td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">20<%=LEFT(HTTPPOST->CONFPGO[j]:CCANO,2)%></font></td>
+                </tr>
+                <%NEXT j %>
+              </table>
+              <font size="1" face="Verdana, Arial, Helvetica, sans-serif">
+<%//ELSE
+//Nenhum titulo pago
+%>
+<%ENDIF%>
+            </font></td>
+            <td valign="top"><font size="1" face="Verdana, Arial, Helvetica, sans-serif">
+            <% 
+IF EMPTY(HTTPPOST->MSINDPGO) %>
+            </font>
+              <table width="110" border="1" cellpadding="0" cellspacing="0" bordercolor="#999999">
+                <tr bgcolor="#CCCCCC">
+                  <td width="47"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Ano</strong></font></td>
+                  <td width="87"><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><strong>Data Baixa </strong></font></td>
+                </tr>
+                <% for i := 1 to len(HTTPPOST->SINDPGO) %>
+                <tr>
+                  <td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">20<%=LEFT(HTTPPOST->SINDPGO[i]:CCANO,2)%></font></td>
+                  <td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><%=HTTPPOST->SINDPGO[i]:dDPAGTO%></font></td>
+                </tr>
+                <% NEXT i %>
+              </table>
+              <font size="1" face="Verdana, Arial, Helvetica, sans-serif">
+<%//ELSE
+//Nenhum titulo pago
+%>
+<%ENDIF%>
+            </font></td>
+          </tr>
+        </table>
+	</div> 	 
+	</ul>	
+	</FORM>
+	</div>
+	</body>
+	</html>

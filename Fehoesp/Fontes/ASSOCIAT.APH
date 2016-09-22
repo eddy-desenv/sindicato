@@ -1,0 +1,158 @@
+<%
+ Local I, nA
+ Local nX := 0
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>  
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title>
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+
+	<script type="text/javascript">
+		function ATUALIZA_DTPAGTO(campo)
+		{ 
+            document.getElementById("DTPGTO").innerHTML  = campo.value.split("$")[2];
+		}	 
+		  
+	function GeraAsso(Condicoes)
+	{
+		var obj;
+		
+		<% If  (Len(HTTPPOST->PARCELA:OWSSCASSO) <= 0) /* Radio sem nenhuma opcao */ %>
+
+		       alert("Sem pagamento registrado!");
+		       return false;
+		
+		<% ElseIf (Len(HTTPPOST->PARCELA:OWSSCASSO) <= 1) /* Radio com uma opcao nao gera Vetor */ %>
+
+			obj = Condicoes.value; 
+		
+		<% Else /* Radio com mais de uma opcao */ %>	
+
+			for (var i = 0; i < Condicoes.length; i++)
+			{
+				if (Condicoes[ i ].checked) 
+				{              
+	               obj = Condicoes[i].value;
+	   			}
+			}
+
+		<% EndIf %>
+
+		ano 	= obj.split("$")[1];
+		vencori	= obj.split("$")[2];
+		filial 	= obj.split("$")[3];
+		prefixo = obj.split("$")[4];
+		numero 	= obj.split("$")[5];
+		parcela = obj.split("$")[6];
+		naturez = obj.split("$")[7];
+
+		document.form1.VerURL.value = document.URL;		
+//        alert(document.form1.VerURL.value);
+
+		document.form1.action="W_GERABOL.APW?FILIAL="+filial+"&PREFIXO="+prefixo+"&NUMERO="+numero+"&ANO="+ano+"&PARCELA="+parcela+"&VENCORI="+vencori+"&NATUREZ="+naturez;
+		document.form1.submit();
+		return true;    
+	} 
+	
+	</script>
+	
+</head>
+
+<body >
+<div id="container">
+
+<h1 id="logo"/>
+..
+</h1>
+
+<form id="form1" name="form1" class="wufoo topLabel page"  method="post" >
+<input id="VerURL" name="VerURL" type="hidden" value=""/>
+
+<div class="info">
+	<h2>Contribuição Associativa / Associativa Confederativa </h2>
+	<div></div>
+</div>
+
+<ul>
+
+<li class="complex     ">
+	<label class="Field4" id="title1" >Data para Pagamento do Título</label>
+	<span class="full">
+		<LABEL id="DTPGTO" NAME="DTPGTO"  >
+			<%IF LEN(HTTPPOST->PARCELA:OWSSCASSO) > 0 %>
+				<%=HTTPPOST->PARCELA:OWSSCASSO[1]:dDVENORIG%>		
+			<%ENDIF%>                      
+		</LABEL>
+	</span>
+	<br>
+</li>
+
+<li  class="complex      ">
+	<label for="Field4">Parcelas Pendentes</label>
+	<table>    
+	
+	<tr>
+	   <td>
+       	<%  nA := (Len(HTTPPOST->PARCELA:OWSSCASSO)-11)
+       	    nA := If(nA <= 0, 1, nA)
+       	    
+       	    nX := 0
+       	    
+       	    For I:= nA TO Len(HTTPPOST->PARCELA:OWSSCASSO) 
+       	        ++nX %>
+
+       		<input type=radio name="radio" onclick="ATUALIZA_DTPAGTO(this);" value='<%=HTTPPOST->PARCELA:OWSSCASSO[I]:CMES%>$<%=HTTPPOST->PARCELA:OWSSCASSO[I]:CANO%>$<%=HTTPPOST->PARCELA:OWSSCASSO[I]:dDVENORIG%>$<%=HTTPPOST->PARCELA:OWSSCASSO[I]:CFILIAL%>$<%=HTTPPOST->PARCELA:OWSSCASSO[I]:CPREFIXO%>$<%=HTTPPOST->PARCELA:OWSSCASSO[I]:CNUMERO%>$<%=HTTPPOST->PARCELA:OWSSCASSO[I]:CPARCELA%>$<%=HTTPPOST->PARCELA:OWSSCASSO[I]:CNATUREZ%>'
+       		<% If  (I == 1) %>                  
+       			CHECKED
+       		<% EndIf %>	
+       		><%=U_MES(HTTPPOST->PARCELA:OWSSCASSO[I]:CMES)%> / <%=HTTPPOST->PARCELA:OWSSCASSO[I]:CANO%>
+			</input>
+			
+			<% 	If  ((I+1) > Len(HTTPPOST->PARCELA:OWSSCASSO))
+					Exit
+			   	EndIf 
+			%>	
+			    
+			</td>
+			<% If  Empty(nX%3) %>
+			    </tr>
+			    <tr>
+			<% EndIf %>
+			<td>
+
+       <% Next I %>
+      </td>
+    </tr>   
+	</table>
+	<br>	
+</li>
+
+<li  class="complex      ">
+	<center>
+	<span class="full">
+		<BR><input id="Button1" type="button" value="Gerar Boleto" ONCLICK="GeraAsso(radio)" />
+	</span>
+	</center>
+</li>
+   
+</ul>
+
+</form> 
+
+ </div><!--container-->
+<img id="bottom" src="images/bottom.png" alt="" />
+
+</body>
+
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>SINDHOSP</title> 
+
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	
+    
+    <!-- valida o cnpj digitado -->
+      
+  <script language="javascript">		 
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro = '';
+		var msg = 'Campo obrigatório:\n';
+		var obj = document.forms[0].CGC.value;
+		var chk = 0;
+		
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CNPJ\n';
+        }
+
+		if(document.forms[0].CAPITAL.value < 0){
+			erro='S';
+			msg += '* Campo Capital Social\n';
+        }
+                 
+        if(erro == ''){                        
+			document.forms[0].action="W_FUNCEMP.APW";
+			document.forms[0].submit();
+			return true;
+		}         
+		
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	  	
+	function Cancela(){ 
+		document.forms[0].action="W_EMPRESA.APW";
+		document.forms[0].submit();
+		return true;
+	} 
+	
+	function Confirma(){
+		document.forms[0].action="W_ATUAEMP.APW";
+		document.forms[0].submit();
+		return true;
+	}   
+	
+function CadEscr(){ 
+	document.forms[0].action="W_EMPESC.APW";
+	document.forms[0].submit();
+	return true;
+}	
+  	
+	function EscCont(){ 
+		document.forms[0].action='W_xxxx.APW';
+		document.forms[0].submit();
+		return true;
+	}		
+	   
+	function Boleto(){ 
+		document.forms[0].action='W_xxxx.APW';
+		document.forms[0].submit();
+		return true;
+	}
+	    
+	function SolicAlt(){ 
+		document.forms[0].action='W_SOLICALT.APW';
+		document.forms[0].submit();
+		return true;
+	}
+	  		
+	function Mostra(opc){ 
+		if (opc > 0)
+	    {                  
+			document.getElementById("label1").style.visibility='visible';
+			document.getElementById("label2").style.display = "inline";
+			document.getElementById("label3").style.display = "inline";
+			document.getElementById("label4").style.display = "inline";
+			document.getElementById("label5").style.display = "inline";
+			document.getElementById("label6").style.display = "inline";
+			document.getElementById("label7").style.display = "inline";
+			document.getElementById("label8").style.display = "inline";
+			document.getElementById("label9").style.display = "inline";
+			document.getElementById("label10").style.display = "inline";
+			document.getElementById("label11").style.display = "inline";
+			document.getElementById("label12").style.display = "inline";
+	     	
+	    }
+	    else
+	    {
+			document.getElementById("label1").style.display = "none";	    
+			document.getElementById("label2").style.display = "none";
+			document.getElementById("label3").style.display = "none";
+			document.getElementById("label4").style.display = "none";
+			document.getElementById("label5").style.display = "none";
+			document.getElementById("label6").style.display = "none";
+			document.getElementById("label7").style.display = "none";
+			document.getElementById("label8").style.display = "none";
+			document.getElementById("label9").style.display = "none";
+			document.getElementById("label10").style.display = "none";
+			document.getElementById("label11").style.display = "none";
+			document.getElementById("label12").style.display = "none";	    
+	    }                       
+	    if (opc != 3){
+		    document.getElementById("FORMAUX").style.display = "none";	
+		}
+	
+	return true;
+	}
+			
+	</script>
+
+</head>
+<body onLoad="Mostra(<%=HTTPSESSION->AUXEXIBE%>)">
+	<form class="style13" method="post">
+	
+    <center>
+       <%IF HTTPPOST->CGC <> NIL%>
+       		<div id="FORM1" style="display:none">
+       	<%ELSE%> 
+  			<div id="FORM1" align="center">	
+  		<%ENDIF%>
+	       <table border="2" width="90%">
+	        <tr>
+	            <td style="height: 353px" align="center">
+	            	<font face="arial, verdana" style="font-size: 12px" color="black">
+	                CNPJ:
+	                <input id="CGC" name="CGC" type="text" size="19"  maxlength="18" onkeyup="FormataCnpj(this,event)" onblur="valida_cnpj(this)" />
+	                <input id="Button1" type="button" value="Enviar" onclick="CampoBranco()" />
+	            	</font>
+	            </td>
+	        </tr>
+	    	</table>
+    	</div>
+
+    	<!--DADOS DA EMPRESA--> 
+       <%IF HTTPSESSION->ROTINA == NIL .AND. HTTPPOST->MSGATUA <> NIL%>
+       		<div id="FORM2" style="display:none">
+       	<%ELSE%>
+  			<div id="FORM2" style="display:inline">	
+  		<%ENDIF%>    	
+        <table border="2" width="90%" >
+	       <%IF HTTPSESSION->AEMPAUX == NIL .OR. HTTPSESSION->EXIBEAUX == 0 .and. HTTPSESSION->ROTINA == NIL .AND. HTTPPOST->MSGATUA <> NIL %>
+	       		<TR id="FORMAUX" style="display:none">
+	       	<%ELSEIF HTTPSESSION->AEMPAUX <> NIL .AND. HTTPSESSION->EXIBEAUX == 1%>
+				<TR id="FORMAUX" style="background-color: WHITE; color: BLACK; font-size: larger; text-align: center; vertical-align: middle;">	  				
+	  		<%ENDIF%>   
+	        	
+	        		<td colspan="2"><CENTER>
+						Alguns dados foram alterados e ainda não foram confirmados pelo Sindicato. Deseja visualizá-los? 
+						</CENTER>
+						<BR><BR>
+	                    <input id="ButtonConfAux" type="button" value="Sim" onclick="Mostra(1)"/>
+	                    <input id="ButtonCancAux" type="button" value="Não" onclick="Mostra(0)" />						
+					</td>
+	        	</tr>
+        		  		      
+        	<tr>
+        		<td colspan="2">
+					<div style="background-color: black; color: white; font-size: larger; text-align: center; vertical-align: middle;">Cadastro de Empresas</div>       		
+				</td>
+        	</tr>
+            <tr>
+                <td style="height: 353px" align="center" valign="middle">
+                    <table>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                CNPJ
+                            </fotn></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                            <%=HTTPPOST->CGC%> 
+                            <input id="CGC2" name="CGC2" type="hidden" value="<%=HTTPPOST->CGC%>"/>
+                            </font></td>
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Razão Social
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                
+                                <input name="RAZAO" id="RAZAO" VALUE='<%=HTTPPOST->RAZAO%>' type="text" style="width: 399px" />
+                                <LABEL id="label1" style="display:none"><I><%=HTTPPOST->RAZAO2%></I></LABEL>
+                                
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                CEP
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                
+                                <input name="CEP" id="CEP" size='9' maxlength='9' VALUE='<%=HTTPPOST->CEP%>' type="text" ONBLUR="BuscaCep()"/>
+                                <LABEL id="label2" style="display:none"><I><%=HTTPPOST->CEP2%></I></LABEL>
+                                
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Endereço
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                
+                                <input name="CEND" id="CEND" VALUE='<%=HTTPPOST->CEND%>' type="text" style="width: 403px" />
+                                <LABEL id="label3" style="display:none"><I><%=HTTPPOST->CEND2%></I></LABEL>
+                                
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Bairro
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+								
+                                <%=HTTPPOST->BAIRRO%>
+                                <input  name="BAIRRO" id='BAIRRO' VALUE='<%=HTTPPOST->BAIRRO%>' type="HIDDEN" style="width: 300px" />
+                                <LABEL id="label4" style="display:none"><I><%=HTTPPOST->BAIRRO2%></I></LABEL>
+                                
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Cidade
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                
+                                <%=HTTPPOST->MUN%>
+                                <input name="MUN" id='MUN' VALUE='<%=HTTPPOST->MUN%>' type="HIDDEN" style="width: 299px" />
+                                <LABEL id="label5" style="display:none"><I><%=HTTPPOST->MUN2%></I></LABEL>
+                                
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Estado
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+								
+                                <%=HTTPPOST->EST%>
+                                <input name="EST" id='EST' VALUE='<%=HTTPPOST->EST%>' type="HIDDEN" style="width: 299px" />
+                                <LABEL id="label6" style="display:none"><I><%=HTTPPOST->EST2%></I></LABEL>
+                                
+ 							</font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Email (Empresa)
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+								
+                                <input id='EMAIL' name="EMAIL"  VALUE='<%=HTTPPOST->EMAIL%>' type="text" style="width: 300px" />
+                                <LABEL id="label7" style="display:none"><I><%=HTTPPOST->EMAIL2%></I></LABEL>
+                                
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Fone (Empresa)
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                
+                                <input id='FONE' name="FONE" maxlength="13"  type="text" VALUE='<%=HTTPPOST->FONE%>' size="13" onkeypress="inserirMascara(window.event.keyCode, this);"  />
+                                <LABEL id="label8" style="display:none"><I><%=HTTPPOST->FONE2%></I></LABEL>
+                                (99)9999-9999                                                              
+                                
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Fax (Empresa)
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                
+                                <input id='FAX' name="FAX" maxlength="13"  type="text" VALUE='<%=HTTPPOST->FAX%>' size="13" onkeypress="inserirMascara(window.event.keyCode, this);"  />
+                                <LABEL id="label9" style="display:none"><I><%=HTTPPOST->FAX2%></I></LABEL>
+                                (99)9999-9999                                                             
+                                
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Capital Social (Empresa)
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                
+                                <input id='CAPITAL' name="CAPITAL" VALUE='<%=HTTPPOST->CAPITAL%>' type="text" value="R$" />
+                                <LABEL id="label10" style="display:none"><I><%=HTTPPOST->CAPITAL2%></I></LABEL>
+                                
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Início das Atividades
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                
+                                <input type="text" name="INIATV" id="INIATV" value="<%=HTTPPOST->INIATV%>" size="11">
+								<input id="ButtonDate" type="button" value="..." onclick="popCal(INIATV)">
+								
+								<LABEL id="label11" style="display:none"><I><%=HTTPPOST->INIATV2%></I></LABEL>
+								
+                            </font></td>                            
+                        </tr>
+                        <tr>
+                            <td align="right"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                Contato (Empresa)
+                            </font></td>
+                            <td align="left"><font face="arial, verdana" style="font-size: 12px" color="black">
+                                
+                                <input id='CONTATO' name="CONTATO" VALUE='<%=HTTPPOST->CONTATO%>' type="text" style="width: 402px" />
+                                <LABEL id="label12" style="display:none"><I><%=HTTPPOST->CONTATO2%></I></LABEL>
+                                
+                            </font></td>                            
+                        </tr>
+                    </table>
+                    <br />
+			       <%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '3' %>
+			       		<div id="FORM3">
+			       	<%ELSE%>
+			  			<div id="FORM3" style="display:none">	
+			  		<%ENDIF%>                     
+                    <input id="Button1" type="button" value="Confirmar" onclick="Confirma()"/>
+                    <input id="Button6" type="button" value="Cancelar" onclick="Cancela()" />
+                    </DIV>
+                    
+			       <%IF HTTPSESSION->ROTINA <> nil .and. HTTPSESSION->ROTINA == '4' %>
+			       		<div id="FORM4">
+			       	<%ELSE%>
+			  			<div id="FORM4" style="display:none">	
+			  		<%ENDIF%>
+			  	   <%IF HTTPSESSION->AEMPRESA:CCSITUAC == 'AS' .OR. HTTPSESSION->AEMPRESA:CCSITUAC == 'SS'%>
+                    	<input id="ButtonAlt" type="button" value="Alterar" onclick="SolicAlt()"/>               
+                    <%ELSE%>
+                    	<input id="ButtonAlt" type="button" value="Alterar" onclick="Confirma()"/>                     
+                    <%ENDIF%>
+                    <input id="ButtonES" type="button" value="Escritório Contábil" onclick="EscCont()" />
+                    <input id="ButtonBol" type="button" value="Boletos" onclick="Boleto()" />
+                    </DIV>
+                                        
+                    </td>
+            </tr>
+        </table>
+
+		</div> 
+		
+		<!--MENSAGEM DE ATUALIZACAO DA EMPRESA-->
+       <%IF HTTPPOST->MSGATUA == NIL%>
+       		<div id="FORM3" style="display:none">
+       	<%ELSE%>
+  			<div id="FORM3">
+		       <table border="2" >
+		        <tr>
+		            <td style="height: 353px" align="center">
+		                <%=HTTPPOST->MSGATUA%>
+		                <br><br> 
+		                <%if !EMPTY(HTTPSESSION->AEMPRESA:CCODESCR)%> <!--TEM ESCRITORIO VINCULADO-->
+	                		<%HTTPSESSION->AEMPRESA := NIL%>   
+                			<input id="Button1" type="button" value="OK" onclick="Cancela()" />		                   
+		                <%ELSE%>
+		                	<input id="Button1" type="button" value="Sim" onclick="CadEscr()" />
+	                		<input id="Button1" type="button" value="Não" onclick="Cancela()" />		                	
+		                <%ENDIF%>
+		                </td>
+		        </tr>
+		    	</table>  				
+  		<%ENDIF%> 
+  		</div>
+    </center>
+    </form>
+</body>
+</html>
+

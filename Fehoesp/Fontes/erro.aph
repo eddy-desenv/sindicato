@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head> 
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title> 
+
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+		
+  <script language="javascript">		 
+
+	function direcionar(){
+
+      <% If  !( Empty(HttpPost->XRedir) ) %>
+			document.forms[0].action="<%= HttpPost->XRedir %>"; 
+			document.forms[0].submit();
+			return true;
+		<% Else %>
+			history.go(-1);
+		<% EndIf %>	
+
+	}
+	  	
+  	</script>   
+	
+
+</head>
+
+<body id="public">
+<div id="container">
+
+<h1 id="logo"/>
+..
+</h1>
+
+<form class="wufoo topLabel" method="post" >
+	<input id="TPBOLETO" name="TPBOLETO" type="hidden" value="<%= HTTPPOST->TPBOLETO %>"/>
+<div class="info">
+	<h2>Aviso</h2>
+	<div></div>
+</div>
+
+<ul>
+
+<li class="COMPLEX    " style="width: 100%">
+	<CENTER>
+	<label class="Field4">
+		<%=HTTPPOST->ERRO%>
+	</label>
+	<span class="full">
+		<BR>
+		<input id="Button1" type="button" value="Voltar" onClick="direcionar()" />
+	</span>  
+	</CENTER>
+</li>
+
+</UL>      
+
+</div>
+</body>
+</HTML>

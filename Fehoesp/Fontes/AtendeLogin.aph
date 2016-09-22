@@ -1,0 +1,75 @@
+<%
+Local cMsg := ''
+if(valtype(httpSession->cMsgErr) == 'C')
+    cMsg := httpSession->cMsgErr 
+endif
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>FEHOESP</title> 
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+</head>
+<body id="public">
+<script language="javascript1.1">
+<!--
+function CheckOut(f){
+	if (f.Usuario.value == ""){
+		alert('Campos Login e Senha são obrigatórios!');
+		f.Usuario.focus()
+		return false;
+	}	
+	if (f.Senha.value == ""){
+		alert('Campos Login e Senha são obrigatórios!');
+		f.Senha.focus()
+		return false;
+	}			
+	else
+		return true;	
+	}
+//-->
+</SCRIPT>
+
+<div id="container">
+<form onSubmit="return CheckOut(this)" action="w_vldsenha.apw" class="wufoo topLabel page" method="post">
+	<div>
+         <img id="Image1" src="images/Layout.gif" style="border-width:0px; width:100%;" />
+	</div>
+<ul>
+<DIV ID="FORMAUX">
+<div class="info">
+<%if(cMsg == '')%>
+	<div>Entre com seu usuário e senha de acesso:</div>  
+<%else%>	
+	<div><b><%=cMsg%></b></div>
+<%endif%>
+</div>
+</DIV>
+<li>
+	<label class="Field4" id="title3" for="Field3">
+	Usuário:
+	</label>
+	<span class="full">
+		<input id="Usuario" name="Usuario" type="text" size="20" maxlenght="6"/>
+	</span>
+</li>
+<li>
+	<label class="Field4" id="title3" for="Field3">
+	Senha:
+	</label>
+	<span class="full">
+		<input id="Senha" name="Senha" type="password" size="20" maxlenght="6"/>
+	</span>
+</li>
+<li class="complex      ">
+	<span class="full">
+		<input class="style14" name="Enviar" type="submit" value="Confirmar"/> 
+		<input type="reset" name="Reset" value="Cancelar" />
+	</span>	
+</li>
+</ul>	
+</FORM>
+</body>
+</html>

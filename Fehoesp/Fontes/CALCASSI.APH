@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>SINDHOSP</title>
+</head>
+<body>
+    <center>
+        <table border="2" width="90%">
+            <tr>
+                <td style="width: 869px; height: 26px" align="center" colspan="5" valign="middle">
+                    <input id="Button2" type="button" value="Cadastro" />
+                    <input id="Button3" type="button" value="Extratos" />
+                    <input id="Button4" type="button" value="Boletos" />
+                    <input id="Button5" type="button" value="Associe-se" />
+                    <hr />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 869px; height: 353px" align="center" colspan="5" valign="middle">
+                    <b><span style="text-decoration: underline">DADOS CADASTRAIS<br />
+                        <br />
+                    </span>
+                        <table style="color: gray; text-align: center;" width="90%">
+                            <tr>
+                                <td align="right">
+                                    CNPJ
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;12.234.456/0001-4</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Razão Social
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;Totvs S/A</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    CEP
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;02511-000</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Endereço
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;Av. Braz Leme, 1717</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Bairro
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;Casa Verde</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Cidade
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;São Paulo</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Estado
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;São Paulo&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Email (Empresa)
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;totvs@totvs.com.br</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Fone (Empresa)
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;(11) 2099-7070</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Fax (Empresa)
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;(11) 2099-7070</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Capital Social (Empresa)
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;R$ 12.900.876,99</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Início das Atividades
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;12/12/1980</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Contato (Empresa)
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;Laercio</td>
+                            </tr>
+                        </table>
+                        <br />
+                        <span style="text-decoration: underline">ESCRITÓRIO CONTÁBIL</span><br />
+                        <br />
+                        <table style="color: gray" width="95%">
+                            <tr>
+                                <td align="right">
+                                    CNPJ/CEI/CPF
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;233.456.566-00</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Razão Social
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;RM Ltda.</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    CEP
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;07110-990</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Endereço
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;Av. Tiradentes, 1212</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Bairro
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;Centro</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Cidade
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;Guarulhos</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Estado
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;São Paulo</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Email (Contabilidade)
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;rm@rm.com.br</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Fone (Contabilidade)
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;(11) 2099-8888</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Fax (Contabilidade)
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;(11) 2099-0000</td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    Contato (Empresa)
+                                </td>
+                                <td align="left" style="font-weight: normal">
+                                    &nbsp;Daniel</td>
+                            </tr>
+                        </table>
+                        <br />
+                        <input id="Button6" type="button" value="Alteração Empresa" /><input id="Button7"
+                            type="button" value="Alteração Escritório Contábil" /><br />
+                        <br />
+                        <hr />
+                        <br />
+                        CONTRIBUIÇÃO ASSOCIATIVA</b><br />
+                    <br />
+                    <table>
+                        <tr>
+                            <td align="right">
+                                Data Para Pagamento do Título</td>
+                            <td align="left">
+                                <input id="Text2" disabled="disabled" type="text" style="width: 70px" value="12/12/1980" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                Parcelas Pendentes</td>
+                            <td align="left">
+                                <select id="Select1">
+                                    <option selected="selected" value="2010">1ª Parcela</option>
+                                    <option value="2010">2ª Parcela</option>
+                                </select>
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><input id="Button1" type="button" value="Gerar Boleto" /></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </center>
+</body>
+</html>
+

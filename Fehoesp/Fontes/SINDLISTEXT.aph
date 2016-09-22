@@ -1,0 +1,542 @@
+<% 
+  Local i := 0 
+  Local j := 0 
+  Local x := 0
+  Local aMeses  := {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"}
+  Local cMensFone  := If(HTTPSESSION->AEMPRESA:CCSINDICA=='01', "Fax:(11) 3222-0251", "Tel/Fax: (11) 3221-9333")
+  Local cMensEMail := If(HTTPSESSION->AEMPRESA:CCSINDICA=='01', "e-mail: arrecadacao@sindhosp.com.br ou ligue Tel.:(11) 3331-1555 opção 4",; 
+                                                                "<br>e-mail: arrecadacao@fehoesp.org.br")
+  Local nAssoAbt := LEN(HTTPPOST->ASSOABT)   
+  
+  nAssoAbt := If(nAssoAbt > 12, 12, nAssoAbt)
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head> 
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title> 
+
+
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	<link rel="stylesheet" href="css/table.css" type="text/css" />	
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+	    
+    <!--EMITE O BOLETO-->
+	<script type="text/javascript">
+	
+		function GeraBoleto(pITEM, pANOPARCELA, pTPBOLETO, pCHAVE, pANO, pVALOR, pVENCTO)
+		{                   
+
+			document.form1.VerURL.value = document.URL;		
+			document.form1.TPBOLETO.value = pTPBOLETO;          
+			
+			if (pTPBOLETO == 1)  //Sindical
+			{
+				document.form1.action="W_CALCBOL.APW?TPBOLETO=1&ITEM="+pITEM;
+			}
+			if (pTPBOLETO == 2)  //Confederativa
+			{
+				document.form1.action="W_CALCBOL.APW?TPBOLETO=2&ITEM="+pITEM;
+			}
+			if  (pTPBOLETO == 3)  //Associativa
+			{
+				document.form1.action="W_GERABOL.APW?TPBOLETO=3&ANO="+pANO+"&XCHAVE="+pCHAVE+"&VALOR="+pVALOR+"&VENCORI="+pVENCTO;
+			}
+			if (pTPBOLETO == 4)  //Assistencial
+			{
+				document.form1.action="W_CALCBOL.APW?TPBOLETO=4&ITEM="+pITEM+"&ANOPARCELA="+pANOPARCELA;
+			}												
+			
+			document.form1.submit();
+			
+ 			return true;
+		}
+
+		function BolConfAss(Item,AnoParcela)
+		{                   
+		    var obj = 'radio';  
+		    var TpBoleto = '';
+
+			for (var i = 1; i <= 2; i++)
+			{
+		        obj = 'radio' + Item + i;      
+		        radio = document.getElementById(obj);
+		        
+				if (radio.checked) 
+				{              
+	               TpBoleto = radio.value;
+	               break;
+	   			}
+			}
+
+		    GeraBoleto(Item, AnoParcela, TpBoleto);
+
+		} 
+		
+	function Imprimir()
+	{
+		window.print();
+		return false;
+	}
+			
+	</script>
+	    
+</head>
+
+
+<body id="public">
+<div id="container">
+
+<form name="form1" id="form1" class="wufoo topLabel page" method="post" >
+	<input id="VerURL" name="VerURL" type="hidden" value=""/> 
+	<input id="TPBOLETO" name="TPBOLETO" type="hidden" value=""/>
+
+<UL>                    
+
+<%IF HTTPSESSION->SIND == 1 %>
+
+<div class="info">
+    <br>
+	<h2>Extrato - Contribuição Sindical</h2>
+	<div></div>
+</div>
+
+<UL>
+<div>
+<li class="     ">
+	<label class="Field4" id="title1" for="Field1">
+		Pagamentos Efetuados
+	</label>
+	<%IF !EMPTY(HTTPPOST->MSINDPGO)%>
+		<span class="full">
+			<%=HTTPPOST->MSINDPGO%>
+		</span>                          
+	<%ENDIF%>
+</li>
+</div>
+
+<% IF EMPTY(HTTPPOST->MSINDPGO) %>
+<div>
+<li  class="complex      ">
+	<table class="table">
+	    <tr> 
+			<td>
+	        	<b><center>ANO</center></b>
+			</td>
+	        
+            <td>
+	       		<b><center>VENCIMENTO</center></b>
+			</td>
+	        
+			<td>
+	        	<b><center>PAGAMENTO</center></b>
+			</td>
+			
+		</tr>	
+	
+		<% for i := 1 to len(HTTPPOST->SINDPGO) %>
+			<tr>
+		        <td>
+					20<%=substring(HTTPPOST->SINDPGO[i]:CCANO,1,2)%>    
+				</td>
+                <td>
+                    <%=HTTPPOST->SINDPGO[i]:dDVENCTO%>                                
+              	</td>                            
+				<td>
+	                <%=HTTPPOST->SINDPGO[i]:dDPAGTO%>                            
+	            </td>
+			</tr>  
+		<% NEXT i %>
+	</table>  
+	<BR><BR>
+</li>
+</div>
+<%ENDIF%>
+  
+<div>     
+<li class="info">
+	<label class="Field4" id="title1" for="Field1">
+		Pendências
+	</label>
+	<% IF !EMPTY(HTTPPOST->MSINDABT) %>
+		<span class="full">
+			<%=HTTPPOST->MSINDABT%>
+		</span>
+	<%ENDIF%>
+</li>
+</div> 
+	                        
+<% IF EMPTY(HTTPPOST->MSINDABT) %>
+<div>
+<li  class="complex      ">
+	<table class="table">
+	    <tr>
+			<td>
+	        	<b><center>ANO</center></b>
+			</td>
+	        
+            <td>
+	       		<b><center>BOLETO</center></b>
+			</td>
+		</tr>	
+	
+		<% for i := 1 to len(HTTPPOST->SINDABT) %>	                        
+        <tr>
+			<td>
+	            20<%=substring(HTTPPOST->SINDABT[i]:CCANO,1,2)%>
+	        </td>
+	        <td>
+	            <input CLASS="btTxt" id="Button<%=i%>" NAME="Button<%=i%>" type="button" value="Emitir Boleto" onclick="GeraBoleto(<%=i%>, '', 1)"/>
+			</td>
+		</tr>
+        <%NEXT i%>
+	</table>
+</li> 
+</div>
+</UL>
+                        
+<br><br>
+
+<%ENDIF%>
+
+<%ENDIF%>
+
+<%IF HTTPSESSION->CONFNEG == 1 %>
+<div class="info"  width="100%">
+    <br>
+    <br>
+	<h2>Extrato - Contribuição Confederativa e Assistencial/Negocial</h2>
+	<div></div>
+</div>
+
+<UL>
+<div>
+<li class="     ">
+	<label class="Field4" id="title1" for="Field1">
+		Pagamentos Efetuados
+	</label> 
+	<% IF !EMPTY(HTTPPOST->MCONFPGO) %>
+		<span class="full">
+			<%=HTTPPOST->MCONFPGO%>
+		</span>
+	<%ENDIF%>
+</li>
+</div>
+                    
+<% IF EMPTY(HTTPPOST->MCONFPGO) %>
+<div>
+<li  class="complex      ">
+	<table class="table">
+	    <tr>
+			<td><B><CENTER>ANO</B></CENTER>
+			</td>
+	        
+            <td ><B><CENTER>PARCELA</B></CENTER>
+			</td>
+			
+            <td ><B><CENTER>VENCIMENTO</B></CENTER>
+			</td>			
+			
+            <td><B><CENTER>PAGAMENTO</B></CENTER>
+			</td>
+					
+ 
+            <td><B><CENTER>TIPO DA CONTRIBUIÇÃO</B></CENTER>
+			</td>					 
+										
+		</tr>	
+	
+        <%FOR i := 1 TO LEN(HTTPPOST->CONFPGO)%>
+        <tr>
+	        <td>
+			    20<%=substring(HTTPPOST->CONFPGO[i]:CCANO,1,2)%>
+            </td>
+
+			<td>
+		        <%=HTTPPOST->CONFPGO[i]:CCPARCELA%>
+            </td>
+            
+            <td>
+	            <%=HTTPPOST->CONFPGO[i]:DDVENCTO%>
+            </td>
+
+	        <td>
+	            <%=HTTPPOST->CONFPGO[i]:DDPAGTO%>
+            </td>
+			
+            <td>
+	            <%=HTTPPOST->CONFPGO[i]:CCTIPO%>
+            </td>
+		</tr>
+		<%NEXT i %> 
+	</table>
+	<br><br>
+</li>
+</div>
+<%ENDIF%>
+  
+<div>
+<li class="info">
+	<label class="Field4" id="title1" for="Field1">
+		Pendências
+	</label>
+	<% IF !EMPTY(HTTPPOST->MCONFABT) %>	
+		<span class="full">
+			<%=HTTPPOST->MCONFABT%>
+		</span>
+	<%ENDIF%>
+</li>
+</div>
+
+<% IF EMPTY(HTTPPOST->MCONFABT) %>
+<div>
+<li  class="complex      ">
+	<table class="table">
+	    <tr>
+			<td><b><center>ANO</center></b>
+			</td>
+	     
+            <td><b><center>PARCELA</center></b>
+			</td>
+				        
+            <td><b><center>TIPO DA CONTRIBUIÇÃO</center></b>
+			</td>
+
+            <td><b><center>BOLETO</center></b>
+			</td>
+												
+		</tr>	
+
+		<%FOR i := 1 TO LEN(HTTPPOST->CONFABT)%>
+        <tr>
+	        <td>
+			    20<%=substring(HTTPPOST->CONFABT[i]:CCANO,1,2)%>
+            </td>
+
+            <td>
+	             <%=HTTPPOST->CONFABT[i]:CCPARCELA%>
+            </td>
+             
+            <td STYLE="text-align:left" > 
+                <% x := 0 %>                                      
+                <% For j := 1 to 2 %>
+                    <% If (j > 1) %>
+                       <br>
+                    <% EndIf %>
+                    <% If !( If(j==1, "XXXXX","ZZZZZ") $ HTTPPOST->CONFABT[i]:COPCOES ) %>
+                        <% x += 1 %>
+			       		<input type=radio name="radio<%=i%>" id="radio<%=i%><%=x%>" value='<%={2,4}[j]%>'
+			       		<% If  (x == 1) %>                  
+			       			CHECKED
+			       		<% EndIf %>	
+			       		><%=If(j=1,"CONFEDERATIVA","ASSISTENCIAL/NEGOCIAL")%>
+						</input>
+				   <% EndIf %>		
+				<% Next j %>	
+            </td>
+            
+	        <td STYLE="vertical-align:middle">              
+              	<input id="Button8" type="button" value="Emitir Boleto" onclick="BolConfAss(<%=i%>,20<%=substring(HTTPPOST->CONFABT[i]:CCANO,1,2)+HTTPPOST->CONFABT[i]:CCPARCELA%>)">
+            </td>
+
+		</tr>
+		<%NEXT i %> 
+	</table>
+</li>
+</div>
+</UL>
+<BR><BR>
+<%ENDIF%>
+<%ENDIF%>
+
+<%IF HTTPSESSION->ASSOC == 1 %>          
+<div class="info">
+	<h2>Extrato - Contribuição Associativa</h2>
+	<div></div>
+</div>
+     
+<UL>
+<div>
+<li class="     ">
+	<%IF HTTPSESSION->AEMPRESA:CCSITUAC <> 'AS' .AND. HTTPSESSION->AEMPRESA:CCSITUAC <> 'SS'%>   
+			<span class="full">
+				Prezado Contribuinte, esta empresa não é associada. Caso queira associar-se, favor entrar em contato com Depto. de Cadastro - Tel. (11) 3221-9333 ou e-mail: arrecadacao@fehoesp.org.br
+			</span>	
+	<%ELSE%>	
+
+		<label class="Field4" id="title1" for="Field1">
+			Pagamentos Efetuados
+		</label>
+		<% IF !EMPTY(HTTPPOST->MASSOPGO) %>
+			<span class="full">
+				<%=HTTPPOST->MASSOPGO%>
+			</span>
+		<%ENDIF%>
+	<%ENDIF%>
+</li>
+</div>
+
+<% IF EMPTY(HTTPPOST->MASSOPGO) .AND. (HTTPSESSION->AEMPRESA:CCSITUAC == 'AS' .OR. HTTPSESSION->AEMPRESA:CCSITUAC == 'SS') %>
+<div>
+<li  class="complex      ">
+	<table class="table">
+	    <tr>
+			<td><b><center>ANO</center></b>
+			</td>
+	        
+            <td><b><center>MES</center></b>
+			</td>
+			
+            <td><b><center>VENCIMENTO</center></b>
+			</td>			
+			
+            <td><b><center>PAGAMENTO</center></b>
+			</td>
+					
+												
+		</tr>	
+	
+        <%FOR i := 1 TO LEN(HTTPPOST->ASSOPGO)%>
+        <tr>
+	        <td>
+			    20<%=substring(HTTPPOST->ASSOPGO[i]:CCANO,1,2)%>
+            </td>
+
+            <td>
+            	<% If  !( Empty(HTTPPOST->ASSOPGO[i]:CCMES) ) %>
+            		<%= aMeses[Val(HTTPPOST->ASSOPGO[i]:CCMES)] %>
+            	<% EndIf %>
+            </td>
+
+	        <td>
+	            <%=HTTPPOST->ASSOPGO[i]:DDVENCTO%>
+            </td>
+			
+		    <td>
+	            <%=HTTPPOST->ASSOPGO[i]:DDPAGTO%>
+            </td>
+
+ 
+		</tr>
+		<%NEXT i %> 
+	</table>
+	<br><br>
+</li>
+</div>
+<%ENDIF%>
+  
+<div>
+<li class="info">
+
+	<%IF HTTPSESSION->AEMPRESA:CCSITUAC <> 'AS' .AND. HTTPSESSION->AEMPRESA:CCSITUAC <> 'SS'%>   
+	<%ELSE%> 
+		<label class="Field4" id="title1" for="Field1">
+			Pendências
+		</label>	
+		<% IF !EMPTY(HTTPPOST->MASSOABT) %>
+			<span class="full">
+				<%=HTTPPOST->MASSOABT%>
+			</span>
+		<%ENDIF%>
+	<%ENDIF%>
+</li>
+</div>
+	<% IF EMPTY(HTTPPOST->MASSOABT) .AND. HTTPPOST->ASSOABT <> NIL .AND. LEN(HTTPPOST->ASSOABT) > 12 .AND. !EMPTY(HTTPSESSION->AEMPRESA:DINISIND) .AND. (HTTPSESSION->AEMPRESA:CCSITUAC == 'AS' .OR. HTTPSESSION->AEMPRESA:CCSITUAC == 'SS')%>
+	    <div>
+		<LI class="complex      ">
+			<span class="full">
+				ASSOCIADO COM DEBITOS!<BR>
+				FAVOR ENTRAR EM CONTATO COM DEPTO. DE ARRECADAÇÃO
+				<BR>
+				TEL. (11) 3221-9333
+			</span>
+		</LI>
+		</div>
+	<%ELSE%>
+	
+		<% IF EMPTY(HTTPPOST->MASSOABT) .AND. HTTPPOST->ASSOABT <> NIL .AND. (HTTPSESSION->AEMPRESA:CCSITUAC == 'AS' .OR. HTTPSESSION->AEMPRESA:CCSITUAC == 'SS')%>
+		<div>
+		<li  class="complex      ">
+			<table CLASS="table">
+			    <tr>
+					<td><B><CENTER>ANO</CENTER></B>
+					</td>
+			        
+		            <td><B><CENTER>MES</CENTER></B>
+					</td>
+					
+		            <td><B><CENTER>VENCIMENTO</CENTER></B>
+					</td>			
+					
+		            <td><B><CENTER>BOLETO</CENTER></B>
+					</td>
+												
+				</tr>	
+		        <%FOR i := 1 TO nAssoAbt%>
+		        <tr>
+			        <td>
+					    20<%=Left(HTTPPOST->ASSOABT[i]:CCANO,2)%>
+		            </td>
+		
+		            <td>              
+		            	<% If  !( Empty(HTTPPOST->ASSOABT[i]:CCMES) ) %>
+		            		<%= aMeses[Val(HTTPPOST->ASSOABT[i]:CCMES)] %>
+		            	<% EndIf %>
+		            </td>
+		
+			        <td>
+			            <%=HTTPPOST->ASSOABT[i]:DDVENCTO%>
+		            </td>
+					
+		            <td>
+			          	<input id="Button9" type="button" value="Emitir Boleto" onclick="GeraBoleto(<%=i%>,'',3,'<%=HTTPPOST->ASSOABT[i]:CCCHAVE%>', '20<%=Left(HTTPPOST->ASSOABT[i]:CCANO,2)%>', '<%=HTTPPOST->ASSOABT[i]:cNVALOR%>', '<%=HTTPPOST->ASSOABT[i]:DDPAGTO%>')">
+		            </td>
+								
+				</tr>
+				<%NEXT i %> 
+			</table>
+		</li>
+		</div>
+		<%ENDIF%>
+	<%ENDIF%>
+	
+<BR><BR>     
+<div>
+<LI class="complex      ">
+	<span class="full"><i><font face="Tahoma" style="font-size: 12px">
+		Caso haja pendência e o pagamento foi efetuado, 
+		favor enviar <br> cópia do comprovante através 
+		do <%= cMensFone %>, 
+		<%= cMensEMail %>.
+	</font></i></span>
+</LI>
+</div>
+
+</UL>
+
+<%ENDIF%>
+
+<BR><BR>
+<CENTER>
+	   <input class="style14" name='VOLTAR' type="button" value="Voltar" onclick="javascript:history.back();"/>
+		<a href="#" onClick="javascript:Imprimir()">
+			<img src="images/impressora32x32.jpg" width="32" height="32" alt="IMPRIMIR"  border="0" />
+		</a> 		
+</CENTER>
+
+</UL>
+</form>
+</div>
+</body>
+</html>
+

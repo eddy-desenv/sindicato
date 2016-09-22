@@ -1,0 +1,289 @@
+<%LOCAL I := 0 %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>       
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title>
+
+		<script type="text/javascript">
+
+		   function fMes(nMes) 
+		   {
+		   
+		   	var aMes = new Array("Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro");
+		   	 
+		   	nMes = parseInt(nMes-1,10);
+		   	
+		   	return aMes[nMes];
+		   
+		   }
+		
+			function ATUALIZA_DTPAGTO(campo, lfunc)
+			{       
+                document.getElementById("dtpagto").innerHTML  = campo.value.split("$")[1];
+                document.getElementById("msgfolha").innerHTML = "Valor Bruto da Folha de Pagamento"
+//              document.getElementById("msgfolha").innerHTML = "Valor Bruto da Folha de Pagamento do Mês de " + fMes(campo.value.split("$")[3]) + "/" + campo.value.split("$")[2];
+                document.getElementById("VALOR").value  = ''; //campo.value.split("$")[4];
+                document.getElementById("VALOR").disabled = lfunc[1].checked;
+                
+                if (campo.value.split("$")[5] == '.T.')
+                   {
+                   	   alert("Pagamento Já Efetuado");
+                   }
+			}	  
+			
+		function ATUALIZA_VALOR(tipo)
+		{    
+	    	document.getElementById("VALOR").value = "";
+
+			if (tipo == 2){			
+             document.getElementById("VALOR").disabled = true;
+	    	}else{
+		    	 document.getElementById("VALOR").disabled = false;
+	    	}
+		}
+				
+	function GeraConf(Condicoes,  lfunc)
+	{
+		var obj; 
+		var func;
+		                                                   
+		<% If  (Len(HTTPSESSION->ACONFED:OWSSCCONF) <= 0) /* Radio sem nenhuma opcao */ %>
+
+		       alert("Sem pagamento registrado!");
+		       return false;
+		
+		<% ElseIf (Len(HTTPSESSION->ACONFED:OWSSCCONF) <= 1) /* Radio com uma opcao nao gera Vetor */ %>
+
+			obj = Condicoes.value; 
+		
+		<% Else /* Radio com mais de uma opcao */ %>	
+		
+			for (var i = 0; i < Condicoes.length; i++)
+			{
+				if (Condicoes[ i ].checked) 
+				{              
+	               obj = Condicoes[i].value;
+	   			}
+			}
+
+		<% EndIf %>
+
+		if (obj.split("$")[5] == '.T.')
+		{
+			alert("Pagamento Já Efetuado");
+		}
+		else
+		{
+			obj = obj.split("$")[0]; 
+			for (var i = 0; i < lfunc.length; i++) 
+			{       
+				if (lfunc[ i ].checked) 
+				{              
+                    func = lfunc[i].value;
+    			}
+    		}			
+			//if (document.getElementById("VALOR").value == ""){
+			//	alert("Informar o Valor Bruto da Folha");
+			//}else{
+				document.form1.VerURL.value = document.URL;		
+//        		alert(document.form1.VerURL.value);
+				
+				document.form1.action="W_GERABOL.APW?CODIGO="+obj+"&VALOR="+document.getElementById("VALOR").value+"&rFunc="+func+"&ITEM="+obj.split("$")[7];
+				document.form1.submit();
+			//}
+		}
+		return true;
+	}  
+			
+	function XformataMoeda(objTextBox,SeparadorMilesimo, SeparadorDecimal,e){   
+    var sep = 0;
+    var key = '';
+    var i = j = 0;
+    var len = len2 = 0;
+    var strCheck = '0123456789';
+    var aux = aux2 = '';
+    var whichCode = (window.Event) ? e.which : e.keyCode;
+    if (whichCode == 13) return true;
+	var t = new String(objTextBox.value);
+	if (whichCode == 8){
+		objTextBox.value = t.substring(0, t.length-1);
+		}                     
+	 if ((whichCode >= 96) && (whichCode <= 105)) whichCode -= 48; //Teclado Numerico da Direita
+	 	
+    key = String.fromCharCode(whichCode); // Valor para o código da Chave
+
+    if (strCheck.indexOf(key) == -1) {
+	    if(e.preventDefault){
+	    	e.preventDefault();                     
+	    } else {	
+	    	e.returnValue=false;
+	    }	
+    	 return false; // Chave inválida
+    }	 
+
+    len = objTextBox.value.length;
+
+    for(i = 0; i < len; i++)
+        if ((objTextBox.value.charAt(i) != '0') && (objTextBox.value.charAt(i) != SeparadorDecimal)) break;
+    aux = '';
+
+    for(; i < len; i++)
+        if (strCheck.indexOf(objTextBox.value.charAt(i))!=-1) aux += objTextBox.value.charAt(i);
+    aux += key;
+
+    len = aux.length;
+    if (len == 0) objTextBox.value = '';
+    if (len == 1) objTextBox.value = '0'+ SeparadorDecimal + '0' + aux;
+    if (len == 2) objTextBox.value = '0'+ SeparadorDecimal + aux;
+    if (len > 2) {
+        aux2 = '';
+        for (j = 0, i = len - 3; i >= 0; i--) {
+            if (j == 3) {
+                aux2 += SeparadorMilesimo;
+                j = 0;
+            }
+            aux2 += aux.charAt(i);
+            j++;
+        }
+        objTextBox.value = '';
+        len2 = aux2.length;
+        for (i = len2 - 1; i >= 0; i--)
+        objTextBox.value += aux2.charAt(i);
+        objTextBox.value += SeparadorDecimal + aux.substr(len - 2, len);
+    }
+                        
+    if(e.preventDefault){
+    	e.preventDefault();                     
+    } else {	
+    	e.returnValue=false;
+    }	
+
+    return false;
+}		
+	</script>
+</head>
+
+<body>
+<div id="container">
+       
+<%/*
+<h1 id="logo"/>
+..
+</h1>
+*/%>
+
+<form name="form1" id="form1" class="wufoo topLabel page"  method="post">
+	<input id="VerURL" name="VerURL" type="hidden" value=""/>
+
+<div class="info">
+	<FONT SIZE="4">Contribuição Confederativa</FONT>
+	<div></div>
+</div>
+
+<ul>  
+
+<% IF  (Len(HTTPSESSION->ACONFED:OWSSCCONF) <= 0) %>
+
+<li class="complex     ">
+	<span class="full" >
+		<label id="xxx" name="xxx" value=''>Não existem títulos pendentes!</label>
+	</span>
+	<br>
+</li>
+
+<% ELSE %>
+
+<li class="complex     ">
+	<label class="Field4" id="title1" >
+		Data para Pagamento do Título
+	</label>
+	<span class="full" >
+		<label id="dtpagto" name="dtpagto" value='<%=HTTPSESSION->ACONFED:OWSSCCONF[Val(HttpPost->Item)]:DDTPAGTO%>'><%=HTTPSESSION->ACONFED:OWSSCCONF[Val(HttpPost->Item)]:DDTPAGTO%></label>
+	</span>
+	<br>
+</li>
+
+<li  class="complex      ">
+	<label for="Field4">Ano/Parcela</label>
+	<table>    
+	
+	<tr>
+	   <td>
+
+       	<% For I:= 1 TO Len(HTTPSESSION->ACONFED:OWSSCCONF) %>
+
+       		<input type=radio name="radio" onclick="ATUALIZA_DTPAGTO(this,RFUNC);" value='<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CCODIGO%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:DDTPAGTO%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CANO%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CMESFOLHA%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:cVLMIN%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:lPAGTO%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CITEM%>'
+       		<% If  (I == Val(HttpPost->Item)) %>                  
+       			CHECKED
+       		<% EndIf %>	
+       		><%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CANO%> - <%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CPARCELA%>  ª Parcela
+			</input>
+
+			<% 	If  ((I+1) > Len(HTTPSESSION->ACONFED:OWSSCCONF))
+					Exit
+			   	EndIf 
+			%>	
+			    
+			</td>
+			<% If  Empty(I%3) %>
+			    </tr>
+			    <tr>
+			<% EndIf %>
+			<td>
+
+       <% Next I /* '<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CCODIGO%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:DDTPAGTO%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CANO%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CMESFOLHA%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:cVLMIN%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:lPAGTO%>$<%=HTTPSESSION->ACONFED:OWSSCCONF[I]:CITEM%>' */ %>
+
+      </td>
+    </tr>   
+	</table>
+
+	<br>	
+</li>
+
+<li  class="complex      ">
+	<label for="Field4">Possui Funcionários?</label>
+	<span class="full">
+		<input id="RFUNC1" name="RFUNC" type="radio" VALUE='1' onclick="ATUALIZA_VALOR(1);"          />Sim &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;
+        <input id="RFUNC2" name="RFUNC" type="radio" VALUE='2' onclick="ATUALIZA_VALOR(2);"  CHECKED />Não
+	</span>
+	<br>	
+</li>
+
+<li  class="complex      ">
+	<label for="Field4" id="msgfolha" name="msgfolha" class="titulo">
+    Valor Bruto da Folha de Pagamento    
+	</label>
+	<span class="full">
+		R$ <input id="VALOR" NAME="VALOR" type="TEXT" value="" onkeydown="XformataMoeda(this,'.',',',event);" DISABLED ></INPUT>
+	</span>
+	<br>	
+</li>
+
+<li  class="complex      ">
+	<center>
+	<span class="full">
+		<input id="Button1" type="button" value="Gerar Boleto" ONCLICK="GeraConf(radio, RFUNC);" />
+	</span>
+	</center>
+</li>
+
+<% ENDIF %>
+
+</ul>     
+
+</form> 
+
+ </div><!--container-->
+<img id="bottom" src="images/bottom.png" alt="" />
+
+</body>
+
+</html>
+
+<script>
+   document.form1.RFUNC[1].checked = true;
+  	document.getElementById("VALOR").disabled = true;
+</script>
+

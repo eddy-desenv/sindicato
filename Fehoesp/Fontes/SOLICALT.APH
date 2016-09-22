@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>   
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">	
+    <title>FEHOESP</title>
+      
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+		
+        
+  <script language="javascript">		 
+	<!--campos em branco-->
+	function Confirma(){
+		var erro = '';
+		var msg = 'Campo obrigatório:\n';
+
+		if(document.forms[0].SOLICNOME.value == ''){
+			erro='S';
+			msg += '* Campo Nome\n';
+        }
+
+		if(document.forms[0].SOLICCARGO.value == ''){
+			erro='S';
+			msg += '* Campo Cargo\n';
+        }
+                 
+        if(document.forms[0].SOLICTEL.value == ''){ 
+			erro='S';
+			msg += '* Campo Telefone\n';
+		}
+		
+        if(document.forms[0].SOLICEMAIL.value == ''){ 
+			erro='S';
+			msg += '* Campo Email\n';
+		}  
+		if ( erro == '')
+		{       
+			document.forms[0].action="W_SOLICMAIL.APW";
+			document.forms[0].submit();
+			return true;
+		} 
+		if(msg != ''){
+			alert(msg);
+			return false;
+		} 
+	}
+	</script>
+	    
+</head>
+
+<body id="public">
+<div id="container">
+
+<form  class="wufoo topLabel page"  method="post"  >
+	<% If  !( Empty(HttpGet->DADOSEC) ) .And. (HttpGet->DADOSEC == 'S') %>
+		<input name='DADOSEC' id="DADOSEC" VALUE='S' type="HIDDEN" />
+	<% EndIf %>	
+
+	<div>
+         <img id="Image1" src="images/header_dados.gif" style="border-width:0px; width:100%;" />
+	</div>
+
+<div class="info">
+    <br>
+	<h2>SOLICITAÇÃO DE ALTERAÇÃO DE DADOS CADASTRAIS</h2>
+	<% If  !( Empty(HttpGet->DADOSEC) ) .And. (HttpGet->DADOSEC == 'S') %>
+		<h3>Empresa Contabil</h3>
+	<% EndIf %>	
+	<div></div>
+</div>
+
+<ul>
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+	CNPJ
+	</label>
+	<span class="full">
+		<%=HTTPSESSION->CGC%>
+	</span>
+</li>
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title3" for="Field3">
+	Razao Social
+	</label>
+	<span class="full">
+		<%=HTTPSESSION->AEMPRESA:CCNOME%>
+	</span>
+</li>
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Nome do Solicitante
+	</label>
+	<span class="full">
+		<input id="SOLICNOME" name="SOLICNOME" type="text" style="width: 399px" />
+	</span>
+</li>
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Cargo
+	</label>
+	<span class="full">
+		<input id="SOLICCARGO" name="SOLICCARGO" type="text" style="width: 399px" />
+	</span>
+</li>
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Telefone
+	</label>
+	<span class="full">
+		<input id="SOLICTEL" name="SOLICTEL" SIZE='13'  maxlength="13" type="text" size="13" onkeypress="inserirMascara(window.event.keyCode, this);" /> (99)9999-9999
+	</span>
+</li>
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Municipio
+	</label>
+	<span class="full">
+		<input id="SOLICMUN" name="SOLICMUN" type="text" style="width: 300px" />
+	</span>
+</li>
+     
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Email
+	</label>
+	<span class="full">
+		<input id="SOLICEMAIL" name="SOLICEMAIL" type="text" style="width: 300px" onblur="ValidaEmail(this)" maxlength="60"  SIZE="60"/>
+	</span>
+</li>	      
+
+<li class="COMPLEX     ">
+	<label class="Field4" id="title1" for="Field1">
+		Preencha aqui os dados a serem alterados:
+	</label>
+	<span class="full">
+		<textarea id="SOLICTEXTO" name="SOLICTEXTO" style="width: 460px; height: 100px"></textarea>
+	</span>
+</li>	  												
+
+<li class="COMPLEX     ">
+	<span class="full">
+		<input id="Button1" type="button" value="Enviar" onclick="Confirma()" />	
+	</span>
+</li>          
+
+</ul>
+</form>
+
+</div><!--container-->
+<img id="bottom" src="images/bottom.png" alt="" />
+
+</body>
+</html>

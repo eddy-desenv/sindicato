@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title> 
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	
+  <script language="javascript">		 
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro = '';
+		var msg = 'Campo obrigatório:\n';
+		var obj = document.forms[0].CGC.value;
+		var chk = 0;
+		
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CNPJ\n';
+        }
+        
+        if(erro == ''){                        
+			document.forms[0].action="W_ESCINFO.APW";
+			document.forms[0].submit();
+			return true;
+		}         
+		
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	  	
+	function Cancela(){ 
+		document.forms[0].action="W_ESCRITO.APW";
+		document.forms[0].submit();
+		return true;
+	} 
+	
+	function Confirma(){
+		document.forms[0].action="W_ATUAEMP.APW";
+		document.forms[0].submit();
+		return true;
+	}
+
+	function Altera(){
+		document.forms[0].action="W_ALTESC.APW?CGC="+document.forms[0].ESCCGC.value;
+		document.forms[0].submit();
+		return true;
+	}
+
+	function Vincula(){
+		document.forms[0].action="W_VINCESC.APW";
+		document.forms[0].submit();
+		return true;
+	}
+
+	</script>
+
+</head>
+<body id="public">
+<div id="container">
+
+<h1 id="logo"/>
+..
+</h1>
+
+<form  class="wufoo topLabel page"  method="post" >
+
+<div class="info">
+<h2>Escritorio Contabil - Dados Cadastrais</h2>
+<div></div>
+</div>
+
+<ul>
+
+<%IF HTTPSESSION->AESCRITO == NIL%>
+
+<li class="     ">
+	<%IF HTTPSESSION->AESCRITO == NIL%>
+    	<label class="Field4" id="title1" for="Field1">
+			Deseja Vincular Qual Escritório Contábil a Empresa <%=HTTPSESSION->AEMPRESA:cCNOME%> ?
+	    	<br><br>
+      	</label>
+ 
+		<span class="full">
+			<select size="1" id="tipo" name="tipo">
+				<option selected value="1">CNPJ</option>
+				<option value="2">CPF</option>
+				<option value="3">CEI</option>
+			</select>
+	           			
+            <input id="CGC" name="CGC" type="text" size="19"  maxlength="18" onkeyup="MascaraCPF(tipo.options[tipo.selectedIndex].value, event, this)" onblur="valida_info(this,tipo.options[tipo.selectedIndex].value)" />
+            <input id="Button1" type="button" value="Enviar" onclick="CampoBranco()" />
+		</span>
+	<%endif%>	
+</li>
+
+<%ELSE%> 
+
+<li class="     ">
+	<label class="Field4" id="title1" for="Field1">
+		CNPJ/CPF/CEI
+	</label>
+	<span class="full">
+	<%=HTTPPOST->ESCCGC%>
+	</span> 
+	<input  name='ESCCGC' id='ESCCGC' VALUE='<%=HTTPPOST->ESCCGC%>' type="HIDDEN"/>	
+</li>
+
+<li class="complex      ">
+	<label class="Field4" id="title3" for="Field3">
+		Razao Social
+	</label>
+	<span class="full">
+	<%=HTTPPOST->ESCRAZAO%>
+	</span>
+</li>
+
+<li  class="       ">
+	<label for="Field4">CEP</label>
+	<span class="full">
+	<%=HTTPPOST->ESCCEP%>
+	</span>
+</li>
+
+<li  class="       ">
+	<label for="Field4">Endereco</label>
+	<span class="full">
+	<%=HTTPPOST->ESCEND%>
+	</span>
+</li>
+
+<li  class="       ">
+	<label for="Field4">Bairro</label>
+	<span class="full">
+	<%=HTTPPOST->ESCBAIRRO%>
+	</span>
+</li>
+
+<li  class="       ">
+	<label for="Field4">Cidade</label>
+	<span class="full">
+	<%=HTTPPOST->ESCMUN%>
+	</span>
+</li>
+
+<li  class="       ">
+	<label for="Field4">Estado</label>
+	<span class="full">
+	<%=HTTPPOST->ESCEST%>
+	</span>
+</li>
+
+<li  class="       ">
+	<label for="Field4">Email(Contabilidade)</label>
+	<span class="full">
+	<%=HTTPPOST->ESCEMAIL%>
+	</span>
+</li>
+
+<li  class="       ">
+	<label for="Field4">Fone (Contabilidade)</label>
+	<span class="full">
+	<%=HTTPPOST->ESCFONE%>
+	</span>
+</li>
+
+<li  class="       ">
+	<label for="Field4">Fax (Contabilidade)</label>
+	<span class="full">
+	<%=HTTPPOST->ESCFAX%>
+	</span>
+</li>
+
+<li  class="       ">
+	<label for="Field4">Contato (Empresa)</label>
+	<span class="full">
+	<%=HTTPPOST->ESCCONTATO%>
+	</span>
+</li>
+   
+<li class="      ">
+	<span class="full">
+		<input id="Button1" type="button" value="Vincular" onclick="Vincula()"/>  
+    	<%IF HTTPSESSION->AESCRITO == NIL .OR. EMPTY(HTTPSESSION->AESCRITO:CCCODIGO) %>
+        <%ELSE%>
+          	<input id="ButtonAlt" type="button" value="Alterar" onclick="Altera()"/>                     
+        <%ENDIF%>
+        <input id="Button6" type="button" value="Cancelar" onclick="Cancela()" />
+        <br><br>
+        <i>Caso queira que as correspondências sejam enviadas para o escritório de contabilidade, clique em "Vincular" e preencha os dados.</i>
+	</span>
+</li>
+<%ENDIF%>
+</ul>
+
+</form>
+
+</div><!--container-->
+<img id="bottom" src="images/bottom.png" alt="" />
+
+</body>
+</html>

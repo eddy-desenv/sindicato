@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title>
+
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+	
+  <script language="javascript">		 
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro = '';
+		var msg = 'Campos obrigatórios:\n';
+		var obj = document.forms[0].CGC.value;
+		var chk = 0;
+		
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CNPJ\n';
+        }
+        
+		for (var i=0; i < document.forms[0].TPBOLETO.length; i++)
+	   	{
+	   		if (document.forms[0].TPBOLETO[i].checked)
+	      	{
+	     		chk++;
+	      	}
+	   	}	          
+	   	
+		if(chk == 0){ 
+			erro='S';
+			msg += '* Campo TIPO DO BOLETO\n';
+        }
+              
+        if(erro == ''){                        
+			document.forms[0].action="W_CALCBOL.APW";
+			document.forms[0].submit();
+			return true;
+		}         
+		
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	  	
+  	</script>   
+  	
+
+</head>
+<body id="public">
+<div id="container">
+
+<form class="wufoo" method="post">
+
+	<div>
+         <img id="Image1" src="images/header_boletos-todos.gif" style="border-width:0px; width:100%;" />
+	</div>
+
+<ul>
+
+<%if HTTPPOST->MSGATUA == NIL .OR. EMPTY(HTTPPOST->MSGATUA)%>
+
+<li class="complex      ">
+	<input id="TPBOLETO" name="TPBOLETO" type="radio" value='1'
+	   <% If  (HttpPost->Boleto == "1") %>
+	       CHECKED
+	   <% EndIf %>
+	   />	
+	<label class="Field4" id="title3" for="Field3">
+		Contribuição Sindical	
+	</label>
+</li>
+
+<li class="complex      ">
+	<input id="TPBOLETO" name="TPBOLETO" type="radio" value='2'
+	   <% If  (HttpPost->Boleto == "2") %>
+	       CHECKED
+	   <% EndIf %>
+	   />
+	<label class="Field4" id="title3" for="Field3">
+		Contribuição Confederativa	
+	</label>
+
+</li>
+								
+<li class="complex      ">
+	<input id="TPBOLETO" name="TPBOLETO" type="radio" value='3' 
+	   <% If  (HttpPost->Boleto == "3") %>
+	       CHECKED
+	   <% EndIf %>
+	   />
+	<label class="Field4" id="title3" for="Field3">
+		Contribuição Associativa	
+	</label>
+</li>
+
+<li class="complex      ">
+	<input id="TPBOLETO" name="TPBOLETO" type="radio" value='4' 
+	   <% If  (HttpPost->Boleto == "4") %>
+	       CHECKED
+	   <% EndIf %>
+	   />	
+	<label class="Field4" id="title3" for="Field3">
+		Contribuição Assistêncial/Negocial	
+	</label>
+</li>
+
+<BR><BR>
+<li class="complex      ">
+	<label class="Field4" id="title3" for="Field3">
+		* CNPJ:	
+	</label>
+	<input id="CGC" maxlength="18" name="CGC" onblur="valida_cnpj(this)" size="19" value="<%=HttpPost->CGC%>"/> (somente números)
+</li>
+<BR><BR>
+<li class="complex      ">
+	<span class="full">
+		<input class="style14" name="Enviar" type="button" value="Enviar" onclick="CampoBranco()"/>
+	</span>	
+</li>
+
+<%ELSE%>
+
+<li class="     ">
+	<label class="Field4" id="title1" for="Field1">
+	<%=HTTPPOST->MSGATUA%>
+	</label>
+	<BR><BR>
+	<span class="full">
+		<input id="ButtonS" type="button" value="Sim" onclick="Cadastro()" />
+		<input id="ButtonN" type="button" value="Não" onclick="Cancela()" />		                	
+	</span>
+</li>
+
+<%ENDIF%>
+</body>
+</html>

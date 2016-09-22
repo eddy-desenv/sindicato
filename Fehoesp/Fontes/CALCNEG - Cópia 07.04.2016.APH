@@ -1,0 +1,288 @@
+<%
+  LOCAL I 
+  Local nPos := 1
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head> 
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title>
+    
+	<script type="text/javascript">
+
+		   function fMes(nMes) 
+		   {
+		   
+		   	var aMes = new Array("Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro");
+		   	 
+		   	nMes = parseInt(nMes-1,10);
+		   	
+		   	return aMes[nMes];
+		   
+		   }
+		
+		function ATUALIZA_DTPAGTO(campo, lfunc)
+		{    
+			var msgfolha, valor, dados;
+			
+			dados = campo.value.split("&");
+         	document.getElementById("DTPAGTO").innerHTML = dados[2];
+         	valor = dados[4]; 
+         	msgfolha = "Valor Bruto da Folha de Pagamento"
+//         	msgfolha = "Valor Bruto da Folha de Pagamento do Mês de " + fMes(dados[3].substr(0,2)) + dados[3].substr(2,5); 
+         	document.getElementById("MSGFOLHA").innerHTML = msgfolha;
+    		//document.getElementById("VALOR").value = ""; 
+	      	document.getElementById("VALOR").disabled = lfunc[1].checked;
+	      	
+            if (dados[5] == '.T.')
+               {
+               	   alert("Pagamento Já Efetuado");
+               }
+	      	
+
+     		return true;                 
+		}    
+		
+		function ATUALIZA_VALOR(tipo)
+		{  
+		
+			if (tipo == 2){			
+              document.getElementById("VALOR").value  = "";
+              document.getElementById("VALOR").disabled = true;
+                    
+              alert("Empresa sem empregados, deve fazer o recolhimento da Contribuição Confederativa no valor mínimo!");
+
+				  document.form1.VerURL.value   = document.URL;
+				  document.form1.TPBOLETO.value = '2';
+
+				  document.form1.action="W_CALCBOL.APW";
+				  document.form1.submit();
+	    	}else{
+    			  document.getElementById("VALOR").value = "";
+	    		  document.getElementById("VALOR").disabled = false;
+	    	}
+		}  
+		
+	function GeraNeg(Condicoes,  lfunc)
+	{
+		var obj; 
+		var func;
+		                                                   
+		<% If  (Len(HTTPSESSION->AASSIST) <= 0) /* Radio sem nenhuma opcao */ %>
+
+		       alert("Sem pagamento registrado!");
+		       return false;
+		
+		<% ElseIf (Len(HTTPSESSION->AASSIST) <= 1) /* Radio com uma opcao nao gera Vetor */ %>
+
+			obj = Condicoes.value; 
+		
+		<% Else /* Radio com mais de uma opcao */ %>	
+		
+			for (var i = 0; i < Condicoes.length; i++)
+			{
+				if (Condicoes[ i ].checked) 
+				{              
+	               obj = Condicoes[i].value;
+	   			}
+			}
+
+		<% EndIf %>
+                                  
+		obj = obj.split("&"); 
+		
+		if (obj[5] == '.T.')
+		{
+			alert("Pagamento Já Efetuado");
+		}
+		else
+		{
+			for (var i = 0; i < lfunc.length; i++) 
+			{       
+				if (lfunc[ i ].checked) 
+				{              
+                    func = lfunc[i].value;
+    			}
+    		}			
+
+			document.form1.VerURL.value = document.URL;
+		
+			document.form1.action="W_GERABOL.APW?CODIGO="+obj[1]+"&ITEM="+obj[0]+"&VALOR="+document.getElementById("VALOR").value;
+			document.form1.submit();
+	    }
+	    
+		return true;
+	}  
+					
+	function XformataMoeda(objTextBox,SeparadorMilesimo, SeparadorDecimal,e){   
+    var sep = 0;
+    var key = '';
+    var i = j = 0;
+    var len = len2 = 0;
+    var strCheck = '0123456789';
+    var aux = aux2 = '';
+    var whichCode = (window.Event) ? e.which : e.keyCode;
+    if (whichCode == 13) return true;
+	var t = new String(objTextBox.value);
+	if (whichCode == 8){
+		objTextBox.value = t.substring(0, t.length-1);
+		}                     
+	 if ((whichCode >= 96) && (whichCode <= 105)) whichCode -= 48; //Teclado Numerico da Direita
+	 	
+    key = String.fromCharCode(whichCode); // Valor para o código da Chave
+
+    if (strCheck.indexOf(key) == -1) {
+	    if(e.preventDefault){
+	    	e.preventDefault();                     
+	    } else {	
+	    	e.returnValue=false;
+	    }	
+    	 return false; // Chave inválida
+    }	 
+
+    len = objTextBox.value.length;
+
+    for(i = 0; i < len; i++)
+        if ((objTextBox.value.charAt(i) != '0') && (objTextBox.value.charAt(i) != SeparadorDecimal)) break;
+    aux = '';
+
+    for(; i < len; i++)
+        if (strCheck.indexOf(objTextBox.value.charAt(i))!=-1) aux += objTextBox.value.charAt(i);
+    aux += key;
+
+    len = aux.length;
+    if (len == 0) objTextBox.value = '';
+    if (len == 1) objTextBox.value = '0'+ SeparadorDecimal + '0' + aux;
+    if (len == 2) objTextBox.value = '0'+ SeparadorDecimal + aux;
+    if (len > 2) {
+        aux2 = '';
+        for (j = 0, i = len - 3; i >= 0; i--) {
+            if (j == 3) {
+                aux2 += SeparadorMilesimo;
+                j = 0;
+            }
+            aux2 += aux.charAt(i);
+            j++;
+        }
+        objTextBox.value = '';
+        len2 = aux2.length;
+        for (i = len2 - 1; i >= 0; i--)
+        objTextBox.value += aux2.charAt(i);
+        objTextBox.value += SeparadorDecimal + aux.substr(len - 2, len);
+    }
+                        
+    if(e.preventDefault){
+    	e.preventDefault();                     
+    } else {	
+    	e.returnValue=false;
+    }	
+
+    return false;
+	}		
+
+</script>    
+
+</head>
+
+<body >
+<div id="container">
+
+<%/*
+<h1 id="logo"/>
+..
+</h1>
+*/%>
+
+<form name="form1" id="form1" class="wufoo topLabel page" method="post" >
+	<input id="TPBOLETO" name="TPBOLETO" type="hidden" value="<%= HTTPSESSION->TPBOLETO %>"/> 
+	<input id="CGC"      name="CGC"      type="hidden" value="<%= HTTPPOST->CGC %>"/> 
+	<input id="VerURL"   name="VerURL"   type="hidden" value=""/>
+
+<div class="info">
+	<h2>Contribuição Assistencial/Negocial</h2>
+	<div></div>
+</div>
+
+<ul>
+
+<li class="complex     ">
+	<label class="Field4" id="title1" >
+		Data para Pagamento doTítulo
+	</label>
+	<span class="full">
+		<LABEL id="DTPAGTO" NAME="DTPAGTO" >
+			<%=HTTPSESSION->AASSIST[1]:DDTPAGTO%>		
+		</label>
+	</span>
+	<br>
+</li>
+<li  class="complex      ">
+	<label for="Field4">Ano/Parcela</label>
+	<table>    
+	
+	<tr>
+	   <td>
+	        <%FOR I:= 1 TO LEN(HTTPSESSION->AASSIST)%>
+
+       		<input type=radio name="radio" id="radio" onclick="ATUALIZA_DTPAGTO(this,NFUNC);" value='<%=StrZero(I,2)%>&<%=HTTPSESSION->AASSIST[I]:CCODIGO%>&<%=HTTPSESSION->AASSIST[I]:DDTPAGTO%>&<%=HTTPSESSION->AASSIST[I]:CMESANO%>&<%=HTTPSESSION->AASSIST[I]:CVLFOLHA%>&<%=HTTPSESSION->AASSIST[I]:LPGTO%>'
+       		<% If  (SUBSTR(HTTPSESSION->AASSIST[I]:CMESANO,4,4)+Alltrim(HTTPSESSION->AASSIST[I]:CPARCELA) == HttpPost->AnoParcela) %>                  
+       		    <% nPos := I %>
+       			CHECKED
+       		<% EndIf %>	
+       		><%=SUBSTR(HTTPSESSION->AASSIST[I]:CMESANO,4,4)%>  - <%=HTTPSESSION->AASSIST[I]:CPARCELA%> ª Parcela
+			</input>
+
+			<% 	If  ((I+1) > Len(HTTPSESSION->AASSIST))
+					    Exit
+			   	EndIf 
+			%>	
+			    
+			</td>
+			<% If  Empty(I%3) %>
+			    </tr>
+			    <tr>
+			<% EndIf %>
+			<td>
+       <%NEXT I%>
+      </td>
+    </tr>   
+	</table>
+
+	<br>	
+</li>
+
+<li  class="complex      ">
+	<label for="Field4">Possui Funcionários?</label>
+	<span class="full">
+		<input id="NFUNC" name="NFUNC" type="radio" VALUE='1' checked onclick="ATUALIZA_VALOR(1);"/>Sim &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;
+        <input id="NFUNC" name="NFUNC" type="radio" VALUE='2' onclick="ATUALIZA_VALOR(2);" />Não
+	</span>
+	<br>	
+</li>
+
+<li  class="complex      ">
+	<label id="MSGFOLHA"  name="MSGFOLHA" >
+		Valor Bruto da Folha de Pagamento do Mês de <%=u_MES(LEFT(HTTPSESSION->AASSIST[nPos]:CMESANO,2)) + SUBSTR(HTTPSESSION->AASSIST[nPos]:CMESANO,3)%>
+	</label>	
+	<span class="full">
+	   R$ <input id="VALOR" name="VALOR" TYPE="TEXT" value=""  onkeydown="XformataMoeda(this,'.',',',event);" ></input>
+	</span>
+	<br>	
+</li>
+
+<li  class="complex      ">
+	<center>
+	<span class="full">
+		<input id="Button1" type="button" value="Gerar Boleto" ONCLICK="GeraNeg(radio, NFUNC);" />
+	</span>
+	</center>
+</li>
+
+</ul>
+</form> 
+
+ </div><!--container-->
+<img id="bottom" src="images/bottom.png" alt="" />
+
+</body>
+</html>

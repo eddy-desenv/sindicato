@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head> 
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+    <title>FEHOESP</title> 
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+	
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	
+    
+    <!-- valida o cnpj digitado -->
+      
+  <script language="javascript">		 
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro = '';
+		var msg = 'Campo obrigatório:\n';
+		var obj = document.forms[0].CGC.value;
+		var chk = 0;
+		
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CNPJ\n';
+        }
+
+        if(erro == ''){                        
+			document.forms[0].action="W_FUNCEMP.APW";
+			document.forms[0].submit();
+			return true;
+		}         
+		
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	  	
+	function Cancela(){ 
+		document.forms[0].action="W_EMPRESA.APW";
+		document.forms[0].submit();
+		return true;
+	}                                       
+	
+	function CadEscr(){ 
+		document.forms[0].action="W_EMPESC.APW";
+		document.forms[0].submit();
+		return true;
+	}	
+	
+	function xValidaCNPJ(xCNPJ){
+
+	   var cCNPJ = trim(xCNPJ);
+	   
+	   return valida_cnpj(cCNPJ);
+		
+	}
+			
+	</script>
+
+</head>
+
+<body id="public">
+<div id="container">
+
+<form class="wufoo topLabel page" method="post" >
+
+	<div>
+         <img id="Image1" src="images/header_dados_empresas-todos.gif" style="border-width:0px; width:100%;" />
+	</div>
+
+<ul>
+
+<%if HTTPPOST->MSGATUA == NIL .OR. EMPTY(HTTPPOST->MSGATUA)%>
+<li class="     ">
+	<span class="full">  
+	CNPJ:
+		<input id="CGC" name="CGC" type="text" size="19"  maxlength="18" onblur="xValidaCNPJ(this)" />
+		<input id="Button1" type="button" value="Enviar" onclick="CampoBranco()" />
+	</span>
+</li>
+         
+<%ELSE%>
+
+<li class="     ">
+	<label class="Field4" id="title1" for="Field1">
+	<%=HTTPPOST->MSGATUA%>
+	</label>
+	<BR><BR>
+	<span class="full">
+	    <%if !EMPTY(HTTPSESSION->AEMPRESA:CCODESCR)%> <!--TEM ESCRITORIO VINCULADO-->
+	   		<%HTTPSESSION->AEMPRESA := NIL%>   
+  			<input id="Button1" type="button" value="OK" onclick="Cancela()" />		                   
+		<%ELSE%>
+			<input id="Button1" type="button" value="Sim" onclick="CadEscr()" />
+			<input id="Button1" type="button" value="Não" onclick="Cancela()" />		                	
+		<%ENDIF%>	
+	</span>
+</li>
+
+<%ENDIF%>
+</UL>
+
+</form>
+</body>
+</html>
+

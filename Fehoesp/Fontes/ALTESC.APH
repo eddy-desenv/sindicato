@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+<TITLE>FEHOESP</TITLE>
+
+<script language="javascript">
+    function Redirectfun()
+    {                                                
+		document.forms[0].action="W_FUNCESC.APW";
+		document.forms[0].submit();
+		return true;
+    } 
+</script>
+
+</HEAD>
+
+<BODY onload="Redirectfun()">
+	<form  method="post" >
+   		<input id="CGC" name="CGC" type="hidden" value = '<%=HTTPPOST->CGC%>'/>
+ 	</form>
+</BODY>
+</HTML>

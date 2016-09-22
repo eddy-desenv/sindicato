@@ -15,7 +15,7 @@
 
 User Function NoAccent( cText )
 
-cText := STRTRAN( cText, CHR(198 ), "aa" )
+cText := STRTRAN( cText, CHR(198 ), "a" )
 cText := STRTRAN( cText, CHR(228 ), "o" )
 cText := STRTRAN( cText, CHR(160 ), "a" )
 cText := STRTRAN( cText, CHR(130 ), "e" )

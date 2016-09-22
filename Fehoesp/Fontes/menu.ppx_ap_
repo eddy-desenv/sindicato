@@ -1,0 +1,34 @@
+
+
+
+Function H_menu(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += "<HTML>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += "</head>" + CHR(13)+CHR(10)
+__Response += '<BODY TOPMARGIN="0" LEFTMARGIN="0" BGCOLOR="white" TEXT="black" ALINK="#FFFFFF" LINK="#FFFFFF" VLINK="#FFFFFF">' + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<base target="_blank">' + CHR(13)+CHR(10)
+__Response += '<script language="JavaScript" src=' + CHR(39) + "toolbar.js" + CHR(39) + "></script>" + CHR(13)+CHR(10)
+__Response += '<script language="JavaScript" src=' + CHR(39) + "global.js" + CHR(39) + "></script>" + CHR(13)+CHR(10)
+__Response += "<BR><BR>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<DIV ID="DownLevelDiv" ALIGN="center">' + CHR(13)+CHR(10)
+__Response += '<font face="arial, verdana" size="5" color="white">' + CHR(13)+CHR(10)
+__Response += "</DIV> " + CHR(13)+CHR(10)
+__Response += '<script language="JavaScript">' + CHR(13)+CHR(10)
+__Response += "	DownLevelDiv.style.display ='none';" + CHR(13)+CHR(10)
+__Response += '	setICPBanner("curve.gif","","www.interweb.com.br");' + CHR(13)+CHR(10)
+__Response += "	drawToolbar();" + CHR(13)+CHR(10)
+__Response += "</script> " + CHR(13)+CHR(10)
+__Response += "</BODY>" + CHR(13)+CHR(10)
+__Response += "</HTML>" + CHR(13)+CHR(10)
+Return(__Response)

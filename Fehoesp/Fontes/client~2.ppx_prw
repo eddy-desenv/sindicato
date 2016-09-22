@@ -1,0 +1,742 @@
+#line 1 "D:\PROTHE~2\INCLUDE\PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Dialog.ch"
+#line 27 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Font.ch"
+#line 28 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\PTMenu.ch"
+#line 30 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Print.ch"
+#line 32 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Colors.ch"
+#line 34 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Folder.ch"
+#line 36 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\msobject.ch"
+#line 37 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\VKey.ch"
+#line 41 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\WinApi.ch"
+#line 43 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\FWCommand.ch"
+#line 46 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\FWCSS.CH"
+#line 48 "PROTHEUS.CH"
+#line 2 "d:\PROTHE~2\fontes\CLIENT~2.PRW"
+#line 1 "D:\PROTHE~2\INCLUDE\APWEBSRV.CH"
+#line 12 "d:\PROTHE~2\fontes\CLIENT~2.PRW"
+Function U__HBXRGQQ ; Return
+
+
+
+
+
+_ObjNewClass( WSSHATENDE , WSCLIENT )
+
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( RESET, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( BUSCACEP, , )
+	_ObjClassMethod( BUSCAESC, , )
+	_ObjClassMethod( GETCOMBO, , )
+	_ObjClassMethod( GETLOGIN, , )
+	_ObjClassMethod( VERCADEMP, , )
+	_ObjClassMethod( VERCADESC, , )
+	_ObjClassMethod( VEREMPAUX, , )
+	_ObjClassMethod( VEREMPESC, , )
+	_ObjClassMethod( VERESCAUX, , )
+	_ObjClassMethod( VINCESCR, , )
+
+	_ObjClassData( _URL,String, , )
+	_ObjClassData( _HEADOUT,arrayof_String, , )
+	_ObjClassData( _COOKIES,arrayof_String, , )
+	_ObjClassData( cCEP,string, , )
+	_ObjClassData( oWSBUSCACEPRESULT,SHATENDE_SEND, , )
+	_ObjClassData( cCODESCR,string, , )
+	_ObjClassData( oWSBUSCAESCRESULT,SHATENDE_SESCRITO, , )
+	_ObjClassData( cCTIPO,string, , )
+	_ObjClassData( cCNOME,string, , )
+	_ObjClassData( oWSGETCOMBORESULT,SHATENDE_ARRAYOFSCOMBO, , )
+	_ObjClassData( cUSUARIO,string, , )
+	_ObjClassData( cSENHA,string, , )
+	_ObjClassData( oWSGETLOGINRESULT,SHATENDE_STRLOGIN, , )
+	_ObjClassData( cCCGC,string, , )
+	_ObjClassData( cCLCGC,string, , )
+	_ObjClassData( cCCOD,string, , )
+	_ObjClassData( cCLNOME,string, , )
+	_ObjClassData( oWSVERCADEMPRESULT,SHATENDE_SEMPRATND, , )
+	_ObjClassData( oWSVERCADESCRESULT,SHATENDE_SESCRITO, , )
+	_ObjClassData( oWSVEREMPAUXRESULT,SHATENDE_SEMPRATND, , )
+	_ObjClassData( oWSVEREMPESCRESULT,SHATENDE_SESCRITO, , )
+	_ObjClassData( oWSVERESCAUXRESULT,SHATENDE_SESCRITO, , )
+	_ObjClassData( cCODEMP,string, , )
+	_ObjClassData( lVINCESCRRESULT,boolean, , )
+
+_ObjEndClass()
+
+Function ___WSSHATENDE____NEW()
+Self:Init()
+If !FindFunction("XMLCHILDEX")
+	UserException("O Código-Fonte Client atual requer os executáveis do Protheus Build [7.00.131227A-20141125] ou superior. Atualize o Protheus ou gere o Código-Fonte novamente utilizando o Build atual.")
+EndIf
+Return Self
+
+Function ___WSSHATENDE____INIT()
+	Self:oWSBUSCACEPRESULT  := SHATENDE_SEND():New()
+	Self:oWSBUSCAESCRESULT  := SHATENDE_SESCRITO():New()
+	Self:oWSGETCOMBORESULT  := SHATENDE_ARRAYOFSCOMBO():New()
+	Self:oWSGETLOGINRESULT  := SHATENDE_STRLOGIN():New()
+	Self:oWSVERCADEMPRESULT := SHATENDE_SEMPRATND():New()
+	Self:oWSVERCADESCRESULT := SHATENDE_SESCRITO():New()
+	Self:oWSVEREMPAUXRESULT := SHATENDE_SEMPRATND():New()
+	Self:oWSVEREMPESCRESULT := SHATENDE_SESCRITO():New()
+	Self:oWSVERESCAUXRESULT := SHATENDE_SESCRITO():New()
+Return
+
+Function ___WSSHATENDE____RESET()
+	Self:cCEP               := NIL
+	Self:oWSBUSCACEPRESULT  := NIL
+	Self:cCODESCR           := NIL
+	Self:oWSBUSCAESCRESULT  := NIL
+	Self:cCTIPO             := NIL
+	Self:cCNOME             := NIL
+	Self:oWSGETCOMBORESULT  := NIL
+	Self:cUSUARIO           := NIL
+	Self:cSENHA             := NIL
+	Self:oWSGETLOGINRESULT  := NIL
+	Self:cCCGC              := NIL
+	Self:cCLCGC             := NIL
+	Self:cCCOD              := NIL
+	Self:cCLNOME            := NIL
+	Self:oWSVERCADEMPRESULT := NIL
+	Self:oWSVERCADESCRESULT := NIL
+	Self:oWSVEREMPAUXRESULT := NIL
+	Self:oWSVEREMPESCRESULT := NIL
+	Self:oWSVERESCAUXRESULT := NIL
+	Self:cCODEMP            := NIL
+	Self:lVINCESCRRESULT    := NIL
+	Self:Init()
+Return
+
+Function ___WSSHATENDE____CLONE()
+Local oClone := WSSHATENDE():New()
+	oClone:_URL          := Self:_URL
+	oClone:cCEP          := Self:cCEP
+	oClone:oWSBUSCACEPRESULT :=  IIF(Self:oWSBUSCACEPRESULT = NIL , NIL ,Self:oWSBUSCACEPRESULT:Clone() )
+	oClone:cCODESCR      := Self:cCODESCR
+	oClone:oWSBUSCAESCRESULT :=  IIF(Self:oWSBUSCAESCRESULT = NIL , NIL ,Self:oWSBUSCAESCRESULT:Clone() )
+	oClone:cCTIPO        := Self:cCTIPO
+	oClone:cCNOME        := Self:cCNOME
+	oClone:oWSGETCOMBORESULT :=  IIF(Self:oWSGETCOMBORESULT = NIL , NIL ,Self:oWSGETCOMBORESULT:Clone() )
+	oClone:cUSUARIO      := Self:cUSUARIO
+	oClone:cSENHA        := Self:cSENHA
+	oClone:oWSGETLOGINRESULT :=  IIF(Self:oWSGETLOGINRESULT = NIL , NIL ,Self:oWSGETLOGINRESULT:Clone() )
+	oClone:cCCGC         := Self:cCCGC
+	oClone:cCLCGC        := Self:cCLCGC
+	oClone:cCCOD         := Self:cCCOD
+	oClone:cCLNOME       := Self:cCLNOME
+	oClone:oWSVERCADEMPRESULT :=  IIF(Self:oWSVERCADEMPRESULT = NIL , NIL ,Self:oWSVERCADEMPRESULT:Clone() )
+	oClone:oWSVERCADESCRESULT :=  IIF(Self:oWSVERCADESCRESULT = NIL , NIL ,Self:oWSVERCADESCRESULT:Clone() )
+	oClone:oWSVEREMPAUXRESULT :=  IIF(Self:oWSVEREMPAUXRESULT = NIL , NIL ,Self:oWSVEREMPAUXRESULT:Clone() )
+	oClone:oWSVEREMPESCRESULT :=  IIF(Self:oWSVEREMPESCRESULT = NIL , NIL ,Self:oWSVEREMPESCRESULT:Clone() )
+	oClone:oWSVERESCAUXRESULT :=  IIF(Self:oWSVERESCAUXRESULT = NIL , NIL ,Self:oWSVERESCAUXRESULT:Clone() )
+	oClone:cCODEMP       := Self:cCODEMP
+	oClone:lVINCESCRRESULT := Self:lVINCESCRRESULT
+Return oClone
+
+
+
+Function ___WSSHATENDE____BUSCACEP( cCEP, oWSBUSCACEPRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<BUSCACEP xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("CEP", Self:cCEP, cCEP , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</BUSCACEP>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/BUSCACEP", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:oWSBUSCACEPRESULT:SoapRecv( WSAdvValue( oXmlRet,"_BUSCACEPRESPONSE:_BUSCACEPRESULT","SEND",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHATENDE____BUSCAESC( cCODESCR, oWSBUSCAESCRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<BUSCAESC xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("CODESCR", Self:cCODESCR, cCODESCR , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</BUSCAESC>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/BUSCAESC", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:oWSBUSCAESCRESULT:SoapRecv( WSAdvValue( oXmlRet,"_BUSCAESCRESPONSE:_BUSCAESCRESULT","SESCRITO",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHATENDE____GETCOMBO( cCTIPO,cCNOME, oWSGETCOMBORESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<GETCOMBO xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("CTIPO", Self:cCTIPO, cCTIPO , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("CNOME", Self:cCNOME, cCNOME , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</GETCOMBO>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/GETCOMBO", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:oWSGETCOMBORESULT:SoapRecv( WSAdvValue( oXmlRet,"_GETCOMBORESPONSE:_GETCOMBORESULT","ARRAYOFSCOMBO",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHATENDE____GETLOGIN( cUSUARIO,cSENHA, oWSGETLOGINRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<GETLOGIN xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("USUARIO", Self:cUSUARIO, cUSUARIO , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("SENHA", Self:cSENHA, cSENHA , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</GETLOGIN>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/GETLOGIN", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:oWSGETLOGINRESULT:SoapRecv( WSAdvValue( oXmlRet,"_GETLOGINRESPONSE:_GETLOGINRESULT","STRLOGIN",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHATENDE____VERCADEMP( cCCGC,cCLCGC,cCCOD,cCNOME,cCLNOME, oWSVERCADEMPRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<VERCADEMP xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("CCGC", Self:cCCGC, cCCGC , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("CLCGC", Self:cCLCGC, cCLCGC , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("CCOD", Self:cCCOD, cCCOD , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("CNOME", Self:cCNOME, cCNOME , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("CLNOME", Self:cCLNOME, cCLNOME , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</VERCADEMP>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/VERCADEMP", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:oWSVERCADEMPRESULT:SoapRecv( WSAdvValue( oXmlRet,"_VERCADEMPRESPONSE:_VERCADEMPRESULT","SEMPRATND",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHATENDE____VERCADESC( cCCGC, oWSVERCADESCRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<VERCADESC xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("CCGC", Self:cCCGC, cCCGC , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</VERCADESC>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/VERCADESC", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:oWSVERCADESCRESULT:SoapRecv( WSAdvValue( oXmlRet,"_VERCADESCRESPONSE:_VERCADESCRESULT","SESCRITO",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHATENDE____VEREMPAUX( cCCGC, oWSVEREMPAUXRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<VEREMPAUX xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("CCGC", Self:cCCGC, cCCGC , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</VEREMPAUX>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/VEREMPAUX", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:oWSVEREMPAUXRESULT:SoapRecv( WSAdvValue( oXmlRet,"_VEREMPAUXRESPONSE:_VEREMPAUXRESULT","SEMPRATND",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHATENDE____VEREMPESC( cCODESCR, oWSVEREMPESCRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<VEREMPESC xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("CODESCR", Self:cCODESCR, cCODESCR , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</VEREMPESC>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/VEREMPESC", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:oWSVEREMPESCRESULT:SoapRecv( WSAdvValue( oXmlRet,"_VEREMPESCRESPONSE:_VEREMPESCRESULT","SESCRITO",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHATENDE____VERESCAUX( cCCGC, oWSVERESCAUXRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<VERESCAUX xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("CCGC", Self:cCCGC, cCCGC , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</VERESCAUX>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/VERESCAUX", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:oWSVERESCAUXRESULT:SoapRecv( WSAdvValue( oXmlRet,"_VERESCAUXRESPONSE:_VERESCAUXRESULT","SESCRITO",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHATENDE____VINCESCR( cCODESCR,cCODEMP, lVINCESCRRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<VINCESCR xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("CODESCR", Self:cCODESCR, cCODESCR , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("CODEMP", Self:cCODEMP, cCODEMP , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</VINCESCR>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/VINCESCR", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHATENDE.apw")
+
+Self:Init()
+Self:lVINCESCRRESULT    :=  WSAdvValue( oXmlRet,"_VINCESCRRESPONSE:_VINCESCRRESULT:TEXT","boolean",NIL,NIL,NIL,NIL,NIL,NIL)
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+
+_ObjNewClass( SHATENDE_SEND , WSSTRUCT )
+	_ObjClassData( cBAIRRO,string, , )
+	_ObjClassData( cBASE,string, , )
+	_ObjClassData( cBASE2,string, , )
+	_ObjClassData( cCEP,string, , )
+	_ObjClassData( cENDERECO,string, , )
+	_ObjClassData( cERSIN,string, , )
+	_ObjClassData( cEST,string, , )
+	_ObjClassData( cMUN,string, , )
+	_ObjClassData( cSINDICATO,string, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHATENDE_SEND____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHATENDE_SEND____INIT()
+Return
+
+Function ___SHATENDE_SEND____CLONE()
+	Local oClone := SHATENDE_SEND():NEW()
+	oClone:cBAIRRO              := Self:cBAIRRO
+	oClone:cBASE                := Self:cBASE
+	oClone:cBASE2               := Self:cBASE2
+	oClone:cCEP                 := Self:cCEP
+	oClone:cENDERECO            := Self:cENDERECO
+	oClone:cERSIN               := Self:cERSIN
+	oClone:cEST                 := Self:cEST
+	oClone:cMUN                 := Self:cMUN
+	oClone:cSINDICATO           := Self:cSINDICATO
+Return oClone
+
+Function ___SHATENDE_SEND____SOAPRECV( oResponse)
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	Self:cBAIRRO            :=  WSAdvValue( oResponse,"_BAIRRO","string",NIL,"Property cBAIRRO as s:string on SOAP Response not found.",NIL,"S",NIL,NIL)
+	Self:cBASE              :=  WSAdvValue( oResponse,"_BASE","string",NIL,"Property cBASE as s:string on SOAP Response not found.",NIL,"S",NIL,NIL)
+	Self:cBASE2             :=  WSAdvValue( oResponse,"_BASE2","string",NIL,"Property cBASE2 as s:string on SOAP Response not found.",NIL,"S",NIL,NIL)
+	Self:cCEP               :=  WSAdvValue( oResponse,"_CEP","string",NIL,"Property cCEP as s:string on SOAP Response not found.",NIL,"S",NIL,NIL)
+	Self:cENDERECO          :=  WSAdvValue( oResponse,"_ENDERECO","string",NIL,"Property cENDERECO as s:string on SOAP Response not found.",NIL,"S",NIL,NIL)
+	Self:cERSIN             :=  WSAdvValue( oResponse,"_ERSIN","string",NIL,"Property cERSIN as s:string on SOAP Response not found.",NIL,"S",NIL,NIL)
+	Self:cEST               :=  WSAdvValue( oResponse,"_EST","string",NIL,"Property cEST as s:string on SOAP Response not found.",NIL,"S",NIL,NIL)
+	Self:cMUN               :=  WSAdvValue( oResponse,"_MUN","string",NIL,"Property cMUN as s:string on SOAP Response not found.",NIL,"S",NIL,NIL)
+	Self:cSINDICATO         :=  WSAdvValue( oResponse,"_SINDICATO","string",NIL,"Property cSINDICATO as s:string on SOAP Response not found.",NIL,"S",NIL,NIL)
+Return
+
+
+
+_ObjNewClass( SHATENDE_SESCRITO , WSSTRUCT )
+	_ObjClassData( cCBAIRRO,opt_string, , )
+	_ObjClassData( cCCEP,opt_string, , )
+	_ObjClassData( cCCGC,opt_string, , )
+	_ObjClassData( cCCODIGO,opt_string, , )
+	_ObjClassData( cCCONTATO,opt_string, , )
+	_ObjClassData( cCEMAIL,opt_string, , )
+	_ObjClassData( cCEND,opt_string, , )
+	_ObjClassData( cCFAX,opt_string, , )
+	_ObjClassData( cCFILIAL,opt_string, , )
+	_ObjClassData( cCMUN,opt_string, , )
+	_ObjClassData( cCNOME,opt_string, , )
+	_ObjClassData( cCTEL,opt_string, , )
+	_ObjClassData( cCUF,opt_string, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHATENDE_SESCRITO____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHATENDE_SESCRITO____INIT()
+Return
+
+Function ___SHATENDE_SESCRITO____CLONE()
+	Local oClone := SHATENDE_SESCRITO():NEW()
+	oClone:cCBAIRRO             := Self:cCBAIRRO
+	oClone:cCCEP                := Self:cCCEP
+	oClone:cCCGC                := Self:cCCGC
+	oClone:cCCODIGO             := Self:cCCODIGO
+	oClone:cCCONTATO            := Self:cCCONTATO
+	oClone:cCEMAIL              := Self:cCEMAIL
+	oClone:cCEND                := Self:cCEND
+	oClone:cCFAX                := Self:cCFAX
+	oClone:cCFILIAL             := Self:cCFILIAL
+	oClone:cCMUN                := Self:cCMUN
+	oClone:cCNOME               := Self:cCNOME
+	oClone:cCTEL                := Self:cCTEL
+	oClone:cCUF                 := Self:cCUF
+Return oClone
+
+Function ___SHATENDE_SESCRITO____SOAPRECV( oResponse)
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	Self:cCBAIRRO           :=  WSAdvValue( oResponse,"_CBAIRRO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCEP              :=  WSAdvValue( oResponse,"_CCEP","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCGC              :=  WSAdvValue( oResponse,"_CCGC","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCODIGO           :=  WSAdvValue( oResponse,"_CCODIGO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCONTATO          :=  WSAdvValue( oResponse,"_CCONTATO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCEMAIL            :=  WSAdvValue( oResponse,"_CEMAIL","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCEND              :=  WSAdvValue( oResponse,"_CEND","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCFAX              :=  WSAdvValue( oResponse,"_CFAX","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCFILIAL           :=  WSAdvValue( oResponse,"_CFILIAL","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCMUN              :=  WSAdvValue( oResponse,"_CMUN","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCNOME             :=  WSAdvValue( oResponse,"_CNOME","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCTEL              :=  WSAdvValue( oResponse,"_CTEL","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCUF               :=  WSAdvValue( oResponse,"_CUF","string",NIL,NIL,NIL,"S",NIL,NIL)
+Return
+
+
+
+_ObjNewClass( SHATENDE_ARRAYOFSCOMBO , WSSTRUCT )
+	_ObjClassData( oWSSCOMBO,opt_SHATENDE_SCOMBO, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHATENDE_ARRAYOFSCOMBO____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHATENDE_ARRAYOFSCOMBO____INIT()
+	Self:oWSSCOMBO            := {}
+Return
+
+Function ___SHATENDE_ARRAYOFSCOMBO____CLONE()
+	Local oClone := SHATENDE_ARRAYOFSCOMBO():NEW()
+	oClone:oWSSCOMBO := NIL
+	If Self:oWSSCOMBO <> NIL
+		oClone:oWSSCOMBO := {}
+		aEval( Self:oWSSCOMBO , { |x| aadd( oClone:oWSSCOMBO , x:Clone() ) } )
+	Endif
+Return oClone
+
+Function ___SHATENDE_ARRAYOFSCOMBO____SOAPRECV( oResponse)
+	Local nRElem1, oNodes1, nTElem1
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	oNodes1 :=  WSAdvValue( oResponse,"_SCOMBO","SCOMBO",{},NIL, .T. ,"O",NIL,NIL)
+	nTElem1 := len(oNodes1)
+	For nRElem1 := 1 to nTElem1
+		If !WSIsNilNode( oNodes1[nRElem1] )
+			aadd(Self:oWSSCOMBO , SHATENDE_SCOMBO():New() )
+			Self:oWSSCOMBO[len(Self:oWSSCOMBO)]:SoapRecv(oNodes1[nRElem1])
+		Endif
+	Next
+Return
+
+
+
+_ObjNewClass( SHATENDE_STRLOGIN , WSSTRUCT )
+	_ObjClassData( cCODIGO,opt_string, , )
+	_ObjClassData( cNOME,opt_string, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHATENDE_STRLOGIN____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHATENDE_STRLOGIN____INIT()
+Return
+
+Function ___SHATENDE_STRLOGIN____CLONE()
+	Local oClone := SHATENDE_STRLOGIN():NEW()
+	oClone:cCODIGO              := Self:cCODIGO
+	oClone:cNOME                := Self:cNOME
+Return oClone
+
+Function ___SHATENDE_STRLOGIN____SOAPRECV( oResponse)
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	Self:cCODIGO            :=  WSAdvValue( oResponse,"_CODIGO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cNOME              :=  WSAdvValue( oResponse,"_NOME","string",NIL,NIL,NIL,"S",NIL,NIL)
+Return
+
+
+
+_ObjNewClass( SHATENDE_SEMPRATND , WSSTRUCT )
+	_ObjClassData( cCBAIRRO,opt_string, , )
+	_ObjClassData( cCBASE,opt_string, , )
+	_ObjClassData( cCBASE2,opt_string, , )
+	_ObjClassData( cCCAPITAL,opt_string, , )
+	_ObjClassData( cCCATEG1,opt_string, , )
+	_ObjClassData( cCCEP,opt_string, , )
+	_ObjClassData( cCCGC,opt_string, , )
+	_ObjClassData( cCCODASSO,opt_string, , )
+	_ObjClassData( cCCODIGO,opt_string, , )
+	_ObjClassData( cCCONTATO,opt_string, , )
+	_ObjClassData( cCEMAIL,opt_string, , )
+	_ObjClassData( cCEND,opt_string, , )
+	_ObjClassData( cCERSIN,opt_string, , )
+	_ObjClassData( cCESCCONT,opt_string, , )
+	_ObjClassData( cCEST,opt_string, , )
+	_ObjClassData( cCFAX,opt_string, , )
+	_ObjClassData( cCFILANT,opt_string, , )
+	_ObjClassData( cCFILIAL,opt_string, , )
+	_ObjClassData( cCFOLCENT,opt_string, , )
+	_ObjClassData( cCINAT,opt_string, , )
+	_ObjClassData( cCLOJA,opt_string, , )
+	_ObjClassData( cCMUN,opt_string, , )
+	_ObjClassData( cCNATUREZ,opt_string, , )
+	_ObjClassData( cCNOME,opt_string, , )
+	_ObjClassData( cCNREDUZ,opt_string, , )
+	_ObjClassData( cCSINDICA,opt_string, , )
+	_ObjClassData( cCSITUAC,opt_string, , )
+	_ObjClassData( cCTEL,opt_string, , )
+	_ObjClassData( cCUF,opt_string, , )
+	_ObjClassData( dDDTABERT,opt_date, , )
+	_ObjClassData( dDDTCADAS,opt_date, , )
+	_ObjClassData( dDDTFIMAS,opt_date, , )
+	_ObjClassData( dDDTINASS,opt_date, , )
+	_ObjClassData( dDDTNASC,opt_date, , )
+	_ObjClassData( dDINIATV,opt_date, , )
+	_ObjClassData( cNCATEGOR,opt_string, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHATENDE_SEMPRATND____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHATENDE_SEMPRATND____INIT()
+Return
+
+Function ___SHATENDE_SEMPRATND____CLONE()
+	Local oClone := SHATENDE_SEMPRATND():NEW()
+	oClone:cCBAIRRO             := Self:cCBAIRRO
+	oClone:cCBASE               := Self:cCBASE
+	oClone:cCBASE2              := Self:cCBASE2
+	oClone:cCCAPITAL            := Self:cCCAPITAL
+	oClone:cCCATEG1             := Self:cCCATEG1
+	oClone:cCCEP                := Self:cCCEP
+	oClone:cCCGC                := Self:cCCGC
+	oClone:cCCODASSO            := Self:cCCODASSO
+	oClone:cCCODIGO             := Self:cCCODIGO
+	oClone:cCCONTATO            := Self:cCCONTATO
+	oClone:cCEMAIL              := Self:cCEMAIL
+	oClone:cCEND                := Self:cCEND
+	oClone:cCERSIN              := Self:cCERSIN
+	oClone:cCESCCONT            := Self:cCESCCONT
+	oClone:cCEST                := Self:cCEST
+	oClone:cCFAX                := Self:cCFAX
+	oClone:cCFILANT             := Self:cCFILANT
+	oClone:cCFILIAL             := Self:cCFILIAL
+	oClone:cCFOLCENT            := Self:cCFOLCENT
+	oClone:cCINAT               := Self:cCINAT
+	oClone:cCLOJA               := Self:cCLOJA
+	oClone:cCMUN                := Self:cCMUN
+	oClone:cCNATUREZ            := Self:cCNATUREZ
+	oClone:cCNOME               := Self:cCNOME
+	oClone:cCNREDUZ             := Self:cCNREDUZ
+	oClone:cCSINDICA            := Self:cCSINDICA
+	oClone:cCSITUAC             := Self:cCSITUAC
+	oClone:cCTEL                := Self:cCTEL
+	oClone:cCUF                 := Self:cCUF
+	oClone:dDDTABERT            := Self:dDDTABERT
+	oClone:dDDTCADAS            := Self:dDDTCADAS
+	oClone:dDDTFIMAS            := Self:dDDTFIMAS
+	oClone:dDDTINASS            := Self:dDDTINASS
+	oClone:dDDTNASC             := Self:dDDTNASC
+	oClone:dDINIATV             := Self:dDINIATV
+	oClone:cNCATEGOR            := Self:cNCATEGOR
+Return oClone
+
+Function ___SHATENDE_SEMPRATND____SOAPRECV( oResponse)
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	Self:cCBAIRRO           :=  WSAdvValue( oResponse,"_CBAIRRO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCBASE             :=  WSAdvValue( oResponse,"_CBASE","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCBASE2            :=  WSAdvValue( oResponse,"_CBASE2","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCAPITAL          :=  WSAdvValue( oResponse,"_CCAPITAL","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCATEG1           :=  WSAdvValue( oResponse,"_CCATEG1","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCEP              :=  WSAdvValue( oResponse,"_CCEP","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCGC              :=  WSAdvValue( oResponse,"_CCGC","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCODASSO          :=  WSAdvValue( oResponse,"_CCODASSO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCODIGO           :=  WSAdvValue( oResponse,"_CCODIGO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCONTATO          :=  WSAdvValue( oResponse,"_CCONTATO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCEMAIL            :=  WSAdvValue( oResponse,"_CEMAIL","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCEND              :=  WSAdvValue( oResponse,"_CEND","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCERSIN            :=  WSAdvValue( oResponse,"_CERSIN","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCESCCONT          :=  WSAdvValue( oResponse,"_CESCCONT","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCEST              :=  WSAdvValue( oResponse,"_CEST","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCFAX              :=  WSAdvValue( oResponse,"_CFAX","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCFILANT           :=  WSAdvValue( oResponse,"_CFILANT","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCFILIAL           :=  WSAdvValue( oResponse,"_CFILIAL","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCFOLCENT          :=  WSAdvValue( oResponse,"_CFOLCENT","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCINAT             :=  WSAdvValue( oResponse,"_CINAT","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCLOJA             :=  WSAdvValue( oResponse,"_CLOJA","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCMUN              :=  WSAdvValue( oResponse,"_CMUN","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCNATUREZ          :=  WSAdvValue( oResponse,"_CNATUREZ","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCNOME             :=  WSAdvValue( oResponse,"_CNOME","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCNREDUZ           :=  WSAdvValue( oResponse,"_CNREDUZ","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCSINDICA          :=  WSAdvValue( oResponse,"_CSINDICA","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCSITUAC           :=  WSAdvValue( oResponse,"_CSITUAC","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCTEL              :=  WSAdvValue( oResponse,"_CTEL","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCUF               :=  WSAdvValue( oResponse,"_CUF","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:dDDTABERT          :=  WSAdvValue( oResponse,"_DDTABERT","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:dDDTCADAS          :=  WSAdvValue( oResponse,"_DDTCADAS","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:dDDTFIMAS          :=  WSAdvValue( oResponse,"_DDTFIMAS","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:dDDTINASS          :=  WSAdvValue( oResponse,"_DDTINASS","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:dDDTNASC           :=  WSAdvValue( oResponse,"_DDTNASC","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:dDINIATV           :=  WSAdvValue( oResponse,"_DINIATV","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:cNCATEGOR          :=  WSAdvValue( oResponse,"_NCATEGOR","string",NIL,NIL,NIL,"S",NIL,NIL)
+Return
+
+
+
+_ObjNewClass( SHATENDE_SCOMBO , WSSTRUCT )
+	_ObjClassData( cCVALUE,opt_string, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHATENDE_SCOMBO____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHATENDE_SCOMBO____INIT()
+Return
+
+Function ___SHATENDE_SCOMBO____CLONE()
+	Local oClone := SHATENDE_SCOMBO():NEW()
+	oClone:cCVALUE              := Self:cCVALUE
+Return oClone
+
+Function ___SHATENDE_SCOMBO____SOAPRECV( oResponse)
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	Self:cCVALUE            :=  WSAdvValue( oResponse,"_CVALUE","string",NIL,NIL,NIL,"S",NIL,NIL)
+Return

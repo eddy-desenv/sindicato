@@ -1,0 +1,94 @@
+
+
+
+Function H_solicmensag(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+ If  HttpPost->lOk
+__Response += PlainH_2()
+ EndIf
+__Response += PlainH_3()
+__Response += "" + cValToChar(HTTPPOST->MENSAGEM) + "<br><br><br>" + CHR(13)+CHR(10)
+__Response += PlainH_4()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + CHR(13)+CHR(10)
+__Response += '<html xmlns="http://www.w3.org/1999/xhtml" >' + CHR(13)+CHR(10)
+__Response += "<head> " + CHR(13)+CHR(10)
+__Response += '	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">' + CHR(13)+CHR(10)
+__Response += "    <title>SindHosp</title>  " + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '	<script src="js/popcal_config.js"></script>' + CHR(13)+CHR(10)
+__Response += '	<script src="js/popcal_lang.js"></script>' + CHR(13)+CHR(10)
+__Response += '	<script src="js/popcal.js"></script>' + CHR(13)+CHR(10)
+__Response += '	<script src="funcoes.js"></script>' + CHR(13)+CHR(10)
+__Response += "	" + CHR(13)+CHR(10)
+__Response += "	<!-- CSS -->" + CHR(13)+CHR(10)
+__Response += '	<link rel="stylesheet" href="css/structure.css" type="text/css" />' + CHR(13)+CHR(10)
+__Response += '	<link rel="stylesheet" href="css/form.css" type="text/css" />' + CHR(13)+CHR(10)
+__Response += "	" + CHR(13)+CHR(10)
+__Response += "	<!-- JavaScript -->" + CHR(13)+CHR(10)
+__Response += '	<script type="text/javascript" src="scripts/wufoo.js"></script>' + CHR(13)+CHR(10)
+__Response += '    <script language="javascript">		 ' + CHR(13)+CHR(10)
+__Response += "	function Confirma(){" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_2()
+Local __Response := ""
+
+__Response += "			window.opener.location.replace('W_ATUAEMP.APW');" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_3()
+Local __Response := ""
+
+__Response += "		this.close();" + CHR(13)+CHR(10)
+__Response += "		return true;" + CHR(13)+CHR(10)
+__Response += "	}" + CHR(13)+CHR(10)
+__Response += "  	</script>" + CHR(13)+CHR(10)
+__Response += "  " + CHR(13)+CHR(10)
+__Response += "</head>" + CHR(13)+CHR(10)
+__Response += '<body id="public">' + CHR(13)+CHR(10)
+__Response += '<div id="container">' + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<form class="wufoo topLabel page"  method="post" >' + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += "	<div>" + CHR(13)+CHR(10)
+__Response += '         <img id="Image1" src="images/header_dados.gif" style="border-width:0px; width:100%;" />' + CHR(13)+CHR(10)
+__Response += "	</div>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<div class="info">' + CHR(13)+CHR(10)
+__Response += "    <br>" + CHR(13)+CHR(10)
+__Response += "	<h2>Solicitação de Alteração</h2>" + CHR(13)+CHR(10)
+__Response += "	<div></div>" + CHR(13)+CHR(10)
+__Response += "</div>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += "<ul>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<li class="COMPLEX     ">' + CHR(13)+CHR(10)
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_4()
+Local __Response := ""
+
+__Response += "	</label>" + CHR(13)+CHR(10)
+__Response += '	<span class="full">' + CHR(13)+CHR(10)
+__Response += '		<input id="Button1" type="button" value="Fechar" onClick="Confirma()" />' + CHR(13)+CHR(10)
+__Response += "	</span>" + CHR(13)+CHR(10)
+__Response += "</li>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += "</ul>" + CHR(13)+CHR(10)
+__Response += "</form>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += "</div><!--container-->" + CHR(13)+CHR(10)
+__Response += '<img id="bottom" src="images/bottom.png" alt="" />' + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += "</body>" + CHR(13)+CHR(10)
+__Response += "</html>" + CHR(13)+CHR(10)
+Return(__Response)

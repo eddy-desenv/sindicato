@@ -1,0 +1,98 @@
+Group SINDHOSP
+   Version=7.0
+   VSSDB=
+   HasProperties=1
+   Properties
+      BeforeApply=
+      AfterApply=
+      Icon=
+      ID=
+      Version=
+      PalmName=
+      OutPut=
+   End
+   ProjectsCount=1
+   Project Novo Projeto
+      FoldersCount=8
+      Folder Fontes
+         VSSPath=Fontes
+         FilesCount=8
+         File \ap10\Fontes\WEBFUNCTION.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHMSIND.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHSINDMUN.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHMLAYOUT.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHMASSO.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHMCONF.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHMASSI.PRW
+             Type=T
+         End
+         File \ap10\Fontes\FUNCBOLETOS.PRW
+             Type=T
+         End
+      End
+      Folder Extratos
+         VSSPath=Nova Pasta4
+         FilesCount=1
+         File \ap10\Fontes\WSSHEXTR.PRW
+             Type=T
+         End
+      End
+      Folder Cadastro
+         VSSPath=Nova Pasta6
+         FilesCount=1
+         File \ap10\Fontes\WSSINDHOSP.prw
+             Type=T
+         End
+      End
+      Folder Manutencao - Empresa
+         VSSPath=Nova Pasta6
+         FilesCount=2
+         File \ap10\Fontes\MANEMPWEB.PRW
+             Type=T
+         End
+         File \ap10\Fontes\MA030ROT.PRW
+             Type=T
+         End
+      End
+      Folder Manutencao - Escritorio
+         VSSPath=Nova Pasta7
+         FilesCount=1
+         File \ap10\Fontes\MANESCWEB.PRW
+             Type=T
+         End
+      End
+      Folder Boletos
+         VSSPath=Nova Pasta8
+         FilesCount=1
+         File \ap10\Fontes\WSSHBOLETO.PRW
+             Type=T
+         End
+      End
+      Folder Fontes_Cliente
+         VSSPath=Nova Pasta10
+         FilesCount=1
+         File \ap10\Fontes\RDMAKE\RFINA16.PRX
+             Type=T
+         End
+      End
+      Folder Atende
+         VSSPath=Nova Pasta11
+         FilesCount=1
+         File \ap10\Fontes\WSSHATENDE.prw
+             Type=T
+         End
+      End
+   End
+End

@@ -1,0 +1,225 @@
+Group SINDHOSP
+   Version=7.0
+   VSSDB=
+   HasProperties=1
+   Properties
+      BeforeApply=
+      AfterApply=
+      Icon=
+      ID=
+      Version=
+      PalmName=
+      OutPut=
+   End
+   ProjectsCount=1
+   Project Novo Projeto
+      FoldersCount=9
+      Folder Fontes
+         VSSPath=Fontes
+         FilesCount=8
+         File \ap10\Fontes\WEBFUNCTION.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHMSIND.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHMLAYOUT.PRW
+             Type=T
+         End
+         File \ap10\Fontes\shmasso.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHMCONF.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHMASSI.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHSINDMUN.PRW
+             Type=T
+         End
+         File \ap10\Fontes\erro.aph
+             Type=T
+         End
+      End
+      Folder Associe-se
+         VSSPath=Nova Pasta3
+         FilesCount=3
+         File \ap10\Fontes\SINDASSOC.APH
+             Type=T
+         End
+         File \ap10\Fontes\ASSOC.PRW
+             Type=T
+         End
+         File \ap10\Fontes\ASSOCMAIL.APH
+             Type=T
+         End
+      End
+      Folder Extratos
+         VSSPath=Nova Pasta4
+         FilesCount=3
+         File \ap10\Fontes\EXTRATO.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SINDEXTR.APH
+             Type=T
+         End
+         File \ap10\Fontes\SINDLISTEXT.aph
+             Type=T
+         End
+      End
+      Folder Clients
+         VSSPath=Nova Pasta5
+         FilesCount=4
+         File \ap10\Fontes\CLIENT_WSSHEXTR.PRW
+             Type=T
+         End
+         File \ap10\Fontes\CLIENT_WSSINDHOSP.PRW
+             Type=T
+         End
+         File \ap10\Fontes\CLIENT_WSSHBOLETO.PRW
+             Type=T
+         End
+         File \ap10\Fontes\CLIENT_WSSHATENDE.PRW
+             Type=T
+         End
+      End
+      Folder Cadastro
+         VSSPath=Nova Pasta6
+         FilesCount=11
+         File \ap10\Fontes\SHEMPRESA.PRW
+             Type=T
+         End
+         File \ap10\Fontes\EMPRESA.APH
+             Type=T
+         End
+         File \ap10\Fontes\SHESCRITO.PRW
+             Type=T
+         End
+         File \ap10\Fontes\ESCRITO.APH
+             Type=T
+         End
+         File \ap10\Fontes\EMPESC.APH
+             Type=T
+         End
+         File \ap10\Fontes\SOLICALT.APH
+             Type=T
+         End
+         File \ap10\Fontes\INTROESCR.APH
+             Type=T
+         End
+         File \ap10\Fontes\INTROEMP.APH
+             Type=T
+         End
+         File \ap10\Fontes\ALTESC.APH
+             Type=T
+         End
+         File \ap10\Fontes\SOLICALMAIL.APH
+             Type=T
+         End
+         File \ap10\Fontes\SOLICMENSAG.APH
+             Type=T
+         End
+      End
+      Folder Boletos
+         VSSPath=Nova Pasta8
+         FilesCount=13
+         File \ap10\Fontes\FUNCBOLETOS.PRW
+             Type=T
+         End
+         File \ap10\Fontes\CALCSIND.APH
+             Type=T
+         End
+         File \ap10\Fontes\CALCCONF.APH
+             Type=T
+         End
+         File \ap10\Fontes\CALCNEG.APH
+             Type=T
+         End
+         File \ap10\Fontes\SHBOLETO.PRW
+             Type=T
+         End
+         File \ap10\Fontes\SHCABEMP.APH
+             Type=T
+         End
+         File \ap10\Fontes\SHCABESC.APH
+             Type=T
+         End
+         File \ap10\Fontes\INTROBOLETO.APH
+             Type=T
+         End
+         File \ap10\Fontes\Cliente\BOLSIND.APH
+             Type=T
+         End
+         File \ap10\Fontes\Cliente\BOLCONF.APH
+             Type=T
+         End
+         File \ap10\Fontes\ASSOCIAT.APH
+             Type=T
+         End
+         File \ap10\Fontes\Cliente\BOLASSO.APH
+             Type=T
+         End
+         File \ap10\Fontes\Cliente\BOLNEG.APH
+             Type=T
+         End
+      End
+      Folder Menu
+         VSSPath=Nova Pasta9
+         FilesCount=4
+         File \ap10\Fontes\SHPERFIL.APH
+             Type=T
+         End
+         File \ap10\Fontes\MENU.PRW
+             Type=T
+         End
+         File \ap10\Fontes\MENU.APH
+             Type=T
+         End
+         File \ap10\Fontes\INDEXCONTR.APH
+             Type=T
+         End
+      End
+      Folder Atende
+         VSSPath=Nova Pasta11
+         FilesCount=4
+         File \ap10\Fontes\AtendeLogin.aph
+             Type=T
+         End
+         File \ap10\Fontes\AtendeDados.apw
+             Type=T
+         End
+         File \ap10\Fontes\AtendeDados.aph
+             Type=T
+         End
+         File \ap10\Fontes\AtendeLogin.apw
+             Type=T
+         End
+      End
+      Folder BoletosBancos
+         VSSPath=Nova Pasta12
+         FilesCount=7
+         File \ap10\Fontes\BoletosBcos\SHBOLCEF_Boleto_CEF_Confederativa.PRW
+             Type=T
+         End
+         File \ap10\Fontes\BoletosBcos\SHBOLCEF_INCLUDES.CH
+             Type=T
+         End
+         File \ap10\Fontes\BoletosBcos\BOLCEFCONF.APH
+             Type=T
+         End
+         File \ap10\Fontes\BoletosBcos\SHBOLBR_Boleto_BCOREAL_Confederativa.PRW
+             Type=T
+         End
+         File \ap10\Fontes\BoletosBcos\BOLBRCONF.APH
+             Type=T
+         End
+         File \ap10\Fontes\BoletosBcos\SHBOLITAU_Boleto_ITAU_Associativa.PRW
+             Type=T
+         End
+         File \ap10\Fontes\BoletosBcos\BOLITAUASSO.APH
+             Type=T
+         End
+      End
+   End
+End

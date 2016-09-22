@@ -1,0 +1,37 @@
+
+
+
+Function H_indexcontr(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += "<HTML>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += "</head>" + CHR(13)+CHR(10)
+__Response += "<BODY>" + CHR(13)+CHR(10)
+__Response += "<center>" + CHR(13)+CHR(10)
+__Response += '        <table border="2" width="90%">' + CHR(13)+CHR(10)
+__Response += "            <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="center" style="height: 353px">' + CHR(13)+CHR(10)
+__Response += "                   <center>" + CHR(13)+CHR(10)
+__Response += '                    <img border="0" height="60" src="http://www.sindhosp.com.br/website/imagens/cab_l2_01.gif"' + CHR(13)+CHR(10)
+__Response += '                        usemap="#MapHome1" width="289" align="center"/><br />' + CHR(13)+CHR(10)
+__Response += '                    <img border="0" height="27" src="http://www.sindhosp.com.br/website/imagens/cab_l3_01%282%29.gif"' + CHR(13)+CHR(10)
+__Response += '                        style="width: 290px" usemap="#MapHome2" align="center"/><br />' + CHR(13)+CHR(10)
+__Response += '                    <img border="0" height="18" src="http://www.sindhosp.com.br/website/imagens/cab_l4_01%282%29.gif"' + CHR(13)+CHR(10)
+__Response += '                        style="width: 291px" align="center"/>' + CHR(13)+CHR(10)
+__Response += "            		</center>" + CHR(13)+CHR(10)
+__Response += "            	</td>" + CHR(13)+CHR(10)
+__Response += "                        " + CHR(13)+CHR(10)
+__Response += "            </tr>" + CHR(13)+CHR(10)
+__Response += "        </table>" + CHR(13)+CHR(10)
+__Response += "</center>" + CHR(13)+CHR(10)
+__Response += "</BODY>" + CHR(13)+CHR(10)
+__Response += "</HTML>" + CHR(13)+CHR(10)
+Return(__Response)

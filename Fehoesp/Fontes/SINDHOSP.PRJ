@@ -1,0 +1,258 @@
+Group SINDHOSP
+   Version=7.0
+   VSSDB=
+   HasProperties=1
+   Properties
+      BeforeApply=
+      AfterApply=
+      Icon=
+      ID=
+      Version=
+      PalmName=
+      OutPut=
+   End
+   ProjectsCount=1
+   Project Novo Projeto
+      FoldersCount=12
+      Folder Fontes
+         VSSPath=Fontes
+         FilesCount=8
+         File \PROTHEUS_FEHOESP\Fontes\WEBFUNCTION.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHMSIND.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHMLAYOUT.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\shmasso.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHMCONF.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHMASSI.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHSINDMUN.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\erro.aph
+             Type=T
+         End
+      End
+      Folder Associe-se
+         VSSPath=Nova Pasta3
+         FilesCount=3
+         File \PROTHEUS_FEHOESP\Fontes\SINDASSOC.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\ASSOC.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\ASSOCMAIL.APH
+             Type=T
+         End
+      End
+      Folder Extratos
+         VSSPath=Nova Pasta4
+         FilesCount=4
+         File \PROTHEUS_FEHOESP\Fontes\EXTRATO.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SINDEXTR.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SINDLISTEXT.aph
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\WSSHEXTR.PRW
+             Type=T
+         End
+      End
+      Folder Clients
+         VSSPath=Nova Pasta5
+         FilesCount=4
+         File \PROTHEUS_FEHOESP\Fontes\CLIENT_WSSHEXTR.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\CLIENT_WSSINDHOSP.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\CLIENT_WSSHBOLETO.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\CLIENT_WSSHATENDE.PRW
+             Type=T
+         End
+      End
+      Folder Cadastro
+         VSSPath=Nova Pasta6
+         FilesCount=11
+         File \PROTHEUS_FEHOESP\Fontes\WSSINDHOSP.prw
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHEMPRESA.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\EMPRESA.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHESCRITO.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\ESCRITO.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\EMPESC.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SOLICALT.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\INTROESCR.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\INTROEMP.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\ALTESC.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SOLICALTMAIL.APH
+             Type=T
+         End
+      End
+      Folder Manutencao - Empresa
+         VSSPath=Nova Pasta6
+         FilesCount=2
+         File \PROTHEUS_FEHOESP\Fontes\MANEMPWEB.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\MA030ROT.PRW
+             Type=T
+         End
+      End
+      Folder Manutencao - Escritorio
+         VSSPath=Nova Pasta7
+         FilesCount=1
+         File \PROTHEUS_FEHOESP\Fontes\MANESCWEB.PRW
+             Type=T
+         End
+      End
+      Folder Boletos
+         VSSPath=Nova Pasta8
+         FilesCount=14
+         File \PROTHEUS_FEHOESP\Fontes\FUNCBOLETOS.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\CALCSIND.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\CALCCONF.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\CALCNEG.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHBOLETO.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHCABEMP.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\SHCABESC.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\INTROBOLETO.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\Cliente\BOLSIND.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\WSSHBOLETO.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\Cliente\BOLCONF.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\ASSOCIAT.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\Cliente\BOLASSO.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\Cliente\BOLNEG.APH
+             Type=T
+         End
+      End
+      Folder Menu
+         VSSPath=Nova Pasta9
+         FilesCount=4
+         File \PROTHEUS_FEHOESP\Fontes\SHPERFIL.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\MENU.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\MENU.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\INDEXCONTR.APH
+             Type=T
+         End
+      End
+      Folder Fontes_Cliente
+         VSSPath=Nova Pasta10
+         FilesCount=1
+         File \PROTHEUS_FEHOESP\Fontes\RDMAKE\RFINA16.PRX
+             Type=T
+         End
+      End
+      Folder Atende
+         VSSPath=Nova Pasta11
+         FilesCount=5
+         File \PROTHEUS_FEHOESP\Fontes\AtendeLogin.aph
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\AtendeDados.apw
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\AtendeDados.aph
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\AtendeLogin.apw
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\WSSHATENDE.prw
+             Type=T
+         End
+      End
+      Folder BoletosBancos
+         VSSPath=Nova Pasta12
+         FilesCount=7
+         File \PROTHEUS_FEHOESP\Fontes\BoletosBcos\SHBOLCEF_Boleto_CEF_Confederativa.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\BoletosBcos\SHBOLCEF_INCLUDES.CH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\BoletosBcos\BOLCEFCONF.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\BoletosBcos\SHBOLBR_Boleto_BCOREAL_Confederativa.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\BoletosBcos\BOLBRCONF.APH
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\BoletosBcos\SHBOLITAU_Boleto_ITAU_Associativa.PRW
+             Type=T
+         End
+         File \PROTHEUS_FEHOESP\Fontes\BoletosBcos\BOLITAUASSO.APH
+             Type=T
+         End
+      End
+   End
+End

@@ -1,0 +1,123 @@
+Group FEHOESP
+   Version=7.0
+   VSSDB=
+   HasProperties=1
+   Properties
+      BeforeApply=
+      AfterApply=
+      Icon=
+      ID=
+      Version=
+      PalmName=
+      OutPut=
+   End
+   ProjectsCount=1
+   Project Novo Projeto
+      FoldersCount=9
+      Folder Fontes
+         VSSPath=Fontes
+         FilesCount=8
+         File \clientes\FEHOESP\Fontes\WEBFUNCTION.PRW
+             Type=T
+         End
+         File \Clientes\FEHOESP\Fontes\SHMSIND.PRW
+             Type=T
+         End
+         File \Clientes\FEHOESP\Fontes\SHSINDMUN.PRW
+             Type=T
+         End
+         File \Clientes\FEHOESP\Fontes\SHMLAYOUT.PRW
+             Type=T
+         End
+         File \Clientes\FEHOESP\Fontes\SHMASSO.PRW
+             Type=T
+         End
+         File \Clientes\FEHOESP\Fontes\SHMCONF.PRW
+             Type=T
+         End
+         File \Clientes\FEHOESP\Fontes\SHMASSI.PRW
+             Type=T
+         End
+         File \Clientes\FEHOESP\Fontes\FUNCBOLETOS.PRW
+             Type=T
+         End
+      End
+      Folder Extratos
+         VSSPath=Nova Pasta4
+         FilesCount=1
+         File \clientes\FEHOESP\Fontes\WSSHEXTR.PRW
+             Type=T
+         End
+      End
+      Folder Cadastro
+         VSSPath=Nova Pasta6
+         FilesCount=2
+         File \clientes\FEHOESP\Fontes\WSSINDHOSP.prw
+             Type=T
+         End
+         File \Protheus_fehoesp\RDMAKE\IEPASCAD.prw
+             Type=T
+         End
+      End
+      Folder Manutencao - Empresa
+         VSSPath=Nova Pasta6
+         FilesCount=2
+         File \clientes\FEHOESP\Fontes\MANEMPWEB.PRW
+             Type=T
+         End
+         File \clientes\FEHOESP\Fontes\MA030ROT.PRW
+             Type=T
+         End
+      End
+      Folder Manutencao - Escritorio
+         VSSPath=Nova Pasta7
+         FilesCount=1
+         File \clientes\FEHOESP\Fontes\MANESCWEB.PRW
+             Type=T
+         End
+      End
+      Folder Boletos
+         VSSPath=Nova Pasta8
+         FilesCount=1
+         File \Clientes\FEHOESP\Fontes\WSSHBOLETO.PRW
+             Type=T
+         End
+      End
+      Folder Fontes_Cliente
+         VSSPath=Nova Pasta10
+         FilesCount=1
+         File \clientes\FEHOESP\Fontes\RDMAKE\RFINA16.PRX
+             Type=T
+         End
+      End
+      Folder Atende
+         VSSPath=Nova Pasta11
+         FilesCount=1
+         File \Clientes\FEHOESP\Fontes\WSSHATENDE.prw
+             Type=T
+         End
+      End
+      Folder Iepas
+         VSSPath=Nova Pasta9
+         FilesCount=6
+         File \Protheus_fehoesp\RDMAKE\IEPAS.APH
+             Type=T
+         End
+         File \Protheus_fehoesp\RDMAKE\iepas.apl
+             Type=T
+         End
+         File \Protheus_fehoesp\RDMAKE\IEPAS.PRW
+             Type=T
+         End
+         File \Protheus_fehoesp\RDMAKE\IEPASCAD.prw
+             Type=T
+         End
+         File \Protheus_fehoesp\RDMAKE\IEPASGRV.PRW
+             Type=T
+         End
+         File \Protheus_fehoesp\RDMAKE\IEPASLOG.PRW
+             Type=T
+         End
+      End
+   End
+End

@@ -1,0 +1,409 @@
+#line 1 "D:\PROTHE~2\INCLUDE\PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Dialog.ch"
+#line 27 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Font.ch"
+#line 28 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\PTMenu.ch"
+#line 30 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Print.ch"
+#line 32 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Colors.ch"
+#line 34 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\Folder.ch"
+#line 36 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\msobject.ch"
+#line 37 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\VKey.ch"
+#line 41 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\WinApi.ch"
+#line 43 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\FWCommand.ch"
+#line 46 "PROTHEUS.CH"
+#line 1 "D:\PROTHE~2\INCLUDE\FWCSS.CH"
+#line 48 "PROTHEUS.CH"
+#line 2 "d:\PROTHE~2\fontes\CLIENT~4.PRW"
+#line 1 "D:\PROTHE~2\INCLUDE\APWEBSRV.CH"
+#line 12 "d:\PROTHE~2\fontes\CLIENT~4.PRW"
+Function U__SKNEHIL ; Return
+
+
+
+
+
+_ObjNewClass( WSSHEXTRATO , WSCLIENT )
+
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( RESET, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( LSTABT, , )
+	_ObjClassMethod( LSTPAG, , )
+
+	_ObjClassData( _URL,String, , )
+	_ObjClassData( _HEADOUT,arrayof_String, , )
+	_ObjClassData( _COOKIES,arrayof_String, , )
+	_ObjClassData( oWSAEMPRESA,SHEXTRATO__EMPRESA, , )
+	_ObjClassData( lLSIND,boolean, , )
+	_ObjClassData( lLCONFNEG,boolean, , )
+	_ObjClassData( lLASSOC,boolean, , )
+	_ObjClassData( cCCONFNEG,string, , )
+	_ObjClassData( oWSLSTABTRESULT,SHEXTRATO_ARRAYOFSTITABT, , )
+	_ObjClassData( oWSLSTPAGRESULT,SHEXTRATO_ARRAYOFSTITPAG, , )
+
+
+	_ObjClassData( oWS_EMPRESA,SHEXTRATO__EMPRESA, , )
+
+_ObjEndClass()
+
+Function ___WSSHEXTRATO____NEW()
+Self:Init()
+If !FindFunction("XMLCHILDEX")
+	UserException("O Código-Fonte Client atual requer os executáveis do Protheus Build [7.00.131227A-20141125] ou superior. Atualize o Protheus ou gere o Código-Fonte novamente utilizando o Build atual.")
+EndIf
+Return Self
+
+Function ___WSSHEXTRATO____INIT()
+	Self:oWSAEMPRESA        := SHEXTRATO__EMPRESA():New()
+	Self:oWSLSTABTRESULT    := SHEXTRATO_ARRAYOFSTITABT():New()
+	Self:oWSLSTPAGRESULT    := SHEXTRATO_ARRAYOFSTITPAG():New()
+
+
+	Self:oWS_EMPRESA        := Self:oWSAEMPRESA
+Return
+
+Function ___WSSHEXTRATO____RESET()
+	Self:oWSAEMPRESA        := NIL
+	Self:lLSIND             := NIL
+	Self:lLCONFNEG          := NIL
+	Self:lLASSOC            := NIL
+	Self:cCCONFNEG          := NIL
+	Self:oWSLSTABTRESULT    := NIL
+	Self:oWSLSTPAGRESULT    := NIL
+
+
+	Self:oWS_EMPRESA        := NIL
+	Self:Init()
+Return
+
+Function ___WSSHEXTRATO____CLONE()
+Local oClone := WSSHEXTRATO():New()
+	oClone:_URL          := Self:_URL
+	oClone:oWSAEMPRESA   :=  IIF(Self:oWSAEMPRESA = NIL , NIL ,Self:oWSAEMPRESA:Clone() )
+	oClone:lLSIND        := Self:lLSIND
+	oClone:lLCONFNEG     := Self:lLCONFNEG
+	oClone:lLASSOC       := Self:lLASSOC
+	oClone:cCCONFNEG     := Self:cCCONFNEG
+	oClone:oWSLSTABTRESULT :=  IIF(Self:oWSLSTABTRESULT = NIL , NIL ,Self:oWSLSTABTRESULT:Clone() )
+	oClone:oWSLSTPAGRESULT :=  IIF(Self:oWSLSTPAGRESULT = NIL , NIL ,Self:oWSLSTPAGRESULT:Clone() )
+
+
+	oClone:oWS_EMPRESA   := oClone:oWSAEMPRESA
+Return oClone
+
+
+
+Function ___WSSHEXTRATO____LSTABT( oWSAEMPRESA,lLSIND,lLCONFNEG,lLASSOC,cCCONFNEG, oWSLSTABTRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<LSTABT xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("AEMPRESA", Self:oWSAEMPRESA, oWSAEMPRESA , "_EMPRESA", .T.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("LSIND", Self:lLSIND, lLSIND , "boolean", .T.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("LCONFNEG", Self:lLCONFNEG, lLCONFNEG , "boolean", .T.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("LASSOC", Self:lLASSOC, lLASSOC , "boolean", .T.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("CCONFNEG", Self:cCCONFNEG, cCCONFNEG , "string", .F.  , .F. , 0 , NIL, .F. )
+cSoap += "</LSTABT>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/LSTABT", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHEXTRATO.apw")
+
+Self:Init()
+Self:oWSLSTABTRESULT:SoapRecv( WSAdvValue( oXmlRet,"_LSTABTRESPONSE:_LSTABTRESULT","ARRAYOFSTITABT",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+Function ___WSSHEXTRATO____LSTPAG( oWSAEMPRESA,lLSIND,lLCONFNEG,lLASSOC, oWSLSTPAGRESULT)
+Local cSoap := "" , oXmlRet
+
+WsMethodBegin(); BEGIN SEQUENCE
+
+cSoap += '<LSTPAG xmlns="http://192.168.0.2:8502/">'
+cSoap += WSSoapValue("AEMPRESA", Self:oWSAEMPRESA, oWSAEMPRESA , "_EMPRESA", .T.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("LSIND", Self:lLSIND, lLSIND , "boolean", .T.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("LCONFNEG", Self:lLCONFNEG, lLCONFNEG , "boolean", .T.  , .F. , 0 , NIL, .F. )
+cSoap += WSSoapValue("LASSOC", Self:lLASSOC, lLASSOC , "boolean", .T.  , .F. , 0 , NIL, .F. )
+cSoap += "</LSTPAG>"
+
+
+
+
+oXmlRet := SvcSoapCall(	Self,cSoap, "http://192.168.0.2:8502/LSTPAG", "DOCUMENT","http://192.168.0.2:8502/",,"1.031217", "http://192.168.0.2:8502/ws/SHEXTRATO.apw")
+
+Self:Init()
+Self:oWSLSTPAGRESULT:SoapRecv( WSAdvValue( oXmlRet,"_LSTPAGRESPONSE:_LSTPAGRESULT","ARRAYOFSTITPAG",NIL,NIL,NIL,NIL,NIL,NIL) )
+
+RECOVER; WsMethodEnd( .T. ); Return .F. ; end; WsMethodEnd( .F. )
+
+oXmlRet := NIL
+Return .T. 
+
+
+
+
+_ObjNewClass( SHEXTRATO__EMPRESA , WSSTRUCT )
+	_ObjClassData( cCBASE,opt_string, , )
+	_ObjClassData( cCCAPCENT,opt_string, , )
+	_ObjClassData( cCCGC,opt_string, , )
+	_ObjClassData( cCCODIGO,opt_string, , )
+	_ObjClassData( cCFILANTR,opt_string, , )
+	_ObjClassData( cCFILIAL,opt_string, , )
+	_ObjClassData( cCFOLCENT,opt_string, , )
+	_ObjClassData( cCLOJA,opt_string, , )
+	_ObjClassData( cCNATUREZ,opt_string, , )
+	_ObjClassData( dDDTNASC,opt_date, , )
+	_ObjClassData( dDINIATV,opt_date, , )
+	_ObjClassData( cINISIND,opt_string, , )
+	_ObjClassData( nNCATEGOR,opt_integer, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPSEND, , )
+_ObjEndClass()
+
+Function ___SHEXTRATO__EMPRESA____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHEXTRATO__EMPRESA____INIT()
+Return
+
+Function ___SHEXTRATO__EMPRESA____CLONE()
+	Local oClone := SHEXTRATO__EMPRESA():NEW()
+	oClone:cCBASE               := Self:cCBASE
+	oClone:cCCAPCENT            := Self:cCCAPCENT
+	oClone:cCCGC                := Self:cCCGC
+	oClone:cCCODIGO             := Self:cCCODIGO
+	oClone:cCFILANTR            := Self:cCFILANTR
+	oClone:cCFILIAL             := Self:cCFILIAL
+	oClone:cCFOLCENT            := Self:cCFOLCENT
+	oClone:cCLOJA               := Self:cCLOJA
+	oClone:cCNATUREZ            := Self:cCNATUREZ
+	oClone:dDDTNASC             := Self:dDDTNASC
+	oClone:dDINIATV             := Self:dDINIATV
+	oClone:cINISIND             := Self:cINISIND
+	oClone:nNCATEGOR            := Self:nNCATEGOR
+Return oClone
+
+Function ___SHEXTRATO__EMPRESA____SOAPSEND()
+	Local cSoap := ""
+	cSoap += WSSoapValue("CBASE", Self:cCBASE, Self:cCBASE , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("CCAPCENT", Self:cCCAPCENT, Self:cCCAPCENT , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("CCGC", Self:cCCGC, Self:cCCGC , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("CCODIGO", Self:cCCODIGO, Self:cCCODIGO , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("CFILANTR", Self:cCFILANTR, Self:cCFILANTR , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("CFILIAL", Self:cCFILIAL, Self:cCFILIAL , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("CFOLCENT", Self:cCFOLCENT, Self:cCFOLCENT , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("CLOJA", Self:cCLOJA, Self:cCLOJA , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("CNATUREZ", Self:cCNATUREZ, Self:cCNATUREZ , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("DDTNASC", Self:dDDTNASC, Self:dDDTNASC , "date", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("DINIATV", Self:dDINIATV, Self:dDINIATV , "date", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("INISIND", Self:cINISIND, Self:cINISIND , "string", .F.  , .F. , 0 , NIL, .F. )
+	cSoap += WSSoapValue("NCATEGOR", Self:nNCATEGOR, Self:nNCATEGOR , "integer", .F.  , .F. , 0 , NIL, .F. )
+Return cSoap
+
+
+
+_ObjNewClass( SHEXTRATO_ARRAYOFSTITABT , WSSTRUCT )
+	_ObjClassData( oWSSTITABT,opt_SHEXTRATO_STITABT, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHEXTRATO_ARRAYOFSTITABT____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHEXTRATO_ARRAYOFSTITABT____INIT()
+	Self:oWSSTITABT           := {}
+Return
+
+Function ___SHEXTRATO_ARRAYOFSTITABT____CLONE()
+	Local oClone := SHEXTRATO_ARRAYOFSTITABT():NEW()
+	oClone:oWSSTITABT := NIL
+	If Self:oWSSTITABT <> NIL
+		oClone:oWSSTITABT := {}
+		aEval( Self:oWSSTITABT , { |x| aadd( oClone:oWSSTITABT , x:Clone() ) } )
+	Endif
+Return oClone
+
+Function ___SHEXTRATO_ARRAYOFSTITABT____SOAPRECV( oResponse)
+	Local nRElem1, oNodes1, nTElem1
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	oNodes1 :=  WSAdvValue( oResponse,"_STITABT","STITABT",{},NIL, .T. ,"O",NIL,NIL)
+	nTElem1 := len(oNodes1)
+	For nRElem1 := 1 to nTElem1
+		If !WSIsNilNode( oNodes1[nRElem1] )
+			aadd(Self:oWSSTITABT , SHEXTRATO_STITABT():New() )
+			Self:oWSSTITABT[len(Self:oWSSTITABT)]:SoapRecv(oNodes1[nRElem1])
+		Endif
+	Next
+Return
+
+
+
+_ObjNewClass( SHEXTRATO_ARRAYOFSTITPAG , WSSTRUCT )
+	_ObjClassData( oWSSTITPAG,opt_SHEXTRATO_STITPAG, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHEXTRATO_ARRAYOFSTITPAG____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHEXTRATO_ARRAYOFSTITPAG____INIT()
+	Self:oWSSTITPAG           := {}
+Return
+
+Function ___SHEXTRATO_ARRAYOFSTITPAG____CLONE()
+	Local oClone := SHEXTRATO_ARRAYOFSTITPAG():NEW()
+	oClone:oWSSTITPAG := NIL
+	If Self:oWSSTITPAG <> NIL
+		oClone:oWSSTITPAG := {}
+		aEval( Self:oWSSTITPAG , { |x| aadd( oClone:oWSSTITPAG , x:Clone() ) } )
+	Endif
+Return oClone
+
+Function ___SHEXTRATO_ARRAYOFSTITPAG____SOAPRECV( oResponse)
+	Local nRElem1, oNodes1, nTElem1
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	oNodes1 :=  WSAdvValue( oResponse,"_STITPAG","STITPAG",{},NIL, .T. ,"O",NIL,NIL)
+	nTElem1 := len(oNodes1)
+	For nRElem1 := 1 to nTElem1
+		If !WSIsNilNode( oNodes1[nRElem1] )
+			aadd(Self:oWSSTITPAG , SHEXTRATO_STITPAG():New() )
+			Self:oWSSTITPAG[len(Self:oWSSTITPAG)]:SoapRecv(oNodes1[nRElem1])
+		Endif
+	Next
+Return
+
+
+
+_ObjNewClass( SHEXTRATO_STITABT , WSSTRUCT )
+	_ObjClassData( cCANO,opt_string, , )
+	_ObjClassData( cCCHAVE,opt_string, , )
+	_ObjClassData( cCMES,opt_string, , )
+	_ObjClassData( cCNAT,opt_string, , )
+	_ObjClassData( cCPARCELA,opt_string, , )
+	_ObjClassData( cCTIPO,opt_string, , )
+	_ObjClassData( dDPAGTO,opt_date, , )
+	_ObjClassData( dDVENCTO,opt_date, , )
+	_ObjClassData( cNVALOR,opt_string, , )
+	_ObjClassData( cOPCOES,opt_string, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHEXTRATO_STITABT____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHEXTRATO_STITABT____INIT()
+Return
+
+Function ___SHEXTRATO_STITABT____CLONE()
+	Local oClone := SHEXTRATO_STITABT():NEW()
+	oClone:cCANO                := Self:cCANO
+	oClone:cCCHAVE              := Self:cCCHAVE
+	oClone:cCMES                := Self:cCMES
+	oClone:cCNAT                := Self:cCNAT
+	oClone:cCPARCELA            := Self:cCPARCELA
+	oClone:cCTIPO               := Self:cCTIPO
+	oClone:dDPAGTO              := Self:dDPAGTO
+	oClone:dDVENCTO             := Self:dDVENCTO
+	oClone:cNVALOR              := Self:cNVALOR
+	oClone:cOPCOES              := Self:cOPCOES
+Return oClone
+
+Function ___SHEXTRATO_STITABT____SOAPRECV( oResponse)
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	Self:cCANO              :=  WSAdvValue( oResponse,"_CANO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCCHAVE            :=  WSAdvValue( oResponse,"_CCHAVE","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCMES              :=  WSAdvValue( oResponse,"_CMES","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCNAT              :=  WSAdvValue( oResponse,"_CNAT","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCPARCELA          :=  WSAdvValue( oResponse,"_CPARCELA","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCTIPO             :=  WSAdvValue( oResponse,"_CTIPO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:dDPAGTO            :=  WSAdvValue( oResponse,"_DPAGTO","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:dDVENCTO           :=  WSAdvValue( oResponse,"_DVENCTO","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:cNVALOR            :=  WSAdvValue( oResponse,"_NVALOR","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cOPCOES            :=  WSAdvValue( oResponse,"_OPCOES","string",NIL,NIL,NIL,"S",NIL,NIL)
+Return
+
+
+
+_ObjNewClass( SHEXTRATO_STITPAG , WSSTRUCT )
+	_ObjClassData( cCANO,opt_string, , )
+	_ObjClassData( cCMES,opt_string, , )
+	_ObjClassData( cCNAT,opt_string, , )
+	_ObjClassData( cCPARCELA,opt_string, , )
+	_ObjClassData( cCTIPO,opt_string, , )
+	_ObjClassData( dDPAGTO,opt_date, , )
+	_ObjClassData( dDVENCTO,opt_date, , )
+	_ObjClassData( cNVALOR,opt_string, , )
+	_ObjClassData( cNVLPAGTO,opt_string, , )
+	_ObjClassMethod( NEW, , )
+	_ObjClassMethod( INIT, , )
+	_ObjClassMethod( CLONE, , )
+	_ObjClassMethod( SOAPRECV, , )
+_ObjEndClass()
+
+Function ___SHEXTRATO_STITPAG____NEW()
+	Self:Init()
+Return Self
+
+Function ___SHEXTRATO_STITPAG____INIT()
+Return
+
+Function ___SHEXTRATO_STITPAG____CLONE()
+	Local oClone := SHEXTRATO_STITPAG():NEW()
+	oClone:cCANO                := Self:cCANO
+	oClone:cCMES                := Self:cCMES
+	oClone:cCNAT                := Self:cCNAT
+	oClone:cCPARCELA            := Self:cCPARCELA
+	oClone:cCTIPO               := Self:cCTIPO
+	oClone:dDPAGTO              := Self:dDPAGTO
+	oClone:dDVENCTO             := Self:dDVENCTO
+	oClone:cNVALOR              := Self:cNVALOR
+	oClone:cNVLPAGTO            := Self:cNVLPAGTO
+Return oClone
+
+Function ___SHEXTRATO_STITPAG____SOAPRECV( oResponse)
+	Self:Init()
+	If oResponse = NIL ; Return ; Endif
+	Self:cCANO              :=  WSAdvValue( oResponse,"_CANO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCMES              :=  WSAdvValue( oResponse,"_CMES","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCNAT              :=  WSAdvValue( oResponse,"_CNAT","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCPARCELA          :=  WSAdvValue( oResponse,"_CPARCELA","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cCTIPO             :=  WSAdvValue( oResponse,"_CTIPO","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:dDPAGTO            :=  WSAdvValue( oResponse,"_DPAGTO","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:dDVENCTO           :=  WSAdvValue( oResponse,"_DVENCTO","date",NIL,NIL,NIL,"D",NIL,NIL)
+	Self:cNVALOR            :=  WSAdvValue( oResponse,"_NVALOR","string",NIL,NIL,NIL,"S",NIL,NIL)
+	Self:cNVLPAGTO          :=  WSAdvValue( oResponse,"_NVLPAGTO","string",NIL,NIL,NIL,"S",NIL,NIL)
+Return

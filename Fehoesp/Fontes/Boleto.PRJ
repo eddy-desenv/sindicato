@@ -1,0 +1,47 @@
+Group Boletos
+   Version=7.0
+   VSSDB=
+   HasProperties=1
+   Properties
+      BeforeApply=
+      AfterApply=
+      Icon=
+      ID=
+      Version=
+      PalmName=
+      OutPut=
+   End
+   ProjectsCount=1
+   Project Novo Projeto
+      FoldersCount=2
+      Folder Fontes
+         VSSPath=Fontes
+         FilesCount=0
+      End
+      Folder Definições
+         VSSPath=Definições
+         FilesCount=7
+         File \Clientes\SindHosp\Fontes\Cliente\BOLSIND.APH
+             Type=T
+         End
+         File \Clientes\SindHosp\Fontes\SHBOLETO.PRW
+             Type=T
+         End
+         File \CLIENTES\SINDHOSP\FONTES\SHEMPRESA.PRW
+             Type=T
+         End
+         File \Clientes\SindHosp\Fontes\WSSHBOLETO.PRW
+             Type=T
+         End
+         File \Clientes\SindHosp\Fontes\ASSOCIAT.APH
+             Type=T
+         End
+         File \Clientes\SindHosp\Fontes\Cliente\BOLCONF.APH
+             Type=T
+         End
+         File \Clientes\SindHosp\Fontes\FUNCBOLETOS.PRW
+             Type=T
+         End
+      End
+   End
+End

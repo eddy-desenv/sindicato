@@ -1,0 +1,107 @@
+
+
+
+Function H_atendelogin(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+
+Local cMsg := ""
+if(valtype(httpSession->cMsgErr) == "C")
+    cMsg := httpSession->cMsgErr
+endif
+__Response += PlainH_1()
+__Response += PlainH_2()
+if(cMsg == "")
+__Response += PlainH_3()
+else
+__Response += "<div><b>" + cValToChar(cMsg) + "</b></div>" + CHR(13)+CHR(10)
+endif
+__Response += PlainH_4()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + CHR(13)+CHR(10)
+__Response += "<html>" + CHR(13)+CHR(10)
+__Response += "<head>" + CHR(13)+CHR(10)
+__Response += "    <title>FEHOESP</title> " + CHR(13)+CHR(10)
+__Response += "	<!-- CSS -->" + CHR(13)+CHR(10)
+__Response += '	<link rel="stylesheet" href="css/structure.css" type="text/css" />' + CHR(13)+CHR(10)
+__Response += '	<link rel="stylesheet" href="css/form.css" type="text/css" />' + CHR(13)+CHR(10)
+__Response += "</head>" + CHR(13)+CHR(10)
+__Response += '<body id="public">' + CHR(13)+CHR(10)
+__Response += '<script language="javascript1.1">' + CHR(13)+CHR(10)
+__Response += "<!--" + CHR(13)+CHR(10)
+__Response += "function CheckOut(f){" + CHR(13)+CHR(10)
+__Response += '	if (f.Usuario.value == ""){' + CHR(13)+CHR(10)
+__Response += "		alert('Campos Login e Senha são obrigatórios!');" + CHR(13)+CHR(10)
+__Response += "		f.Usuario.focus()" + CHR(13)+CHR(10)
+__Response += "		return false;" + CHR(13)+CHR(10)
+__Response += "	}	" + CHR(13)+CHR(10)
+__Response += '	if (f.Senha.value == ""){' + CHR(13)+CHR(10)
+__Response += "		alert('Campos Login e Senha são obrigatórios!');" + CHR(13)+CHR(10)
+__Response += "		f.Senha.focus()" + CHR(13)+CHR(10)
+__Response += "		return false;" + CHR(13)+CHR(10)
+__Response += "	}			" + CHR(13)+CHR(10)
+__Response += "	else" + CHR(13)+CHR(10)
+__Response += "		return true;	" + CHR(13)+CHR(10)
+__Response += "	}" + CHR(13)+CHR(10)
+__Response += "//-->" + CHR(13)+CHR(10)
+__Response += "</SCRIPT>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<div id="container">' + CHR(13)+CHR(10)
+__Response += '<form onSubmit="return CheckOut(this)" action="w_vldsenha.apw" class="wufoo topLabel page" method="post">' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_2()
+Local __Response := ""
+
+__Response += "	<div>" + CHR(13)+CHR(10)
+__Response += '         <img id="Image1" src="images/Layout.gif" style="border-width:0px; width:100%;" />' + CHR(13)+CHR(10)
+__Response += "	</div>" + CHR(13)+CHR(10)
+__Response += "<ul>" + CHR(13)+CHR(10)
+__Response += '<DIV ID="FORMAUX">' + CHR(13)+CHR(10)
+__Response += '<div class="info">' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_3()
+Local __Response := ""
+
+__Response += "	<div>Entre com seu usuário e senha de acesso:</div>  " + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_4()
+Local __Response := ""
+
+__Response += "</div>" + CHR(13)+CHR(10)
+__Response += "</DIV>" + CHR(13)+CHR(10)
+__Response += "<li>" + CHR(13)+CHR(10)
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CHR(13)+CHR(10)
+__Response += "	Usuário:" + CHR(13)+CHR(10)
+__Response += "	</label>" + CHR(13)+CHR(10)
+__Response += '	<span class="full">' + CHR(13)+CHR(10)
+__Response += '		<input id="Usuario" name="Usuario" type="text" size="20" maxlenght="6"/>' + CHR(13)+CHR(10)
+__Response += "	</span>" + CHR(13)+CHR(10)
+__Response += "</li>" + CHR(13)+CHR(10)
+__Response += "<li>" + CHR(13)+CHR(10)
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CHR(13)+CHR(10)
+__Response += "	Senha:" + CHR(13)+CHR(10)
+__Response += "	</label>" + CHR(13)+CHR(10)
+__Response += '	<span class="full">' + CHR(13)+CHR(10)
+__Response += '		<input id="Senha" name="Senha" type="password" size="20" maxlenght="6"/>' + CHR(13)+CHR(10)
+__Response += "	</span>" + CHR(13)+CHR(10)
+__Response += "</li>" + CHR(13)+CHR(10)
+__Response += '<li class="complex      ">' + CHR(13)+CHR(10)
+__Response += '	<span class="full">' + CHR(13)+CHR(10)
+__Response += '		<input class="style14" name="Enviar" type="submit" value="Confirmar"/> ' + CHR(13)+CHR(10)
+__Response += '		<input type="reset" name="Reset" value="Cancelar" />' + CHR(13)+CHR(10)
+__Response += "	</span>	" + CHR(13)+CHR(10)
+__Response += "</li>" + CHR(13)+CHR(10)
+__Response += "</ul>	" + CHR(13)+CHR(10)
+__Response += "</FORM>" + CHR(13)+CHR(10)
+__Response += "</body>" + CHR(13)+CHR(10)
+__Response += "</html>" + CHR(13)+CHR(10)
+Return(__Response)

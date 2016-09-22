@@ -1,0 +1,106 @@
+#INCLUDE 'APWEBEX.CH' 
+#INCLUDE 'PROTHEUS.CH'
+#INCLUDE 'TBICONN.CH'
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³AtendeLogin ºAutor  ³Daniel Sobreira     º Data ³  07/06/10  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Monta tela de Logon                                         º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ SINDHOSP - Portal                                           º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºParametros³							                                   º±±
+±±º          ³									                           º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºRetorno   ³                                                             º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Web Function AtendeLogin()
+
+Local 	  cHtml     := ""
+Private	  aMensagem := {}
+
+Web Extended Init cHtml
+
+	cHtml  := h_atendelogin()
+
+Web Extended End
+
+Return cHtml
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³VldSenha	  ºAutor  ³Daniel Sobreira     º Data ³  04/06/10  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Valida senha digitada                                       º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ SINDHOSP - Portal                                           º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºParametros³ExpC1 - Senha do usuario.                                    º±±
+±±º          ³Expc2 - Nome do usuario			                           º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºRetorno   ³                                                             º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Web Function vldsenha( _cSenha, _cUsuario)
+
+Local cHtml      := ""
+Local cUsu		 := _cUsuario
+Local cSenha	 := _cSenha  
+Local oObj       := NIL
+Web Extended Init cHTML
+
+//PREPARE ENVIRONMENT EMPRESA "99" FILIAL "01" 
+
+cUsu    := If(HttpPost->Usuario==NIL,Alltrim(HttpSession->Usuario),Alltrim(HttpPost->Usuario))
+cSenha  := If(HttpPost->Senha==NIL,Alltrim(HttpSession->Senha),Alltrim(HttpPost->Senha)) 
+
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³VALIDA O LOGIN NO PORTAL³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	oObj := WSSHATENDE():New()
+
+	//--Obtem URL padrao do servico (Definida em "Webservicelocation" no .INI do Server Protheus)
+	WSChgUrl( @oObj, "SHATENDE.APW" )
+
+	oObj:cUSUARIO   :=  cUsu
+	oObj:cSENHA     :=  cSenha 
+	
+	If  oObj:GETLOGIN()
+		//LOgin efetuado com sucesso
+		cHtml  := w_atendedados()
+		httpSession->cMsgErr := ''
+	else
+	    //Erro de login    
+		If !Empty( GetWSCError( 3 ) )
+			httpSession->cMsgErr := SubStr( GetWSCError( 3 ), At( ':', GetWSCError(3) ) + 1 ) //--Soap Fault Description
+		Else
+			httpSession->cMsgErr := '<b>No momento, o site encontra-se indisponível. Por favor, tente novamente mais tarde.</b>'
+		EndIf 
+	     cHtml  := h_atendelogin()
+	endif 
+	Web Extended End
+Return cHtml
+
+/*=================================*/
+User Function SeekUser(_cUsu,_cSenha)
+
+PswOrder(3)
+If PswSeek(_cSenha,.T.)
+//	cHtml  := h_atendedados()	//ok - chama a pagina direto
+	cHtml  := w_atendedados()
+Else
+	cHtml  := h_atendelogin()
+Endif
+
+Return cHtml

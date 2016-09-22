@@ -1,0 +1,667 @@
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "WEBEXDEF.CH"   
+#INCLUDE "APWEBEX.CH"
+#INCLUDE "AP5MAIL.CH"
+
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³SHBOLCEF ºAutor  ³Antonio C Ferreira  º Data ³  07/out/2010 º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Geracao do Boleto da Caixa Economica Federal Confederativa º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ SINDHOSP                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+Web Function SHBOLCEF()
+
+Local nValorDocumento, cNossoNumero, cBanco, cAgencia, cCodCed, cCedente, cValor, cDigito
+
+Local cHtml  	:= ""
+Local cMoeda	:= "9"
+
+Web Extended Init cHtml 
+
+	nValorDocumento := aDadosValorDocumento
+    
+	HttpPost->MsgBoleto 	:= aDadosParcela + " a Parcela de " + aDadosAno
+	HttpPost->DataPagto 	:= aDadosDtPagto
+	HttpPost->ValorCobrado  := aDadosValorCobrado
+	HttpPost->ValorMoraMulta:= aDadosMoraMulta
+	HttpPost->ValorDocumento:= nValorDocumento
+
+	'------------------ Mensagem do Boleto -------------------------------
+	HttpPost->Mensagem1  	:= aDadosMensagem1
+	HttpPost->Mensagem2  	:= aDadosMensagem2
+	HttpPost->Mensagem3  	:= aDadosMensagem3
+
+	'------------------ Imagens do Logotipo -------------------------------
+
+	HttpPost->Imagem1 := "images/sind" + aDadosSindicato + "_1.jpg"
+	HttpPost->Imagem2 := "images/sind" + aDadosSindicato + "_2.jpg"
+	HttpPost->Imagem3 := "images/sind" + aDadosSindicato + "_3.jpg"
+	HttpPost->Imagem4 := "images/sind" + aDadosSindicato + "_4.jpg"
+
+	'----------------------------------------------------------------------
+
+	HttpPost->CNPJ := AllTrim(aDadosCNPJ)
+
+	If  (Len(HttpPost->CNPJ) == 14)
+		cNossoNumero 	:= Left(HttpPost->CNPJ,13)
+		HttpPost->CNPJ  := " CNPJ: " + Transform(HttpPost->CNPJ, "@R 99.999.999/9999-99")
+	Else
+		cNossoNumero 	:= HttpPost->CNPJ
+		HttpPost->CNPJ	:= " CPF: " + Transform(HttpPost->CNPJ, "@R 999.999.999-99")
+	EndIf
+
+	HttpPost->Razao 	:= aDadosRazao
+	HttpPost->Endereco 	:= aDadosEndereco
+	HttpPost->Cep 		:= aDadosCEP
+
+	cBanco	 := "104-0"	
+	cAgencia := Trim(aDadosAgencia)
+	cCodCed  := Trim(aDadosConta)
+	                                        
+	HttpPost->Banco   := cBanco
+	HttpPost->Agencia := cAgencia
+	HttpPost->CodCed  := cCodCed
+
+	cCedente := cAgencia + StrTran(StrTran(cCodCed,".",""),"-","")
+
+	cNossoNumero := aDadosTitulo
+	cNossoNumero := "8000" + Alltrim(Str(9-Len(cNossoNumero))) + cNossoNumero
+	
+	HttpPost->NossoNumero := cNossoNumero
+
+	cValor := StrTran(StrTran(Alltrim(Str(nValorDocumento,15,2)),",",""),".","")
+	cValor := Str(10-Len(cValor)) + cValor
+
+	cDigito := "2402" + cNossoNumero
+
+	HttpPost->Digito := fCalcDig11(cDigito,9,0)
+
+	HttpPost->CodBar 		 := fCodBarra(Left(cBanco,3), cMoeda, cValor, cCodCed, cNossoNumero, aDadosDtPagto)
+	HttpPost->LinhaDigitavel := linhadigitavel(HttpPost->CodBar)
+
+Web Extended End
+
+Return cHtml  
+**** fim ***
+
+
+'**************************
+STATIC Function fLinhaDigitavel(cCodBar)
+'**************************
+
+Local cCampo1, cCampo2, cCampo3, cCampo4, cCampo5
+Local cCmpLivre := SubStr(cCodBar,20,25)
+
+cCampo1 := Left(cCodBar,4) + SubStr(cCmpLivre,1,5)
+cCampo1	:= cCampo1 + fCalcDig10(cCampo1)
+cCampo1 := SubStr(cCampo1,1,5) + "." + SubStr(cCampo1,6,5)
+
+cCampo2 := SubStr(cCmpLivre,6,10)
+cCampo2 := cCampo2 + fCalcDig10(cCampo2)
+cCampo2 := SubStr(cCampo2,1,5) + "." + SubStr(cCampo2,6,6)
+
+cCampo3 := SubStr(cCmpLivre,16,10)
+cCampo3 := cCampo3 + fCalcDig10(cCampo3)
+cCampo3 := SubStr(cCampo3,1,5) + "." + SubStr(cCampo3,6,6)
+
+cCampo4 := SubStr(cCodBar,5,1)
+
+cCampo5 := SubStr(cCodBar,6,14)
+
+Return cCampo1 + "  " + cCampo2 + "  " + cCampo3 + "  " + cCampo4 + "  " + cCampo5
+**** fim ***
+
+
+'valortal=fCalcDig10("11513024791005193100033")
+'response.write valortal
+
+'**************************
+STATIC Function fCalcDig10(cCadeia)
+'**************************
+
+Local nPos, nMult, nTotal, nRes
+
+nMult := (Len(cCadeia) % 2) 
+nMult := nMult + 1
+
+nTotal := 0
+
+For nPos := 1 to Len(cCadeia)
+	nRes := SubStr(cCadeia, nPos, 1) * nMult
+
+	If  (nRes > 9)
+		nRes := Int(nRes/10) + (nRes % 10)
+	EndIf
+		
+	nTotal := nTotal + nRes
+
+	nMult := If(nMult = 2, 1, 2)
+Next nPos                     
+
+nTotal := ((10-(nTotal % 10)) % 10 )
+
+Return nTotal
+**** fim ***
+
+
+'valortal1=fCalcDig11("0339000000000103581481302647800076960003348",9,0)
+'response.write valortal1
+
+'**************************
+STATIC Function fCalcDig11(cCadeia, nLimiteSup, cFlag)
+'**************************
+
+Local nMult, nPos, nResto, nDigito
+
+Local nTotal := 0
+
+nMult := (Len(cCadeia) % (nLimiteSup-1)) + 1
+nMult := If(nMult == 1, nLimiteSup, nMult)
+
+For nPos := 1 to Len(cCadeia)
+	nTotal := nTotal + (SubStr(cCadeia, nPos, 1) * nMult)
+
+	nMult  := (nMult - 1)
+	nMult  := If(nMult == 1, nLimiteSup, nMult)
+Next nPos
+
+nResto := (nTotal % 11)
+
+If  (cFlag = 1)
+	nDigito := nResto
+Else
+
+	nDigito := (11 - nResto)
+	nDigito := If(nDigito > 9, 0, nDigito)
+EndIf
+
+Return nDigito
+**** fim ***
+
+
+'**************************
+STATIC Function fCodBarra(cBanco, cMoeda, cValor, cCodCed, cNossoNumero, dDtVencmto)
+'**************************
+'campolivre1="97" & SubStr(nced,7,5) & Left(cnae,1) & tipoent & "77" & cNossoNumero & Right(cnae,2)
+
+Local cCmpLivre, cDigito, cVencto, cCodBar, cDig3
+
+cCmpLivre := cCodCed + "02820004" + Right(cNossoNumero,9)
+
+cDigito   := fCalcDig11(cCmpLivre,9,0)
+
+cCmpLivre := cCmpLivre + cDigito
+
+cVencto   := Alltrim(Str(dDtVencmto - CtoD("07/10/1997")))
+
+cCodBar   := cBanco + cMoeda + cVencto + cValor + cCmpLivre
+
+cDig3     := fCalcDig11(cCodBar, 9, 0)
+
+cCodBar   := cBanco + cMoeda + cDig3 + cVencto + cValor + cCmpLivre
+
+Return cCodBar
+**** fim ***
+
+
+
+
+
+
+
+<script LANGUAGE="JavaScript" TYPE="text/javascript">
+function start(){
+	CreateStaticMenu("botoes_flutuantes", 5, 10);
+//	parent.topFrame.location.reload() ;
+}
+
+function PrintPage() {
+	var painel = document.getElementById('botoes_flutuantes');
+	painel.style.visibility = 'hidden';
+	window.print();
+	painel.style.visibility = '';
+}
+</script>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title> Guia de Recolhimento da Contribui&ccedil;&atilde;o Confederativa</title>
+<link href="guia.css" rel="stylesheet" type="text/css">
+<SCRIPT LANGUAGE="JavaScript" SRC="xBrowser.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="xLayer.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="staticMenu.js"></SCRIPT>
+<script language="JavaScript" type="text/JavaScript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<style type="text/css">
+<!--
+.style14 {font-size: 10px}
+-->
+</style>
+</head>
+
+<body onload="start()" bgcolor="#ffffff" topmargin="0">
+
+<%
+
+
+%>
+<div align="center">
+  <div id="botoes_flutuantes" align="left" style="left: 5; top: 5; width: 36px; height: 55px; position: absolute; z-index:1">
+    <table cellspacing=3 cellpadding=0>
+      <tr>
+        <td align="center"><a href="javascript:PrintPage();"> <img src="images/bt_imprimir.gif" alt="Imprimir" border="0" width="30" height="30"> </a> </td>
+      </tr>
+      <tr>
+        <td align="center"><a href="javascript:history.back();"> <img src="images/bt_voltar.gif" alt="Voltar" width="17" height="15" border="0"> </a> </td>
+      </tr>
+    </table>
+  </div>
+  <table width="630" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="30" align="right" valign="top"><p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;&nbsp;</p>      </td>
+      <td width="569" align="left" valign="top"><table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="left" valign="top"><div align="left">            
+            <table width="600" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="onlybotton">
+                    <tr align="left" valign="top">
+                      <td width="204"><img src="images/LogoCaixa.gif" width="145" height="25"></td>
+                      <td width="41" valign="bottom" class="columnborder"><span class="titulo"><%= cBanco %></span><br>                      </td>
+                      <td width="355" valign="bottom" class="columnborder"> RECIBO DO SACADO </td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="440" class="bottonleftright"><span class="txttitcaixa">Local de Pagamento</span><br>
+                          <span class="txtcaixa">Pag&aacute;vel preferencialmente nas casas lot&eacute;ricas e ag&ecirc;ncias da Caixa</span></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="right"><div align="right"><img src="images/TESTE01.jpg" width="140" height="35"></div></td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="440" class="bottonleftright"><span class="txttitcaixa">Cedente</span><br>
+                          <span class="txtcaixa"><STRONG>SIND HOSPITAIS CLINICAS CAS DE SAUDE</STRONG></span></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="right"><div align="right"><img src="images/TESTE01.jpg" width="140" height="35"></div></td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="110" class="bottonleft"><span class="txttitcaixa">Data do Documento</span><br>
+                          <span class="txtcaixa"><%= Day(Now()) & "/" & Month(Now()) & "/" & Year(Now()) %></span></td>
+                      <td width="115" class="bottonleft"><span class="txttitcaixa">N&uacute;mero do Documento</span><br>
+                          <span class="txtcaixa"><%= "2402"+HttpPost->NossoNumero %></span></td>
+                      <td width="74" class="bottonleft"><span class="txttitcaixa">Esp. Doc.</span><br>
+			            <span class="txtcaixa">NB</span></td>
+                      <td width="36" class="bottonleft"><span class="txttitcaixa">Aceite</span><br>
+			              <span class="txtcaixa">N</span></td>
+                      <td width="104" class="bottonleftright"><span class="txttitcaixa">Data Processamento</span><br>
+                          <span class="txtcaixa"><%= Day(Now()) & "/" & Month(Now()) & "/" & Year(Now()) %></span></td>
+                      <td width="11">&nbsp;</td>
+                      <td width="150" class="right"><div align="right"><img src="images/sindrib.jpg" width="140" height="35"></div></td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="109" height="39" class="bottonleft"><span class="txttitcaixa">Uso Banco</span><br>
+                          <br>                      </td>
+
+                      <td width="74" class="bottonleft"><span class="txttitcaixa">Carteira</span><br>
+                          <span class="txtcaixa">SR</span></td>
+                      <td width="56" class="bottonleft"><span class="txtcaixa">Esp&eacute;cie</span><br>
+                          <span class="txtcaixa">R$</span></td>
+                      <td width="94" class="bottonleft"><span class="txttitcaixa">Quantidade</span><br>                      </td>
+                      <td width="106" class="bottonleftright"><span class="txttitcaixa">Valor</span><br>
+                          <span class="txtcaixa">&nbsp; </span></td>
+                      <td width="11">&nbsp;</td>
+                      <td width="150" class="right"><div align="right"><img src="images/TESTE01.jpg" width="140" height="35"></div></td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="426" class="bleft"><span class="txttitcaixa">Instru&ccedil;&otilde;es de Responsabilidade do Cedente</span><br>                        <br>                          <span class="txtcaixa">CONTRIBUI&Ccedil;&Atilde;O CONFEDERATIVA - <%= msgtela %></span><br></td>
+                      <td width="14" rowspan="5" valign="bottom" class="bright"><div align="center"><br>
+                      </div></td>
+                      <td width="10" rowspan="5">&nbsp;</td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">Vencimento</span><br>
+                        <span class="txtcaixa"><%=HttpPost->DataPagto%></span>                        <br>
+                          <span class="txtcaixa">&nbsp; </span></td>
+                    </tr>
+                    <tr align="left" valign="top">
+                      <td width="426" class="bleft">&nbsp;</td>
+                      <td class="bottonleftright"><span class="txttitcaixa">Ag&ecirc;ncia/C&oacute;digo Cedente </span><br>
+                        <span class="txtcaixa"><%= HttpPost->Agencia + left(HttpPost->CodCed,6) + "/" + right(HttpPost->CodCed,1) %></span></td>
+                    </tr>
+                    <tr align="left" valign="top">
+                      <td width="426" class="bleft"><%=teste123%>&nbsp;</td>
+                      <td class="bottonleftright"><span class="txttitcaixa">Nosso N&uacute;mero</span><br>
+                        <span class="txtcaixa"><%= "2402" + HttpPost->NossoNumero + "-" + HttpPost->Digito %></span></td>
+                    </tr>
+                    <tr align="left" valign="top">
+                      <td width="426" class="bleft  style14">Boleto v&aacute;lido at&eacute; <%=HttpPost->DataPagto%>, ap&oacute;s esta data, retire outro boleto no site: <a href="http://www.sindribeiraopreto.org.br">www.sindribeiraopreto.org.br.</a></td>
+                      <td class="bottonleftright"><span class="txttitcaixa">(=) Valor do Documento </span><br>
+                        <span class="txtcaixa">******<%= FormatNumber(valor_novo,2) %></span></td>
+                    </tr>
+                    <tr align="left" valign="top">
+                      <td width="426" class="bleft">&nbsp;</td>
+                      <td class="bottonleftright"><span class="txttitcaixa">(-) Desconto/Abatimento</span><br>
+                      <span class="txtcaixa">&nbsp; </span></td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td class="titrnr"><div align="center"><br>
+                            </div></td>
+                          </tr>
+                      </table></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(-) Outras Dedu&ccedil;&otilde;es</span><br>
+                          <span class="txtcaixa">&nbsp; </span></td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td class="titrnr"><div align="left"><%=msgvenc%></div></td>
+                          </tr>
+                      </table></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Mora/Multa </span><br>
+                          <!--<% If mm <> 0 Then %>
+                          <span class="txtcaixa">*****<%= FormatNumber(mm,2) %></span></td>
+                      <% End If %>-->
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td class="titrnr"><div align="center"><br>
+                            </div></td>
+                          </tr>
+                      </table></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Outros Acr&eacute;scimos </span><br>
+                          <span class="txtcaixa">&nbsp; </span></td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="440" class="bottonleftright"><div align="center"><strong><br>
+                      </strong></div></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(=) Valor Cobrado </span><br>
+                          
+						 
+                        <span class="txtcaixa">*****<%= FormatNumber(valor_novo,2) %></span></tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="leftright">
+                    <tr>
+                      <td><p><span class="txttitcaixa">Sacado</span><br>
+                              <% If Flag Then %>
+                              <span class="txtcaixa"><%= Trim(Rs("A1_NOME")) %>       CGC: <%= cCNPJ %><br>
+                              <%= Trim(mEnd) & ", " & Trim(Nr) & " " & Trim(Compl) & " - " & Trim(Rs("A1_BAIRRO")) %> <br>
+                              <%= mCep & " - " & Trim(Rs("A1_MUN")) & "-" & Rs("A1_EST") %> </span></p></td>
+                      <% End If %>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="bottonleftright">
+                    <tr>
+                      <td class="txtcaixa">Sacador/Avalista:</td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="268" class="titrnr">&nbsp;</td>
+                      <td width="332" align="right" class="titrnr">Autentica&ccedil;&atilde;o Mec&acirc;nica</td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td height="30" align="left" valign="top"><p>&nbsp;</p></td>
+              <tr>
+                <td align="left" valign="top"><img src="images/cortar.gif" width="600" height="21"></td>
+              </tr>
+            </table>
+          </div></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top">&nbsp;</td>
+        </tr>
+      </table></td>
+    <td height="2"></tr>
+  </table>
+  <table width="630" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td width="30">&nbsp;</td>
+      <td><table width="600" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="onlybotton">
+              <tr align="left" valign="top">
+                <td width="204"><img src="images/LogoCaixa.gif" width="145" height="25"></td>
+                <td width="40" valign="bottom" class="columnborder"><span class="titulo"><%= cBanco %></span><br>                </td>
+                <td width="356" valign="bottom" class="titrnr"><%= HttpPost->LinhaDigitavel %></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="bottonleftright"><span class="txttitcaixa">Local de Pagamento</span><br>
+                    <span class="txtcaixa">Pag&aacute;vel preferencialmente nas casas lot&eacute;ricas e ag&ecirc;ncias da Caixa</span></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">Vencimento</span><br>
+                  <span class="txtcaixa"><%=HttpPost->DataPagto%></span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="bottonleftright"><span class="txttitcaixa">Cedente</span><br>
+                          <span class="txtcaixa"><STRONG>SIND HOSPITAIS CLINICAS CAS DE SAUDE</STRONG></span></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">Ag&ecirc;ncia/C&oacute;digo Cedente </span><br>
+                    <span class="txtcaixa"><%= HttpPost->Agencia + left(HttpPost->CodCed,6) + "/" + right(HttpPost->CodCed,1)  %></span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="110" class="bottonleft"><span class="txttitcaixa">Data do Documento</span><br>
+                    <span class="txtcaixa"><%= Day(Now()) & "/" & Month(Now()) & "/" & Year(Now()) %></span></td>
+                <td width="115" class="bottonleft"><span class="txttitcaixa">N&uacute;mero do Documento</span><br>
+                    <span class="txtcaixa"><%= "2402"+HttpPost->NossoNumero %></span></td>
+                <td width="74" class="bottonleft"><span class="txttitcaixa">Esp. Doc.</span><br>
+                    <span class="txtcaixa">OU</span></td>
+                <td width="36" class="bottonleft"><span class="txttitcaixa">Aceite</span><br>
+                  <span class="txtcaixa">N</span></td>
+                <td width="100" class="bottonleftright"><span class="txttitcaixa">Data Processamento</span><br>
+                    <span class="txtcaixa"><%= Day(Now()) & "/" & Month(Now()) & "/" & Year(Now()) %></span></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">Nosso N&uacute;mero</span><br>
+                  <span class="txtcaixa"><%= "2402" + HttpPost->NossoNumero + "-" + HttpPost->Digito %></span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="111" class="bottonleft"><span class="txttitcaixa">Uso Banco</span><br>                  <br>                </td>
+
+                <td width="62" class="bottonleft"><span class="txttitcaixa">Carteira</span><br>
+                    <span class="txtcaixa">SR</span></td>
+                <td width="61" class="bottonleft"><span class="txtcaixa">Esp&eacute;cie</span><br>
+                    <span class="txtcaixa">REAL</span></td>
+                <td width="84" class="bottonleft"><span class="txttitcaixa">Quantidade</span><br>                </td>
+                <td width="121" class="bottonleftright"><span class="txttitcaixa">Valor</span><br>
+                    <span class="txtcaixa">&nbsp; </span></td>
+                <td width="10">&nbsp;</td>
+                <td width="152" class="bottonleftright"><span class="txttitcaixa">(=) Valor do Documento </span><br>
+                  <span class="txtcaixa">******<%= FormatNumber(valor_novo,2) %></span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="321" class="bleft"><span class="txttitcaixa">Instru&ccedil;&otilde;es de Responsabilidade do Cedente</span> <br>
+                    <br>                </td>
+                <td width="119" valign="bottom" class="bright"><div align="center"><br>
+                </div></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(-) Desconto/Abatimento </span><br>
+                    <span class="txtcaixa">&nbsp; </span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td class="titrnr"><div align="left"><span class="txtcaixa">CONTRIBUI&Ccedil;&Atilde;O CONFEDERATIVA - <%= msgtela %></span><br>                        
+                      </div></td>
+                    </tr>
+                </table></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(-) Outras Dedu&ccedil;&otilde;es</span><br>
+                    <span class="txtcaixa">&nbsp; </span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td class="titrnr"><div align="center"></div></td>
+                    </tr>
+                </table></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Mora/Multa </span><br>
+<!--<% If mm <> 0 Then %>				
+                    <span class="txtcaixa">*****<%= FormatNumber(mm,2) %></span></td>
+<% End If %>-->					
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td> 
+					   </span>
+					  <div align="left"><span class="style14">Boleto v&aacute;lido at&eacute; <%=HttpPost->DataPagto%>, ap&oacute;s esta data, retire outro boleto no site: <a href="http://www.sindribeiraopreto.org.br">www.sindribeiraopreto.org.br.</a></span><br>                              
+                      </div></td>
+                    </tr>
+                </table></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Outros Acr&eacute;scimos </span><br>
+                    <span class="txtcaixa">&nbsp; </span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="bottonleftright"><div align="left">&nbsp;</div></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(=) Valor Cobrado </span><br>
+                   
+                  <span class="txtcaixa">*****<%= FormatNumber(valor_novo,2) %></span></tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="leftright">
+              <tr>
+                <td><p><span class="txttitcaixa">Sacado</span><br>
+                        <% If Flag Then %>
+                        <span class="txtcaixa"><%= Trim(Rs("A1_NOME")) %>       CGC: <%= cCNPJ %><br>
+                        <%= Trim(mEnd) & ", " & Trim(Nr) & " " & Trim(Compl) & " - " & Trim(Rs("A1_BAIRRO")) %> <br>
+                        <%= mCep & " - " & Trim(Rs("A1_MUN")) & "-" & Rs("A1_EST") %> </span></p></td>
+                <% End If %>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="bottonleftright">
+              <tr>
+                <td class="txtcaixa">Sacador/Avalista:</td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="268" class="titrnr">&nbsp;</td>
+                <td width="332" align="right" class="titrnr">Autentica&ccedil;&atilde;o Mec&acirc;nica / Ficha de Compensa&ccedil;&atilde;o </td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td height="30" align="left" valign="top"><p><%= WBarCode(HttpPost->CodBar) %></p>            </td>
+        
+        <tr>
+          <td align="left" valign="top"><img src="images/cortar.gif" width="600" height="21"></td>
+        </tr>
+      </table></td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

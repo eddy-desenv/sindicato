@@ -1,0 +1,740 @@
+
+
+
+Function H_bolbrconf(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+__Response += PlainH_2()
+__Response += '<td align="center"><a href="' + cValToChar(HttpPost->RaizURL) + '"> <img src="Boletos/images/bt_voltar2.gif" alt="Voltar" border="0"> </a> </td>' + CHR(13)+CHR(10)
+__Response += PlainH_3()
+__Response += '<span class="titulo">' + cValToChar( HttpPost->Banco ) + "</span>" + CHR(13)+CHR(10)
+__Response += PlainH_4()
+__Response += '<td width="150" align="right" valign="bottom"><img src="Boletos/images/' + cValToChar(HttpPost->LogoTipo) + '" width="120" height="60"></td>' + CHR(13)+CHR(10)
+__Response += PlainH_5()
+__Response += '<span class="txtcaixa">' + cValToChar(HttpPost->DataPagto) + "</span>" + CHR(13)+CHR(10)
+__Response += PlainH_6()
+__Response += '<span class="txtcaixa"><STRONG>' + cValToChar(HttpPost->SDNome) + "</STRONG></span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_7()
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Agencia + " / " + HttpPost->CodCed + " / " + HttpPost->ValorDig ) + "</span>" + CHR(13)+CHR(10)
+__Response += PlainH_8()
+__Response += '<span class="txtcaixa">' + cValToChar( Alltrim(Str(Day(Date()))) + "/" + Alltrim(Str(Month(Date()))) + "/" + Alltrim(Str(Year(Date()))) ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_9()
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->NumDoc ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_10()
+__Response += '<span class="txtcaixa">' + cValToChar( Alltrim(Str(Day(Date()))) + "/" + Alltrim(Str(Month(Date()))) + "/" + Alltrim(Str(Year(Date()))) ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_11()
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->NossoNumero ) + "</span>" + CHR(13)+CHR(10)
+__Response += PlainH_12()
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Carteira ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_13()
+__Response += '<span class="txtcaixa">******' + cValToChar(HttpPost->ValorDocumento) + "</span>" + CHR(13)+CHR(10)
+__Response += PlainH_14()
+__Response += '<span class="txtcaixa">' + cValToChar(HttpPost->MsgBoleto) + "</span><br></td>" + CHR(13)+CHR(10)
+__Response += PlainH_15()
+__Response += '<td width="426" class="bleft"><span class="txtcaixa">' + cValToChar( HttpPost->Mensagem1 ) + "</span><br>" + CHR(13)+CHR(10)
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Mensagem2 ) + "</span><br>" + CHR(13)+CHR(10)
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Mensagem3 ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_16()
+ If  (Val(HttpPost->ValorMoraMulta) > 0)
+__Response += '<span class="txtcaixa">*****' + cValToChar(HttpPost->ValorMoraMulta) + "</span>" + CHR(13)+CHR(10)
+ Else
+__Response += PlainH_17()
+ EndIf
+__Response += PlainH_18()
+__Response += '<td width="426" class="bleft  style14"><span class="txtcaixa">' + cValToChar( HttpPost->Mensagem4 ) + "</span><br>" + CHR(13)+CHR(10)
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Mensagem5 ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_19()
+__Response += '<td width="426" class="bleft"><span class="txtcaixa">' + cValToChar( HttpPost->Mensagem6 ) + "</span><br>" + CHR(13)+CHR(10)
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Mensagem7 ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_20()
+ If  (Val(HttpPost->ValorCobrado) <> 0)
+__Response += '<span class="txtcaixa">*****' + cValToChar( HttpPost->ValorCobrado ) + "</span>" + CHR(13)+CHR(10)
+ Else
+__Response += PlainH_21()
+ end
+__Response += PlainH_22()
+__Response += PlainH_23()
+__Response += '<span class="txtcaixa">' + cValToChar( AllTrim(HttpPost->Razao) + "      " + HttpPost->CNPJ ) + "<br>" + CHR(13)+CHR(10)
+__Response += "" + cValToChar( HttpPost->XEndereco ) + " <br>" + CHR(13)+CHR(10)
+__Response += "" + cValToChar( HttpPost->Cep ) + " </span></p>" + CHR(13)+CHR(10)
+__Response += PlainH_24()
+__Response += PlainH_25()
+__Response += '<td width="40" valign="bottom" class="columnborder"><span class="titulo">' + cValToChar( HttpPost->Banco ) + "</span><br></td>" + CHR(13)+CHR(10)
+__Response += '<td width="356" valign="bottom" class="titrnr">' + cValToChar( HttpPost->LinhaDigitavel ) + "</td>" + CHR(13)+CHR(10)
+__Response += PlainH_26()
+__Response += '<span class="txtcaixa">' + cValToChar(HttpPost->DataPagto) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_27()
+__Response += '<span class="txtcaixa"><STRONG>' + cValToChar(HttpPost->SDNome) + "</STRONG></span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_28()
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Agencia + " / " + HttpPost->CodCed + " / " + HttpPost->ValorDig ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_29()
+__Response += '<span class="txtcaixa">' + cValToChar( Alltrim(Str(Day(Date()))) + "/" + Alltrim(Str(Month(Date()))) + "/" + Alltrim(Str(Year(Date()))) ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_30()
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->NumDoc ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_31()
+__Response += '<span class="txtcaixa">' + cValToChar( Alltrim(Str(Day(Date()))) + "/" + Alltrim(Str(Month(Date()))) + "/" + Alltrim(Str(Year(Date()))) ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_32()
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->NossoNumero ) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_33()
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Carteira ) + "</span>" + CHR(13)+CHR(10)
+__Response += PlainH_34()
+__Response += '<span class="txtcaixa">******' + cValToChar(HttpPost->ValorDocumento) + "</span></td>" + CHR(13)+CHR(10)
+__Response += PlainH_35()
+__Response += '<span class="txtcaixa">' + cValToChar(HttpPost->MsgBoleto) + "</span><br></td>" + CHR(13)+CHR(10)
+__Response += PlainH_36()
+__Response += '<td class="titrnr"><div align="left"><span class="txtcaixa"><span class="txtcaixa"><br>' + cValToChar( HttpPost->Mensagem1 ) + "</span></span><br>" + CHR(13)+CHR(10)
+__Response += PlainH_37()
+__Response += '<td><div align="left"><span class="txtcaixa">' + cValToChar( HttpPost->Mensagem2 ) + "</span><br>" + CHR(13)+CHR(10)
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Mensagem3 ) + "</span><br>" + CHR(13)+CHR(10)
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Mensagem4 ) + "</span></div>" + CHR(13)+CHR(10)
+__Response += PlainH_38()
+ If  (Val(HttpPost->ValorMoraMulta) > 0)
+__Response += '<span class="txtcaixa">*****' + cValToChar(HttpPost->ValorMoraMulta) + "</span>" + CHR(13)+CHR(10)
+ Else
+__Response += PlainH_39()
+ EndIf
+__Response += PlainH_40()
+__Response += '<div align="left"><span class="style14"><span class="txtcaixa">' + cValToChar( HttpPost->Mensagem5 ) + "</span><br>" + CHR(13)+CHR(10)
+__Response += '<span class="txtcaixa">' + cValToChar( HttpPost->Mensagem6 ) + "</span></div>" + CHR(13)+CHR(10)
+__Response += PlainH_41()
+__Response += '<td width="440" class="bottonleftright"><div align="left"><span class="txtcaixa">' + cValToChar( HttpPost->Mensagem7 ) + " &nbsp;</span></div></td>" + CHR(13)+CHR(10)
+__Response += PlainH_42()
+ If  (Val(HttpPost->ValorCobrado) <> 0)
+__Response += '<span class="txtcaixa">*****' + cValToChar( HttpPost->ValorCobrado ) + "</span>" + CHR(13)+CHR(10)
+ Else
+__Response += PlainH_43()
+ end
+__Response += PlainH_44()
+__Response += '<span class="txtcaixa">' + cValToChar( AllTrim(HttpPost->Razao) + "      " + HttpPost->CNPJ ) + "<br>" + CHR(13)+CHR(10)
+__Response += "" + cValToChar( HttpPost->XEndereco ) + " <br>" + CHR(13)+CHR(10)
+__Response += "" + cValToChar( HttpPost->Cep ) + " </span></p>" + CHR(13)+CHR(10)
+__Response += PlainH_45()
+__Response += '<td height="30" align="left" valign="top"><p>' + cValToChar(fWBarCode1(HttpPost->CodBar)) + "</p>            </td>" + CHR(13)+CHR(10)
+__Response += PlainH_46()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += '<script LANGUAGE="JavaScript" TYPE="text/javascript">' + CHR(13)+CHR(10)
+__Response += "function start(){" + CHR(13)+CHR(10)
+__Response += '	CreateStaticMenu("botoes_flutuantes", 5, 10);' + CHR(13)+CHR(10)
+__Response += "//	parent.topFrame.location.reload() ;" + CHR(13)+CHR(10)
+__Response += "}" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += "function PrintPage() {" + CHR(13)+CHR(10)
+__Response += "	var painel = document.getElementById('botoes_flutuantes');" + CHR(13)+CHR(10)
+__Response += "	painel.style.visibility = 'hidden';" + CHR(13)+CHR(10)
+__Response += "	window.print();" + CHR(13)+CHR(10)
+__Response += "	painel.style.visibility = '';" + CHR(13)+CHR(10)
+__Response += "}" + CHR(13)+CHR(10)
+__Response += "</script>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">' + CHR(13)+CHR(10)
+__Response += "<html>" + CHR(13)+CHR(10)
+__Response += "<head>" + CHR(13)+CHR(10)
+__Response += '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">' + CHR(13)+CHR(10)
+__Response += "<title> Guia de Recolhimento da Contribui&ccedil;&atilde;o Confederativa</title>" + CHR(13)+CHR(10)
+__Response += '<link href="guia.css" rel="stylesheet" type="text/css">' + CHR(13)+CHR(10)
+__Response += '<SCRIPT LANGUAGE="JavaScript" SRC="xBrowser.js"></SCRIPT>' + CHR(13)+CHR(10)
+__Response += '<SCRIPT LANGUAGE="JavaScript" SRC="xLayer.js"></SCRIPT>' + CHR(13)+CHR(10)
+__Response += '<SCRIPT LANGUAGE="JavaScript" SRC="staticMenu.js"></SCRIPT>' + CHR(13)+CHR(10)
+__Response += '<script language="JavaScript" type="text/JavaScript">' + CHR(13)+CHR(10)
+__Response += "<!--" + CHR(13)+CHR(10)
+__Response += "function MM_reloadPage(init) {  //reloads the window if Nav4 resized" + CHR(13)+CHR(10)
+__Response += '  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {' + CHR(13)+CHR(10)
+__Response += "    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}" + CHR(13)+CHR(10)
+__Response += "  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();" + CHR(13)+CHR(10)
+__Response += "}" + CHR(13)+CHR(10)
+__Response += "MM_reloadPage(true);" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_2()
+Local __Response := ""
+
+__Response += "//-->" + CHR(13)+CHR(10)
+__Response += "</script>" + CHR(13)+CHR(10)
+__Response += '<style type="text/css">' + CHR(13)+CHR(10)
+__Response += "<!--" + CHR(13)+CHR(10)
+__Response += ".style14 {font-size: 10px}" + CHR(13)+CHR(10)
+__Response += "-->" + CHR(13)+CHR(10)
+__Response += "</style>" + CHR(13)+CHR(10)
+__Response += "</head>" + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<body onload="start()" bgcolor="#ffffff" topmargin="0">' + CHR(13)+CHR(10)
+__Response += "" + CHR(13)+CHR(10)
+__Response += '<div align="center">' + CHR(13)+CHR(10)
+__Response += '  <div id="botoes_flutuantes" align="left" style="left: 5; top: 5; width: 36px; height: 55px; position: absolute; z-index:1">' + CHR(13)+CHR(10)
+__Response += "    <table cellspacing=3 cellpadding=0>" + CHR(13)+CHR(10)
+__Response += "      <tr>" + CHR(13)+CHR(10)
+__Response += '        <td align="center"><a href="javascript:PrintPage();"> <img src="Boletos/images/bt_imprimir.gif" alt="Imprimir" border="0" width="30" height="30"> </a> </td>' + CHR(13)+CHR(10)
+__Response += "      </tr>" + CHR(13)+CHR(10)
+__Response += "      <tr>" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_3()
+Local __Response := ""
+
+__Response += "      </tr>" + CHR(13)+CHR(10)
+__Response += "    </table>" + CHR(13)+CHR(10)
+__Response += "  </div>" + CHR(13)+CHR(10)
+__Response += '  <table width="630" border="0" align="center" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += "    <tr>" + CHR(13)+CHR(10)
+__Response += '      <td width="30" align="right" valign="top"><p>&nbsp;</p>' + CHR(13)+CHR(10)
+__Response += "      <p>&nbsp;</p>" + CHR(13)+CHR(10)
+__Response += "      <p>&nbsp;</p>" + CHR(13)+CHR(10)
+__Response += "      <p>&nbsp;</p>      </td>" + CHR(13)+CHR(10)
+__Response += '      <td width="569" align="left" valign="top"><table width="600" border="0" align="center" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="left" valign="top"><div align="left">' + CHR(13)+CHR(10)
+__Response += '            <table width="600" border="0" cellspacing="0" cellpadding="0">' + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="onlybotton">' + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="170" valign="bottom"><img src="boletos/images/logotipo_Banco_Real.jpg" width="80" height="18">&nbsp;&nbsp;<img src="boletos/images/logotipo_Santander.jpg" width="80" height="18"></td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="50"  valign="bottom">' + CHR(13)+CHR(10)
+__Response += "                          <img src=images/2.gif width=1 height=20 border=0>" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_4()
+Local __Response := ""
+
+__Response += "                          <img src=images/2.gif width=1 height=20 border=0>" + CHR(13)+CHR(10)
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += '                      <td width="200" valign="bottom"> RECIBO DO SACADO </td>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_5()
+Local __Response := ""
+
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="442" class="bottonleftright"><span class="txttitcaixa">Local de Pagamento</span><br>' + CHR(13)+CHR(10)
+__Response += '                          <span class="txtcaixa">Pag&aacute;vel em qualquer Banco at&eacute; o vencimento</span></td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="150" class="bottonleftright"><span class="txttitcaixa">Vencimento</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_6()
+Local __Response := ""
+
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="442" class="bottonleftright"><span class="txttitcaixa">Cedente</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_7()
+Local __Response := ""
+
+__Response += '                      <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="150" class="bottonleftright"><span class="txttitcaixa">Ag&ecirc;ncia/C&oacute;digo Cedente </span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_8()
+Local __Response := ""
+
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="110" class="bottonleft"><span class="txttitcaixa">Data do Documento</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_9()
+Local __Response := ""
+
+__Response += '                      <td width="115" class="bottonleft"><span class="txttitcaixa">N&uacute;mero do Documento</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_10()
+Local __Response := ""
+
+__Response += '                      <td width="74" class="bottonleft"><span class="txttitcaixa">Esp. Doc.</span><br>' + CHR(13)+CHR(10)
+__Response += '			            <span class="txtcaixa">NB</span></td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="36" class="bottonleft"><span class="txttitcaixa">Aceite</span><br>' + CHR(13)+CHR(10)
+__Response += '			              <span class="txtcaixa">A</span></td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="104" class="bottonleftright"><span class="txttitcaixa">Data Processamento</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_11()
+Local __Response := ""
+
+__Response += '                      <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="151" class="bottonleftright"><span class="txttitcaixa">Nosso N&uacute;mero</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_12()
+Local __Response := ""
+
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="109" height="39" class="bottonleft"><span class="txttitcaixa">Uso Banco</span></td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="74" class="bottonleft"><span class="txttitcaixa">Carteira</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_13()
+Local __Response := ""
+
+__Response += '                      <td width="56" class="bottonleft"><span class="txtcaixa">Esp&eacute;cie</span><br>' + CHR(13)+CHR(10)
+__Response += '                          <span class="txtcaixa">R$</span></td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="94" class="bottonleft"><span class="txttitcaixa">Quantidade</span><br></td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="106" class="bottonleftright"><span class="txttitcaixa">Valor</span><br>' + CHR(13)+CHR(10)
+__Response += '                          <span class="txtcaixa">&nbsp; </span></td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="151" class="bottonleftright"><span class="txttitcaixa">(=) Valor do Documento </span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_14()
+Local __Response := ""
+
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="426" class="bleft"><span class="txttitcaixa">Instru&ccedil;&otilde;es de Responsabilidade do Cedente</span><br><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_15()
+Local __Response := ""
+
+__Response += '                      <td width="14" rowspan="5" valign="bottom" class="bright"><div align="center"><br>' + CHR(13)+CHR(10)
+__Response += "                      </div></td>" + CHR(13)+CHR(10)
+__Response += '                      <td width="10" rowspan="5">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="150" class="bottonleftright">' + CHR(13)+CHR(10)
+__Response += '                         <span class="txttitcaixa">(-) Desconto/Abatimento</span><br>' + CHR(13)+CHR(10)
+__Response += '                         <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="426" class="bleft">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(-) Outras Dedu&ccedil;&otilde;es</span><br>' + CHR(13)+CHR(10)
+__Response += '                          <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_16()
+Local __Response := ""
+
+__Response += '                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Mora/Multa </span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_17()
+Local __Response := ""
+
+__Response += '                             <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_18()
+Local __Response := ""
+
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_19()
+Local __Response := ""
+
+__Response += '                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Outros Acr&eacute;scimos </span><br>' + CHR(13)+CHR(10)
+__Response += '                             <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+__Response += "		      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_20()
+Local __Response := ""
+
+__Response += '                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(=) Valor Cobrado </span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_21()
+Local __Response := ""
+
+__Response += '                             <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_22()
+Local __Response := ""
+
+__Response += "		      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">' + CHR(13)+CHR(10)
+__Response += "                          <tr>" + CHR(13)+CHR(10)
+__Response += '                            <td class="titrnr"><div align="left"><span class="txtcaixa">&nbsp;</span></div></td>' + CHR(13)+CHR(10)
+__Response += "                          </tr>" + CHR(13)+CHR(10)
+__Response += "                      </table></td>" + CHR(13)+CHR(10)
+__Response += '                      <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="150" class="leftright"><span class="txttitcaixa">&nbsp;</span><br>' + CHR(13)+CHR(10)
+__Response += '                          <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top">' + CHR(13)+CHR(10)
+__Response += '                  <table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="440" class="bottonleftright"><div align="left">&nbsp;</div></td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="150" class="bottonleftright"><span class="txttitcaixa">&nbsp;</span><br>' + CHR(13)+CHR(10)
+__Response += '                          <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "		    </tr>" + CHR(13)+CHR(10)
+__Response += "                  </table>" + CHR(13)+CHR(10)
+__Response += "                </td>" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_23()
+Local __Response := ""
+
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="leftright">' + CHR(13)+CHR(10)
+__Response += "                    <tr>" + CHR(13)+CHR(10)
+__Response += '                      <td><p><span class="txttitcaixa">Sacado</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_24()
+Local __Response := ""
+
+__Response += "                      </p></td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="bottonleftright">' + CHR(13)+CHR(10)
+__Response += "                    <tr>" + CHR(13)+CHR(10)
+__Response += '                      <td class="txtcaixa">Sacador/Avalista:</td>' + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '                    <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                      <td width="268" class="titrnr">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                      <td width="332" align="right" class="titrnr">Autentica&ccedil;&atilde;o Mec&acirc;nica / Ficha de Compensa&ccedil;&atilde;o</td>' + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td height="30" align="left" valign="top"><p>&nbsp;</p></td>' + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td align="left" valign="top"><img src="Boletos/images/cortar.gif" width="600" height="21"></td>' + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "            </table>" + CHR(13)+CHR(10)
+__Response += "          </div></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_25()
+Local __Response := ""
+
+__Response += "      </table></td>" + CHR(13)+CHR(10)
+__Response += '    <td height="2"></tr>' + CHR(13)+CHR(10)
+__Response += "  </table>" + CHR(13)+CHR(10)
+__Response += '  <table width="630" border="0" cellspacing="0" cellpadding="0">' + CHR(13)+CHR(10)
+__Response += "    <tr>" + CHR(13)+CHR(10)
+__Response += '      <td width="30">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '      <td><table width="600" border="0" cellspacing="0" cellpadding="0">' + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="onlybotton">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="168"><img src="boletos/images/logotipo_Banco_Real.jpg" width="80" height="18">&nbsp;&nbsp;<img src="boletos/images/logotipo_Santander.jpg" width="80" height="18"></td>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_26()
+Local __Response := ""
+
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="440" class="bottonleftright"><span class="txttitcaixa">Local de Pagamento</span><br>' + CHR(13)+CHR(10)
+__Response += '                    <span class="txtcaixa">Pag&aacute;vel em qualquer Banco at&eacute; o vencimento</span></td>' + CHR(13)+CHR(10)
+__Response += '                <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="150" class="bottonleftright"><span class="txttitcaixa">Vencimento</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_27()
+Local __Response := ""
+
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="440" class="bottonleftright"><span class="txttitcaixa">Cedente</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_28()
+Local __Response := ""
+
+__Response += '                <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="150" class="bottonleftright"><span class="txttitcaixa">Ag&ecirc;ncia/C&oacute;digo Cedente </span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_29()
+Local __Response := ""
+
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="110" class="bottonleft"><span class="txttitcaixa">Data do Documento</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_30()
+Local __Response := ""
+
+__Response += '                <td width="115" class="bottonleft"><span class="txttitcaixa">N&uacute;mero do Documento</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_31()
+Local __Response := ""
+
+__Response += '                <td width="74" class="bottonleft"><span class="txttitcaixa">Esp. Doc.</span><br>' + CHR(13)+CHR(10)
+__Response += '                    <span class="txtcaixa">NB</span></td>' + CHR(13)+CHR(10)
+__Response += '                <td width="36" class="bottonleft"><span class="txttitcaixa">Aceite</span><br>' + CHR(13)+CHR(10)
+__Response += '                  <span class="txtcaixa">A</span></td>' + CHR(13)+CHR(10)
+__Response += '                <td width="100" class="bottonleftright"><span class="txttitcaixa">Data Processamento</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_32()
+Local __Response := ""
+
+__Response += '                <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="150" class="bottonleftright"><span class="txttitcaixa">Nosso N&uacute;mero</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_33()
+Local __Response := ""
+
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="111" class="bottonleft"><span class="txttitcaixa">Uso Banco</span><br><br></td>' + CHR(13)+CHR(10)
+__Response += '                <td width="62" class="bottonleft"><span class="txttitcaixa">Carteira</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_34()
+Local __Response := ""
+
+__Response += "                </td>" + CHR(13)+CHR(10)
+__Response += '                <td width="61" class="bottonleft"><span class="txtcaixa">Esp&eacute;cie</span><br>' + CHR(13)+CHR(10)
+__Response += '                    <span class="txtcaixa">R$</span>' + CHR(13)+CHR(10)
+__Response += "                </td>" + CHR(13)+CHR(10)
+__Response += '                <td width="84" class="bottonleft"><span class="txttitcaixa">Quantidade</span><br></td>' + CHR(13)+CHR(10)
+__Response += '                <td width="122" class="bottonleftright"><span class="txttitcaixa">Valor</span><br>' + CHR(13)+CHR(10)
+__Response += '                    <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+__Response += "                </td>" + CHR(13)+CHR(10)
+__Response += '                <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="152" class="bottonleftright"><span class="txttitcaixa">(=) Valor do Documento </span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_35()
+Local __Response := ""
+
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="321" class="bleft"><span class="txttitcaixa">Instru&ccedil;&otilde;es de Responsabilidade do Cedente</span><br><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_36()
+Local __Response := ""
+
+__Response += '                <td width="119" valign="bottom" class="bright"><div align="center"><br></div></td>' + CHR(13)+CHR(10)
+__Response += '                <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="150" class="bottonleftright"><span class="txttitcaixa">(-) Desconto/Abatimento </span><br>' + CHR(13)+CHR(10)
+__Response += '                    <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+__Response += "                </td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">' + CHR(13)+CHR(10)
+__Response += "                    <tr>" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_37()
+Local __Response := ""
+
+__Response += "                      </div></td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += '                <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="150" class="bottonleftright"><span class="txttitcaixa">(-) Outras Dedu&ccedil;&otilde;es</span><br>' + CHR(13)+CHR(10)
+__Response += '                    <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+__Response += "                </td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">' + CHR(13)+CHR(10)
+__Response += "                    <tr>" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_38()
+Local __Response := ""
+
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += '                <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Mora/Multa </span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_39()
+Local __Response := ""
+
+__Response += '                             <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_40()
+Local __Response := ""
+
+__Response += "                </td>       	  " + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">' + CHR(13)+CHR(10)
+__Response += "                    <tr>" + CHR(13)+CHR(10)
+__Response += "                      <td>" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_41()
+Local __Response := ""
+
+__Response += "                      </td>" + CHR(13)+CHR(10)
+__Response += "                    </tr>" + CHR(13)+CHR(10)
+__Response += "                </table></td>" + CHR(13)+CHR(10)
+__Response += '                <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Outros Acr&eacute;scimos </span><br>' + CHR(13)+CHR(10)
+__Response += '                    <span class="txtcaixa">&nbsp; </span></td>' + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top">' + CHR(13)+CHR(10)
+__Response += '             <table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_42()
+Local __Response := ""
+
+__Response += '                <td width="10">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="150" class="bottonleftright"><span class="txttitcaixa">(=) Valor Cobrado </span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_43()
+Local __Response := ""
+
+__Response += '                             <span class="txtcaixa">&nbsp; </span>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_44()
+Local __Response := ""
+
+__Response += "                </td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "            </table>" + CHR(13)+CHR(10)
+__Response += "          </td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="leftright">' + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td><p><span class="txttitcaixa">Sacado</span><br>' + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_45()
+Local __Response := ""
+
+__Response += "                </p></td>" + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="bottonleftright">' + CHR(13)+CHR(10)
+__Response += "              <tr>" + CHR(13)+CHR(10)
+__Response += '                <td class="txtcaixa">Sacador/Avalista:</td>' + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">' + CHR(13)+CHR(10)
+__Response += '              <tr align="left" valign="top">' + CHR(13)+CHR(10)
+__Response += '                <td width="268" class="titrnr">&nbsp;</td>' + CHR(13)+CHR(10)
+__Response += '                <td width="332" align="right" class="titrnr">Autentica&ccedil;&atilde;o Mec&acirc;nica / Ficha de Compensa&ccedil;&atilde;o </td>' + CHR(13)+CHR(10)
+__Response += "              </tr>" + CHR(13)+CHR(10)
+__Response += "          </table></td>" + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+Return(__Response)
+
+Static Function PlainH_46()
+Local __Response := ""
+
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "        <tr>" + CHR(13)+CHR(10)
+__Response += '          <td align="left" valign="top"><img src="Boletos/images/cortar.gif" width="600" height="21"></td>' + CHR(13)+CHR(10)
+__Response += "        </tr>" + CHR(13)+CHR(10)
+__Response += "      </table></td>" + CHR(13)+CHR(10)
+__Response += "    </tr>" + CHR(13)+CHR(10)
+__Response += "  </table>" + CHR(13)+CHR(10)
+__Response += "</div>" + CHR(13)+CHR(10)
+__Response += "</body>" + CHR(13)+CHR(10)
+__Response += "</html>" + CHR(13)+CHR(10)
+Return(__Response)

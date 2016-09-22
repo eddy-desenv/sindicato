@@ -1,0 +1,78 @@
+
+<script language="javascript">
+    function Redirectfun()
+    {                                                
+		if (document.forms[0].CODBCO.value == '104'){
+			document.forms[0].action=document.getElementById("PORTAL").value + "BOLNEGCEF.asp";
+			document.forms[0].submit();			
+		}else 
+		if (document.forms[0].CODBCO.value == '237'){	                                                               
+			document.forms[0].action=document.getElementById("PORTAL").value + "BOLNEGBRAD.asp";
+			document.forms[0].submit();			
+		}else{
+			alert("Problemas com Redirecinamento");
+		}
+
+		return true;
+    } 
+</script>
+
+</HEAD>
+
+<BODY onload="Redirectfun()">
+	<form  method="post" >
+   		<input id="PORTAL" name="PORTAL" type="hidden" value = '<%=HTTPSESSION->PORTAL%>'/>   		
+   		<input id="CGC" name="CGC" type="hidden" value = '<%=HTTPPOST->CGC%>'/> 
+   		<input id="CEND" name="CEND" type="hidden" value = '<%=HTTPPOST->CEND%>'/>
+   		<input id="CENDNUM" name="CENDNUM" type="hidden" value = '<%=HTTPPOST->CENDNUM%>'/>
+   		<input id="CENDCOMPL" name="CENDCOMPL" type="hidden" value = '<%=HTTPPOST->CENDCOMPL%>'/>
+   		<input id="RAZAO" name="RAZAO" type="hidden" value = '<%=HTTPPOST->RAZAO%>'/>
+   		<input id="EST" name="EST" type="hidden" value = '<%=HTTPPOST->EST%>'/>
+   		<input id="MUN" name="MUN" type="hidden" value = '<%=HTTPPOST->MUN%>'/>
+   		<input id="CEP" name="CEP" type="hidden" value = '<%=HTTPPOST->CEP%>'/>
+   		<input id="BAIRRO" name="BAIRRO" type="hidden" value = '<%=HTTPPOST->BAIRRO%>'/>
+   		<input id="tFuncs" name="tFuncs" type="hidden" value = '<%=HTTPPOST->tFuncs%>'/>
+   		<input id="MSG1" name="MSG1" type="hidden" value = '<%=HTTPPOST->MSG1%>'/>
+   		<input id="MSG2" name="MSG2" type="hidden" value = '<%=HTTPPOST->MSG2%>'/>
+   		<input id="MSG3" name="MSG3" type="hidden" value = '<%=HTTPPOST->MSG3%>'/>
+   		<input id="MSG4" name="MSG4" type="hidden" value = '<%=HTTPPOST->MSG4%>'/>
+   		<input id="MSG5" name="MSG5" type="hidden" value = '<%=HTTPPOST->MSG5%>'/>
+   		<input id="MSG6" name="MSG6" type="hidden" value = '<%=HTTPPOST->MSG6%>'/>
+   		<input id="MSG7" name="MSG7" type="hidden" value = '<%=HTTPPOST->MSG7%>'/>
+   		<input id="ANO" name="ANO" type="hidden" value = '<%=HTTPPOST->ANO%>'/>   		
+   		<input id="PARCELA" name="PARCELA" type="hidden" value = '<%=HTTPPOST->PARCELA%>'/>   		
+   		<input id="CODBCO" name="CODBCO" type="hidden" value = '<%=HTTPPOST->CODBCO%>'/>   		
+
+   		
+   		<input id="AGENCIA" name="AGENCIA" type="hidden" value = '<%=HTTPPOST->AGENCIA%>'/>
+   		<input id="CONTA" name="CONTA" type="hidden" value = '<%=HTTPPOST->CONTA%>'/>
+   		<input id="CEDENTE" name="CEDENTE" type="hidden" value = '<%=HTTPPOST->CEDENTE%>'/>
+   		<input id="TIT" name="TIT" type="hidden" value = '<%=HTTPPOST->TIT%>'/>
+   		<input id="DTINIC" name="DTINIC" type="hidden" value = '<%=HTTPPOST->DINIATV%>'/>
+   		<input id="MOEDA" name="MOEDA" type="hidden" value = '<%=HTTPPOST->MOEDA%>'/>
+   		<input id="VENCTO" name="VENCTO" type="hidden" value = '<%=HTTPPOST->DTVENCTO%>'/>
+
+   		<input id="LOGOTIPO" name="LOGOTIPO" type="hidden" value = '<%=HTTPPOST->LOGOTIPO%>'/>
+
+   		<input id="SDNOME" name="SDNOME" type="hidden" value = '<%=HTTPPOST->SDNOME%>'/>
+   		<input id="SDEND" name="SDEND" type="hidden" value = '<%=HTTPPOST->SDEND%>'/>
+   		<input id="SDNUMEND" name="SDNUMEND" type="hidden" value = '<%=HTTPPOST->SDNUMEND%>'/>
+   		<input id="SDCOMPL" name="SDCOMPL" type="hidden" value = '<%=HTTPPOST->SDCOMPL%>'/>
+   		<input id="SDBAIRRO" name="SDBAIRRO" type="hidden" value = '<%=HTTPPOST->SDBAIRRO%>'/>
+   		<input id="SDCEP" name="SDCEP" type="hidden" value = '<%=HTTPPOST->SDCEP%>'/>
+   		<input id="SDMUN" name="SDMUN" type="hidden" value = '<%=HTTPPOST->SDMUN%>'/>
+   		<input id="SDEST" name="SDEST" type="hidden" value = '<%=HTTPPOST->SDEST%>'/>
+   		<input id="SDCGC" name="SDCGC" type="hidden" value = '<%=HTTPPOST->SDCGC%>'/>
+   		<input id="CNAE" name="CNAE" type="hidden" value = '<%=HTTPPOST->CNAE%>'/>
+   		<input id="VALOR" name="VALOR" type="hidden" value = '<%=HTTPPOST->VALOR %>'/>
+   		<input id="MORA" name="MORA" type="hidden" value = '<%=HTTPPOST->MORAMULTA %>'/>
+   		<input id="CORRECAO" name="CORRECAO" type="hidden" value = '<%=HTTPPOST->CORRMON %>'/>
+   		<input id="VLRCOBR" name="VLRCOBR" type="hidden" value = '<%=HTTPPOST->VLRCOBR%>'/>
+
+   		<input id="ALIQ" name="ALIQ" type="hidden" value = '<%=HTTPPOST->ALIQ%>'/>
+   		
+   		<input id="RAIZURL" name="RAIZURL" type="hidden" value = '<%=HTTPPOST->RAIZURL%>'/>
+   		
+ 	</form>
+</BODY>
+</HTML>

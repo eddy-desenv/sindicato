@@ -1,0 +1,47 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function RFINA16()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA16	³ Autor ³ Ricardo K. Yamashiro	³ Data ³ 03.12.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Cadastro de Escrit¢rios Cont beis			  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso	     ³ Espec¡fico SINDHOSP					  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+Private aMemos    	:= { { 'ZC_CODMEM', 'ZC_OBS' } }
+                         
+
+//AxCadastro("SZC","Cadastro de Escrit¢rios Cont beis")
+//AAdd( aButtons, { "EXCLUIR", {|| U_DELAUXESC() }, ,"Cancela Alterações" } )
+//AxCadastro("SZC","Cadastro de Escrit¢rios Cont beis",,,,,/*bOK*/,,/*bNoTTS*/,,,aButtons,/*aACS*/)
+
+Private cAlias := "SZC"
+Private aRotina   := {}
+Private lRefresh  := .T.
+Private cCadastro := "Cadastro de Escrit¢rios Cont beis"
+Private aButtons := {}
+Private oMenu
+
+aAdd( aRotina, {"Pesquisar"	 	,"AxPesqui"									,0,1} )
+aAdd( aRotina, {"Visualizar"	,"AxVisual"									,0,2} )
+aAdd( aRotina, {"Incluir"   	,'AxInclui(cAlias,RecNo(),3,,,,,,,aButtons)',0,3} )
+aAdd( aRotina, {"Alterar"   	,'AxAltera(cAlias,RecNo(),4)'				,0,4} )
+aAdd( aRotina, {"Alterações Web","U_MANESCWEB"								,0,6} )
+aAdd( aRotina, {"Excluir"   	,"AxDeleta"									,0,5} )
+
+dbSelectArea(cAlias)
+dbSetOrder(1)
+
+mBrowse(,,,,cAlias)
+
+
+return nil
+

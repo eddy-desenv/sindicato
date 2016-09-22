@@ -1,0 +1,187 @@
+<%
+
+Local cCGC := If( !(Empty(HTTPSESSION->AEMPRESA)) .And. !(Empty(HTTPSESSION->AEMPRESA:CCCGC)), HTTPSESSION->AEMPRESA:CCCGC, '')
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head> 
+	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+	<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+    <title>SindHosp</title>  
+
+	<script src="js/popcal_config.js"></script>
+	<script src="js/popcal_lang.js"></script>
+	<script src="js/popcal.js"></script>
+	<script src="funcoes.js"></script>
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/structure.css" type="text/css" />
+	<link rel="stylesheet" href="css/form.css" type="text/css" />
+	
+	<!-- JavaScript -->
+	<script type="text/javascript" src="scripts/wufoo.js"></script>
+			
+	<SCRIPT LANGUAGE="JavaScript">
+	function selecionar_tudo(){ 
+  		for (i=0;i<document.forms[0].elements.length;i++) 
+      		if(document.forms[0].elements[i].type == "checkbox")
+      		{   
+      			if(document.forms[0].elements[i].checked==1){	
+	         		document.forms[0].elements[i].checked=0
+	        	}else{	
+	         		document.forms[0].elements[i].checked=1  
+	   			}
+	         }	        	
+	} 
+
+	function marcado(){ 
+  		for (i=0;i<document.forms[0].elements.length;i++) 
+      		if(document.forms[0].elements[i].type == "checkbox")
+      		{   
+         		document.forms[0].elements[i].checked=1;  
+	         }	        	
+	} 
+	</script>                 
+
+  <script language="javascript">		 
+	<!--campos em branco-->
+	function CampoBranco(){
+		var erro = '';  
+		var chkerro = 0;
+		var msg = '';
+		var obj = document.forms[0].CGC.value;
+		
+		if(obj == '' || obj == 0){
+			erro='S';
+			msg += '* Campo CNPJ em branco\n';
+        }
+             
+   		for (i=0;i<document.forms[0].elements.length;i++) 
+      		if(document.forms[0].elements[i].type == "checkbox")
+      		{   
+      			if(document.forms[0].elements[i].checked==1){
+      				chkerro++;	
+	   			}
+	         }
+<%/*		if(chkerro == 0)
+		{
+			erro='S';
+			msg += '* Selecionar um tipo de extrato\n';
+        }
+  */%>            
+        if(erro == ''){                        
+			document.forms[0].VerURL.value = document.URL;
+            
+			document.forms[0].action="U_IEPAS2.APW";	
+			document.forms[0].submit();
+			return true;
+		}
+		if(msg != ''){
+			alert(msg);
+			return false;
+		}
+	}
+	  	
+  	</script>
+  
+  
+  <script language="javascript">		 
+	
+	<!--Direcionamento para a tela de cadastro-->
+	function Cadastro(){
+		document.forms[0].action="W_FUNCEMP.APW";
+		document.forms[0].submit();
+		return true;
+	}
+	</script>
+
+  <script language="javascript">		 
+	
+	<!--Direcionamento para a tela de EXTRATOS-->
+	function Cancela(){ 
+		document.forms[0].action="W_EXTRATO.APW";
+		document.forms[0].submit();
+		return true;
+	}
+	</script>
+		
+</head>
+
+<body id="public">
+<div id="container">
+
+<form class="wufoo topLabel page" method="post">
+	<input id="VerURL" name="VerURL" type="hidden" value=""/>
+
+	<div>
+         <img id="Image1" src="images/header_extrato_boletos-todos.gif" style="border-width:0px; width:100%;" />
+	</div>
+
+<ul>
+
+<%if HTTPPOST->MSGATUA == NIL .OR. EMPTY(HTTPPOST->MSGATUA)%>
+
+<%/*
+<li class="     ">
+	<a href="javascript:selecionar_tudo()">
+	   		Marcar/Desmarcar Todos
+    </a>
+</li>
+<li class="complex      ">
+	<input type="checkbox" name="CHKSIND" CHECKED onclick="javascript:marcado();" />	
+	<label class="Field4" id="title3" for="Field3">
+		Extrato de Contribuição Sindical	
+	</label>
+</li>
+
+<li class="complex      ">
+	<input type="checkbox" name="CHKCONFASSIST" CHECKED onclick="javascript:marcado();" />	
+	<label class="Field4" id="title3" for="Field3">
+		Extrato de Contribuição Confederativa/Assistencial	
+	</label>
+</li>
+
+<li class="complex      ">
+	<input type="checkbox" name="CHKASSOC" CHECKED onclick="javascript:marcado();" />	
+	<label class="Field4" id="title3" for="Field3">
+		Extrato de Contribuição Associativa	
+	</label>
+</li> 
+*/%>
+
+<BR><BR>
+<li class="complex      ">
+	<label class="Field4" id="title3" for="Field3">
+		* CNPJ:	
+	</label>
+	<input id="CGC" maxlength="18" name="CGC" onblur="valida_cnpj(this)" value="05073574000103" size="19"/>
+</li>
+<BR><BR>
+<li class="complex      ">
+	<span class="full">
+		<input class="style14" name="Enviar" type="button" value="Enviar" onclick="CampoBranco()"/>
+	</span>	
+</li>
+
+<%ELSE%>
+
+<li class="     ">
+	<label class="Field4" id="title1" for="Field1">
+	<%=HTTPPOST->MSGATUA%>
+	</label>
+	<BR><BR>
+	<span class="full">
+		<input id="ButtonS" type="button" value="Sim" onclick="Cadastro()" />
+		<input id="ButtonN" type="button" value="Não" onclick="Cancela()" />		                	
+	</span>
+</li>
+
+<%ENDIF%>
+</body>
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>
+
+

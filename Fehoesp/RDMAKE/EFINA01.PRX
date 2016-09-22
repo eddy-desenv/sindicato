@@ -1,0 +1,234 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function EFINA01()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_COLDALIAS,_CTITULO,N_OPC,CPERG,_CPRIMCHEQUE,CCHEQ")
+SetPrvt("_LACHOU,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ EFINA01  ³ Autor ³ Andreia dos Santos    ³ Data ³ 08.06.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Geracao de Cheque sem Movimentacao Bancaria                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³                                                            ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+/*/
+
+_cOldAlias := ALIAS()
+_cTitulo   := "Geracao de Cheques"
+n_Opc      := 0
+cPerg      := "EFI480"
+
+Pergunte(cPerg,.T.)
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,022,079)
+   SetColor("B/BG,N/W")
+
+   @ 011,010 Say "Este programa ir  gerar cheques sem gerar movimentacao "
+   @ 012,010 Say "Banc ria."
+
+   SetColor("B/BG,W/N")
+
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Parametros","Abandona"},22,04,"b/w,w+/n,r/w","CPA","",2)
+
+      If n_Opc == 3 .or. Lastkey()==27
+         Return
+      Endif
+
+      If n_Opc == 2
+         Pergunte(cPerg,.T.)
+         Loop
+      Endif
+
+      Exit
+   End
+   GERAR()   
+#ELSE
+   @ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 TO 100,222
+   @ 023,014 SAY "Este programa ir  gerar cheques sem gerar movimentacao "
+   @ 033,014 SAY "Banc ria."
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01                    // do Titulo                     ³
+//³ mv_par02                    // Ate o Titulo                  ³
+//³ mv_par03                    // do vencimento                 ³
+//³ mv_par04                    // ate o vencimento              ³
+//³ mv_par05                    // Codigo Do Banco               ³
+//³ mv_par06                    // Da Agencia                    ³
+//³ mv_par07                    // Da Conta                      ³
+//³ mv_par08                    // Numero do 1o cheque           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Iniciar
+Static Function Iniciar()
+*-----------------*
+Close(oDlg1)
+Processa( {|| Gerar() })// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Processa( {|| Execute(Gerar) })
+Return
+
+*------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Gerar
+Static Function Gerar()
+*------------------*
+dbSelectArea("SE2")
+dbSetOrder(1)
+
+ProcRegua(RecCount(),22,05)
+
+dbseek(xFilial()+mv_par01,.t.)
+
+if !eof()
+   _cPrimCheque := strzero(val(mv_par08),6)
+   _Numera()
+
+endif
+
+dbSelectArea("SE2")
+
+while !eof() .and. SE2->E2_FILIAL+SE2->E2_PREFIXO+SE2->E2_NUM+E2_PARCELA <=;
+                 xFilial()+mv_par01
+
+   #IFNDEF WINDOWS
+     IncProc(22,05)
+   #ELSE
+     IncProc(_cTitulo)
+   #ENDIF
+
+&&   Alert ( SE2->E2_PREFIXO + SE2->E2_NUM )
+
+   if SE2->E2_VENCTO < mv_par03 .or. SE2->E2_VENCTO > mv_par04
+      dbskip()
+      loop
+   endif
+
+   if !empty( SE2->E2_NUMBCO)
+      Alert ( "Cheque " + SE2->E2_NUMBCO + " - Ja gerado...") 
+      dbskip()
+      loop
+   endif
+
+   if SE2->E2_GCHEQ == "S"
+
+      dbSelectArea("SA2")
+      dBSetOrder(1)
+      dbSeek(xFilial()+SE2->E2_FORNECE+SE2->E2_LOJA)
+
+      dbSelectArea("SEF")
+      RecLock("SEF",.T.)
+
+
+      Alert ( "cHEQUE" + cCHEQ ) 
+   
+      SEF->EF_FILIAL   := xFilial("SEF")
+      SEF->EF_PREFIXO  := SE2->E2_PREFIXO
+      SEF->EF_TITULO   := SE2->E2_NUM
+      SEF->EF_PARCELA  := SE2->E2_PARCELA
+      SEF->EF_TIPO     := SE2->E2_TIPO
+      SEF->EF_NUM      := cCHEQ     //NUMERO DO CHEQUE SEQUENCIAL
+      SEF->EF_BANCO    := mv_par05
+      SEF->EF_AGENCIA  := mv_par06
+      SEF->EF_CONTA    := mv_par07
+      SEF->EF_BENEF    := SA2->A2_NOME
+      SEF->EF_VALOR    := SE2->E2_VALOR
+      SEF->EF_DATA     := DDatabase
+      SEF->EF_IMPRESS  := "A"
+      SEF->EF_HIST     := SE2->E2_HIST
+      SEF->EF_FORNECE  := SE2->E2_FORNECE
+      SEF->EF_LOJA     := SE2->E2_LOJA
+      SEF->EF_LIBER    := "N"
+
+      RecLock("SEF",.T.)
+      SEF->EF_FILIAL   := xFilial("SEF")
+      SEF->EF_NUM      := cCHEQ          //NUMERO DO CHEQUE SEQUENCIAL
+      SEF->EF_BANCO    := mv_par05
+      SEF->EF_AGENCIA  := mv_par06
+      SEF->EF_CONTA    := mv_par07
+      SEF->EF_BENEF    := SA2->A2_NOME
+      SEF->EF_VALOR    := SE2->E2_VALOR
+      SEF->EF_DATA     := DDatabase
+      SEF->EF_HIST     := SE2->E2_HIST  //?
+      SEF->EF_LIBER    := "N"
+ 
+      msUnlock()
+
+      dbSelectArea("SE2")
+      recLock("SE2",.F.)
+      SE2->E2_IMPCHEQ := "S"        // Flag de impressao do cheque
+      SE2->E2_NUMBCO  := cCHEQ      // N§ do Cheque
+
+      cCHEQ := ltrim( strzero( val( cCHEQ )+1,06 ) )
+      dbSelectArea("SEF")
+      if dbSeek(xFilial()+mv_par05+mv_par06+mv_par07+cCHEQ )
+         _cPrimCheque := CCHEQ
+         _NUMERA()
+      endif
+   endif
+   dbSelectArea("SE2")
+   dbskip()
+end
+
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> __RETURN( .T. )
+Return( .T. )        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+*------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> function _numera
+Static function _numera()
+*------------------*
+
+dbSelectArea("SEF")
+dbSetOrder(1)
+
+_lACHOU := dbSeek(xFilial()+mv_par05+mv_par06+mv_par07+_cPrimCheque )
+
+while !eof() .and. SEF->EF_FILIAL+SEF->EF_BANCO+SEF->EF_AGENCIA+SEF->EF_CONTA == ;
+                        xFilial()+mv_par05+mv_par06+mv_par07
+   dbskip()
+end
+if _lACHOU
+   dbskip( -1 )
+endif
+
+if SEF->EF_FILIAL+SEF->EF_BANCO+SEF->EF_AGENCIA+SEF->EF_CONTA == ;
+        xFilial()+mv_par05+mv_par06+mv_par07
+
+   if _cPrimCheque == SEF->EF_NUM .or. _cPrimCheque < SEF->EF_NUM
+      cCHEQ := ltrim( strzero( val( SEF->EF_NUM )+1,06 ) )
+   else
+      cCHEQ := ltrim( strzero( val( _cPrimCheque ),06 ) )
+   endif
+else
+   cCHEQ := ltrim( strzero( val( _cPrimCheque ),06 ) )
+endif
+
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> __return(.t.)
+Return(.t.)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04

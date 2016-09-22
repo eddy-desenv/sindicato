@@ -1,0 +1,57 @@
+#include "rwmake.ch"
+#include "topconn.ch"
+User Function excluibx()
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ Excluibx ³ Autor ³ Luis Mattos Duarte Jr.³ Data ³ 13/04/05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Exclusao de titulos baixados                               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß\ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo  := "Exclusao de baixas pelo Arquivo Bancario"
+n_Opc := 0
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+@ 023,014 SAY "Este programa exclui os titulos gerados pelo recepcao do arquivo selecionado."
+@ 086,014 SAY "CONFIRME PARA INICIAR A ATUALIZACAO DOS DADOS."
+@ 110,168 BMPBUTTON TYPE 1 ACTION Iniciar()
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+Return
+**************************
+Static Function Iniciar()
+Close(oDlg1)
+Processa( {|| ATUALIZA() })
+Return
+**************************
+Static Function ATUALIZA()
+IF !PERGUNTE("EXCLBX",.T.)
+	RETURN()
+ENDIF	
+if EMPTY(MV_PAR01)
+	alert("Você não informou o arquivo !!")
+	return
+endif
+cquery := "SELECT COUNT(*) AS NUMTIT FROM SE1010 SE1 WHERE D_E_L_E_T_='' AND E1_ARQBCO='"+MV_PAR01+"' and SUBSTRING(E1_PREFIXO,3,1) IN (' ','E','S')"
+TCQUERY cQuery NEW ALIAS "TRB"
+DBSELECTAREA("TRB")
+IF MsgYesNo("Confirma Exclusao de "+alltrim(str(trb->numtit))+" titulos ?")
+	cquery := "UPDATE SE1010 SET D_E_L_E_T_='*' WHERE D_E_L_E_T_='' AND E1_ARQBCO='"+MV_PAR01+"' and SUBSTRING(E1_PREFIXO,3,1) IN (' ','E','S') AND LEFT(E1_CONFED,4) NOT IN ('8000','9000') "
+	TCSQLEXEC(CQUERY)
+	cquery := "UPDATE SE1010 SET E1_BAIXA='',E1_VALLIQ=0,E1_JUROS=0,E1_ARQBCO='',E1_SALDO=E1_VALOR  WHERE D_E_L_E_T_='' AND E1_ARQBCO='"+MV_PAR01+"' "
+	TCSQLEXEC(CQUERY)
+endif
+alert("Exclusão de  "+alltrim(str(trb->numtit))+" titulos finalizada com Sucesso !!")
+dbselectarea("trb")
+dbCLOSEAREA("TRB")
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder) // Atencao (UPDXFUN).
+Return

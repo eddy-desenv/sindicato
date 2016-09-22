@@ -1,0 +1,200 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function RFINA14()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_CALIAS,_NORDEM,_NREGISTRO,_CTITULO,CPERG,_NOPCAO")
+SetPrvt("NSALDODINH,NSALDOREQ,NSOMA,NREEMBOLSO,NREQUISITA,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA14  ³ Autor ³ Jeremias Luna         ³ Data ³ 30.09.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Fechamento do saldo do caixa                               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+_cAlias := alias()
+_nOrdem := IndexOrd()
+_nRegistro := recno()
+_cTitulo := "Fechamento de Caixa"
+cPerg := 'FINA14'
+
+Pergunte(cPerg,.t.)
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,017,079)
+   setcolor("B/BG,N/W")
+
+   @011,010 say "Este programa montara o saldo final do caixa"
+   @012,010 say "para sua utilizacao no proxima dia util"
+
+   @014,010 say "CONFIRME PARA INICIAR A VERIFICACAO DO SALDO"
+
+   while .t.
+      _nOpcao := Menuh({"Confirma","Parametros","Abandona"},17,04,"b/w,w+/n,r/w","CPA","",2)
+
+      if _nOpcao == 3 .or. Lastkey() == 27
+         return
+      endif
+
+      if _nOpcao == 2
+         Pergunte(cPerg,.T.)
+         loop
+      endif
+
+      exit
+   enddo
+
+   FecharCaixa()
+#ELSE
+   @ 096,042 to 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 to 100,222
+
+   @ 023,014 say "Este programa verificara o saldo do caixa "
+   @ 033,014 say "para a impressao do relatorio do caixa"
+
+   @ 063,014 SAY "CONFIRME PARA INICIAR A VERIFICACAO DO SALDO        "
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.t.)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+return
+*---------------------------------------------------------------*
+
+*---------------------------------------------------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>  function Iniciar
+Static function Iniciar()
+*---------------------------------------------------------------*
+
+close(oDlg1)
+
+processa({||FecharCaixa()})// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> processa({||Execute(FecharCaixa)})
+
+return
+*---------------------------------------------------------------*
+
+*---------------------------------------------------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>  Function FecharCaixa
+Static Function FecharCaixa()
+*---------------------------------------------------------------*
+
+dbselectarea('sza')
+dbsetorder(1)
+dbseek(xFilial()+dtos(mv_par02))
+if found() == .t.
+   nSaldoDinh := za_saldodi
+else
+   nSaldoDinh := 0
+endif
+
+nSaldoReq := 0
+
+dbselectarea('se5')
+dbsetorder(1)
+dbgotop()
+dbseek(xFilial("SE5")+dtos(mv_par01),.t.)
+
+nSoma := 0
+nReembolso := 0
+nRequisita := 0
+
+while eof() == .f.
+   *------------------------------------------------------------*
+   * Soma as receitas, p. ex. vendas de tabelas
+   *------------------------------------------------------------*
+   if e5_banco == 'CX ' .and. e5_RecPag == 'R' .and.;
+      e5_tipodoc == '  '.and. e5_tipo == '   '  .and.;
+      e5_data == mv_par01 .and. e5_situaca #'C'
+
+      nSoma := nSoma + e5_valor
+   endif
+
+   *------------------------------------------------------------*
+   * Somas as devolucoes das requisicoes
+   *------------------------------------------------------------*
+   if e5_tipo == 'VL '    .and. e5_naturez == 'REQUISICAO' .and.;
+      e5_RecPag == 'P'    .and. e5_MotBx == 'DEV'          .and.;
+      e5_data == mv_par01
+
+      nSoma := nSoma + e5_valor
+   endif
+
+   *------------------------------------------------------------*
+   * Soma os valores dos reembolsos
+   *------------------------------------------------------------*
+   if e5_banco == 'CX ' .and. e5_RecPag == 'P' .and.;
+      e5_tipo == '   '  .and. e5_data == mv_par01 .and. e5_situaca #'C'
+
+      nReembolso := nReembolso + e5_valor
+   endif
+
+   *------------------------------------------------------------*
+   * Soma os valores dos pgtos de titulos pagos no caixa
+   *------------------------------------------------------------*
+   if e5_banco == 'CX '   .and. e5_RecPag == 'P'    .and.;
+      e5_motbx == 'NOR'   .and. e5_tipo #space(03) .and.;
+      e5_data == mv_par01 .and. e5_situaca #'C'
+
+      nReembolso := nReembolso + e5_valor
+   endif
+
+   dbselectarea('se5')
+   dbsetorder(1)
+   dbskip()
+enddo
+
+dbselectarea('se2')
+dbsetorder(5)
+dbgotop()
+dbseek(xFilial("SE2")+dtos(mv_par01),.t.)
+
+while eof() == .f.
+   *------------------------------------------------------------*
+   * Soma os valores das requisicoes
+   *------------------------------------------------------------*
+   if e2_tipo == 'VL ' .and. e2_portado == 'CX ' .and. e2_emissao == mv_par01
+
+      nRequisita := nRequisita + e2_valor
+   endif
+
+   dbselectarea('se2')
+   dbsetorder(5)
+   dbskip()
+enddo
+
+dbselectarea('sza')
+dbsetorder(1)
+dbseek(xFilial()+dtos(mv_par01))
+if found() == .t.
+   reclock("SZA",.f.)
+else
+   reclock("SZA",.t.)
+endif
+
+replace za_filial   with xFilial("SZA")
+replace za_data     with mv_par01
+replace za_saldoDi  with (nSaldoDinh+nSoma-nReembolso-nRequisita)
+replace za_saldoRe  with nRequisita
+
+dbselectarea(_cAlias)
+dbsetorder(_nOrdem) // Atencao (UPDXFUN).
+dbgoto(_nRegistro)
+return
+*---------------------------------------------------------------*

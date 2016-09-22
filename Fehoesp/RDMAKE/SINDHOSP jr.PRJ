@@ -1,0 +1,535 @@
+Group SindHosp
+   Version=7.0
+   VSSDB=
+   HasProperties=1
+   Properties
+      BeforeApply=
+      AfterApply=
+      Icon=
+      ID=
+      Version=
+      PalmName=
+      OutPut=
+   End
+   ProjectsCount=4
+   Project Financeiro
+      FoldersCount=5
+      Folder Atualizações
+         VSSPath=Nova Pasta1
+         FilesCount=66
+         File \RDMAKE\RFINA22.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA16.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA99.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINATST.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA21.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA22.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA05.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA08.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA09.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA12.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA19.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA20.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA21.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA24.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA13.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA97.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA98.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA01.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA02.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA09.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA14.PRX
+             Type=T
+         End
+         File \RDMAKE\AC1.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA26.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA25.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA17.PRX
+             Type=T
+         End
+         File \RDMAKE\NUMASSOC.PRW
+             Type=T
+         End
+         File \Rdmake\excluibx.PRX
+             Type=T
+         End
+         File \Rdmake\AtuCli99.PRX
+             Type=T
+         End
+         File \Rdmake\ATUE1_99.PRW
+             Type=T
+         End
+         File \Rdmake\bpGCli.prw
+             Type=T
+         End
+         File \Rdmake\axcadZO.PRW
+             Type=T
+         End
+         File \Rdmake\RFINA27.PRX
+             Type=T
+         End
+         File \Rdmake\RFINA28.PRX
+             Type=T
+         End
+         File \Rdmake\axcadZ3.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA100.PRW
+             Type=T
+         End
+         File \RDMAKE\MA030MEM.PRW
+             Type=T
+         End
+         File \RDMAKE\ATUE_199.PRW
+             Type=T
+         End
+         File \RDMAKE\ATUCL199.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA121.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA130.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA104.PRW
+             Type=T
+         End
+         File \RDMAKE\rfina30.prw
+             Type=T
+         End
+         File \RDMAKE\rfina31.prw
+             Type=T
+         End
+         File \RDMAKE\RFINA132.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA134.PRW
+             Type=T
+         End
+         File \RDMAKE\impboli.prw
+             Type=T
+         End
+         File \RDMAKE\RFINA105.PRw
+             Type=T
+         End
+         File \RDMAKE\RFINA127.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA108.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA124.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA128.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA109.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA112.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA32.PRW
+             Type=T
+         End
+         File \RDMAKE\ACENTO.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA135.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA137.PRW
+             Type=T
+         End
+         File \RDMAKE\IMPBOLC.PRW
+             Type=T
+         End
+         File \RDMAKE\rfina139.prw
+             Type=T
+         End
+         File \RDMAKE\isento.prw
+             Type=T
+         End
+         File \RDMAKE\INADIM.PRW
+             Type=T
+         End
+         File \RDMAKE\RETIQHP.PRX
+             Type=T
+         End
+         File \RDMAKE\axcadZv.PRW
+             Type=T
+         End
+         File \RDMAKE\m030del.PRW
+             Type=T
+         End
+         File \RDMAKE\m030alt.PRW
+             Type=T
+         End
+         File \RDMAKE\geratit.PRW
+             Type=T
+         End
+      End
+      Folder Consultas
+         VSSPath=Nova Pasta2
+         FilesCount=2
+         File \RDMAKE\CONSULT1.PRX
+             Type=T
+         End
+         File \RDMAKE\CONSULT.PRX
+             Type=T
+         End
+      End
+      Folder Relatórios
+         VSSPath=Nova Pasta3
+         FilesCount=37
+         File \RDMAKE\RASSIT1.PRX
+             Type=T
+         End
+         File \RDMAKE\RASSIT2.PRX
+             Type=T
+         End
+         File \RDMAKE\RASSOC1.PRX
+             Type=T
+         End
+         File \RDMAKE\RASSOC2.PRX
+             Type=T
+         End
+         File \RDMAKE\RASSOC4.PRX
+             Type=T
+         End
+         File \RDMAKE\RASSOC5.PRX
+             Type=T
+         End
+         File \RDMAKE\RASSOC6.PRX
+             Type=T
+         End
+         File \RDMAKE\RASSOC7.PRX
+             Type=T
+         End
+         File \RDMAKE\RASSOC8.PRX
+             Type=T
+         End
+         File \RDMAKE\RCONF01.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINR01.PRX
+             Type=T
+         End
+         File \RDMAKE\RFIN150.PRX
+             Type=T
+         End
+         File \RDMAKE\RFIN190.PRX
+             Type=T
+         End
+         File \RDMAKE\RFIN490.PRX
+             Type=T
+         End
+         File \RDMAKE\RELCAD.PRX
+             Type=T
+         End
+         File \RDMAKE\RETIQ.PRX
+             Type=T
+         End
+         File \RDMAKE\BOLETO.PRX
+             Type=T
+         End
+         File \RDMAKE\TOTCAD.PRX
+             Type=T
+         End
+         File \RDMAKE\RELFIN.PRX
+             Type=T
+         End
+         File \RDMAKE\RELBXS.PRX
+             Type=T
+         End
+         File \RDMAKE\RELINAD.PRX
+             Type=T
+         End
+         File \RDMAKE\ETIQCORT.PRX
+             Type=T
+         End
+         File \RDMAKE\relescr.PRW
+             Type=T
+         End
+         File \RDMAKE\ETIQESCR.PRX
+             Type=T
+         End
+         File \RDMAKE\RELASSOC.PRX
+             Type=T
+         End
+         File \RDMAKE\RELCAD2.PRX
+             Type=T
+         End
+         File \Rdmake\IMPRBOL.PRW
+             Type=T
+         End
+         File \Rdmake\IMPRBOLR.PRW
+             Type=T
+         End
+         File \Rdmake\relfranc.PRW
+             Type=T
+         End
+         File \Rdmake\RELCAIXA.PRW
+             Type=T
+         End
+         File \Rdmake\IMPBOLR.PRW
+             Type=T
+         End
+         File \Rdmake\IMPBOL.PRW
+             Type=T
+         End
+         File \Rdmake\FINR400a.PRX
+             Type=T
+         End
+         File \RDMAKE\rfina29.prx
+             Type=T
+         End
+         File \RDMAKE\_finr150.PRX
+             Type=T
+         End
+         File \RDMAKE\ETIQCORTHP.PRX
+             Type=T
+         End
+         File \RDMAKE\etiqmail.PRW
+             Type=T
+         End
+      End
+      Folder Miscelânea
+         VSSPath=Nova Pasta4
+         FilesCount=5
+         File \RDMAKE\RAPTOS.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA02.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA23.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA12.PRX
+             Type=T
+         End
+         File \RDMAKE\TrocaCGC.prw
+             Type=T
+         End
+      End
+      Folder teste
+         VSSPath=Nova Pasta5
+         FilesCount=12
+         File \RDMAKE\relescr.PRW
+             Type=T
+         End
+         File \RDMAKE\bpGCli.prw
+             Type=T
+         End
+         File \RDMAKE\bpGECont.prw
+             Type=T
+         End
+         File \RDMAKE\RFINA100.PRW
+             Type=T
+         End
+         File \RDMAKE\ATUCL199.PRX
+             Type=T
+         End
+         File \RDMAKE\DUMMY.PRW
+             Type=T
+         End
+         File \RDMAKE\RFINA12.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINATST.PRX
+             Type=T
+         End
+         File \RDMAKE\IMPBOLR.PRW
+             Type=T
+         End
+         File \RDMAKE\UpdxFun.PRW
+             Type=T
+         End
+         File \RDMAKE\mantexto.prw
+             Type=T
+         End
+         File \RDMAKE\matae1.PRW
+             Type=T
+         End
+      End
+   End
+   Project AP7
+      FoldersCount=1
+      Folder Acertos
+         VSSPath=Nova Pasta1
+         FilesCount=11
+         File \RDMAKE\cartao.prw
+             Type=T
+         End
+         File \RDMAKE\checa.PRW
+             Type=T
+         End
+         File \RDMAKE\EXPATEND.PRX
+             Type=T
+         End
+         File \RDMAKE\IMPMATRIZ.PRX
+             Type=T
+         End
+         File \RDMAKE\AXCADZ2.PRX
+             Type=T
+         End
+         File \RDMAKE\IMPZ9.PRW
+             Type=T
+         End
+         File \RDMAKE\atuATEND.PRX
+             Type=T
+         End
+         File \Rdmake\IMPCNES.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA28.PRX
+             Type=T
+         End
+         File \RDMAKE\RFINA12.PRX
+             Type=T
+         End
+         File \RDMAKE\IMPBOLR.PRW
+             Type=T
+         End
+      End
+   End
+   Project Contabilidade
+      FoldersCount=2
+      Folder Relatorios
+         VSSPath=Nova Pasta1
+         FilesCount=4
+         File \RDMAKE\CONR040A.PRX
+             Type=T
+         End
+         File \RDMAKE\CONR040B.PRX
+             Type=T
+         End
+         File \RDMAKE\CON040.PRX
+             Type=T
+         End
+         File \RDMAKE\CON090.PRX
+             Type=T
+         End
+      End
+      Folder Lancamento Padrao
+         VSSPath=Nova Pasta2
+         FilesCount=16
+         File \RDMAKE\EFINA27.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA07.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA10.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA11.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA12.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA13.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA14.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA16.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA18.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA26.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA20.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA24.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA25.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA06.PRX
+             Type=T
+         End
+         File \RDMAKE\EFINA03.PRX
+             Type=T
+         End
+         File \Rdmake\EFINA15.PRX
+             Type=T
+         End
+      End
+   End
+   Project Boleto
+      FoldersCount=1
+      Folder Fontes Boleto
+         VSSPath=Nova Pasta1
+         FilesCount=4
+         File \RDMAKE\bpGNNumero.prw
+             Type=T
+         End
+         File \RDMAKE\BPGCLI.PRW
+             Type=T
+         End
+         File \RDMAKE\bpGECont.prw
+             Type=T
+         End
+         File \RDMAKE\bpGNECont.prw
+             Type=T
+         End
+      End
+   End
+   BatchBuild_Item0=Financeiro · Desenvolvimento
+End

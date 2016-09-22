@@ -1,0 +1,497 @@
+#include "rwmake.ch"        
+#include "topconn.ch"
+User Function reloco1()    
+SetPrvt("_CALIAS,CBCONT,CBTXT,WNREL,CDESC1,CDESC2")
+SetPrvt("CDESC3,CSTRING,TAMANHO,TIPO,LIMITE,TITULO")
+SetPrvt("CABEC2,CABEC1,ARETURN,NOMEPROG,NLASTKEY,CPERG")
+SetPrvt("M_PAG,LI,_AESTR,C_ARQIMP,CARQIND,CINDSA1")
+SetPrvt("NLINHA,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ TOTCAD   ³ Autor ³ Luis Mattos Duarte Jr.³ Data ³ 06.01.05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Totalizador do cadastro.                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 := "Este programa irá totalizar as ocorrencias no cadastro."
+cDesc2 := ""
+cDesc3 := ""
+cString := "SZI"
+tamanho := "G"
+tipo := 15
+limite := 220
+Titulo := "Totalizador de Ocorrencias
+cabec2 := ""
+cabec1 := "Usuario         Ersin         Web     Inclusao     Captacao   Reativacao N.Localizado      Baixada  Atualizacao   Associacao    Desassoc.  N. Sindhosp  Simples Nac       Outros        Total"         // 12345678901234567890  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999
+        // 01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+        //           1         2         3         4         5         6         7         8         9         10        11        12        13        14        15        16        17        18        19        20        21        22         
+
+    // cabec2 := " "
+aReturn := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog := "RELOCO1"
+nLastkey := 0
+
+/*BEGINDOC
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³01       ¦ Sindicato Hospitais            ¦ C       ¦          2³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+ENDDOC*/
+cPerg := "RELOCO1"
+
+m_pag := 1
+li := 80
+pergunte(cPerg,.f.)
+wnrel := "RELOCO1"
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastkey == 27
+    return
+endif
+SetDefault(aReturn,cString)
+if nLastkey == 27
+   return
+endif
+    RptStatus({|| impREL() },titulo)// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     RptStatus({|| Execute(impREL) },titulo)
+    return
+**********
+Static function ImpREL()
+cabec1 := "Usuario         Ersin         Web     Inclusao     Captacao   Reativacao N.Localizado      Baixada  Atualizacao   Associacao    Desassoc.  N. Sindhosp  Simples Nac       Outros        Total" 
+_aEstr := {}
+AADD(_aEstr,{"CODIGO"    , "C" , 06 , 0})
+AADD(_aEstr,{"NOME"      , "C" , 50 , 0})
+AADD(_aEstr,{"NOMEfanta" , "C" , 50 , 0})
+AADD(_aEstr,{"ENDERECO"  , "C" , 40 , 0})
+AADD(_aEstr,{"BAIRRO"    , "C" , 25 , 0})
+AADD(_aEstr,{"CEP"       , "C" , 08 , 0})
+AADD(_aEstr,{"CIDADE"    , "C" , 25 , 0})
+AADD(_aEstr,{"ESTADO"    , "C" , 02 , 0})
+AADD(_aEstr,{"TIPOEND"   , "C" , 10 , 0})
+AADD(_aEstr,{"CNPJ"      , "C" , 14 , 0})
+AADD(_aEstr,{"FONE"      , "C" , 15 , 0})
+AADD(_aEstr,{"FONE2"     , "C" , 15 , 0})
+AADD(_aEstr,{"FONE3"     , "C" , 15 , 0})
+AADD(_aEstr,{"EMAIL"     , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL2"    , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL3"    , "C" , 40 , 0})
+AADD(_aEstr,{"CONTATO"   , "C" , 40 , 0})
+AADD(_aEstr,{"BASE"      , "C" , 04 , 0})
+AADD(_aEstr,{"SINDMED"   , "C" , 04 , 0})
+AADD(_aEstr,{"ERSIN"     , "C" , 02 , 0})
+AADD(_aEstr,{"SOCIO"     , "C" , 01 , 0})
+AADD(_aEstr,{"CATEGORIA" , "C" , 05 , 0})
+AADD(_aEstr,{"DESCCATEG" , "C" , 50 , 0})
+AADD(_aEstr,{"DATAINICIO", "D" , 08 , 0})
+AADD(_aEstr,{"DATAFIM"   , "D" , 08 , 0})
+AADD(_aEstr,{"DTCADASTRO", "D" , 08 , 0})
+AADD(_aEstr,{"SITUACAO"  , "C" , 02 , 0})
+AADD(_aEstr,{"CODASSO"   , "C" , 06 , 0})
+AADD(_aEstr,{"FAX"       , "C" , 25 , 0})
+AADD(_aEstr,{"CARTAO"    , "C" , 06 , 0}) 
+AADD(_aEstr,{"LEITOS"    , "N" , 10 , 0}) 
+AADD(_aEstr,{"NUM_FUNC"  , "N" , 10 , 0}) 
+AADD(_aEstr,{"FILANT"    , "C" , 01 , 0})
+AADD(_aEstr,{"ESCCONT"   , "C" , 14 , 0})
+AADD(_aEstr,{"SINDICA"   , "C" , 02 , 0})
+AADD(_aEstr,{"VALASSO"   , "N" , 08 , 2})
+AADD(_aEstr,{"CATLEIT"   , "C" , 02 , 0})
+AADD(_aEstr,{"FISICO"    , "C" , 01 , 0})
+AADD(_aEstr,{"HISTASS"   , "C" , 80 , 0})
+AADD(_aEstr,{"SCONTAT"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL4"    , "C" , 60 , 0})
+AADD(_aEstr,{"PREXORG"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL23"    , "C" , 60 , 0})
+
+
+AADD(_aEstr,{"NOMPRES"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL5"    , "C" , 60 , 0})
+AADD(_aEstr,{"SECRDIR"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL13"   , "C" , 60 , 0})
+AADD(_aEstr,{"ADMPROV"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL6"    , "C" , 60 , 0})
+AADD(_aEstr,{"SUPERIN"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL7"    , "C" , 60 , 0})
+AADD(_aEstr,{"DIRCLIN"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL8"    , "C" , 60 , 0})
+AADD(_aEstr,{"DIRFIN"    , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL9"    , "C" , 60 , 0})
+AADD(_aEstr,{"FAT"       , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL12"   , "C" , 60 , 0})
+AADD(_aEstr,{"DIRRH"     , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL0"    , "C" , 60 , 0})
+AADD(_aEstr,{"DIRCOML"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL15"   , "C" , 60 , 0})
+AADD(_aEstr,{"DIRADM"    , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL10"   , "C" , 60 , 0})
+AADD(_aEstr,{"ADVOGA"	 , "C" , 40 , 0})	
+AADD(_aEstr,{"EMAIL11"	 , "C" , 60 , 0})
+
+AADD(_aEstr,{"TECSEGT"   , "C" , 40 , 0})	
+AADD(_aEstr,{"EMAIL17"	 , "C" , 60 , 0})
+AADD(_aEstr,{"SOCIO1 "   , "C" , 40 , 0})	
+AADD(_aEstr,{"EMAIL18"	 , "C" , 60 , 0})
+AADD(_aEstr,{"SOCIO2 "   , "C" , 40 , 0})	
+AADD(_aEstr,{"EMAIL19"	 , "C" , 60 , 0})
+AADD(_aEstr,{"SOCIO3 "   , "C" , 40 , 0})	
+AADD(_aEstr,{"EMAIL20"	 , "C" , 60 , 0})
+AADD(_aEstr,{"SOCIO4 "   , "C" , 40 , 0})	
+AADD(_aEstr,{"EMAIL21"	 , "C" , 60 , 0})
+AADD(_aEstr,{"SOCIO5 "   , "C" , 40 , 0})	
+AADD(_aEstr,{"EMAIL22"	 , "C" , 60 , 0})
+
+//
+AADD(_aEstr,{"CODDESCINA"	, "C" , 02 , 0})
+AADD(_aEstr,{"DESCRINAT"	, "C" , 60 , 0})
+AADD(_aEstr,{"TPCADAS"	 	, "C" , 01 , 0})
+//
+
+AADD(_aEstr,{"INAT"			, "C" , 01 , 0})		
+AADD(_aEstr,{"DATINAT"		, "D" , 08 , 0})		
+//
+AADD(_aEstr,{"CAPITAL1"		, "N" , 15 , 2})
+// OCORR
+AADD(_aEstr,{"DATA_OC"		, "D" , 08 , 0})
+AADD(_aEstr,{"TIPO_OC"		, "C" , 10 , 0})
+AADD(_aEstr,{"USUARIO_OC"	, "C" , 15 , 0})
+AADD(_aEstr,{"OBSERV_OC"	, "C" , 90 , 0})
+AADD(_aEstr,{"HORA_OC"		, "C" , 05 , 0})
+c_ArqImp := CriaTrab(_aEstr,.t.)
+dbusearea(.t.,,c_ArqImp,"ETIQ",.T.)
+
+_aEstr := {}
+AADD(_aEstr,{"USUARIO"   , "C" , 20 , 0})
+AADD(_aEstr,{"ERSIN"     , "C" , 02 , 0})
+AADD(_aEstr,{"WEB"       , "N" , 09 , 0})
+AADD(_aEstr,{"INCLUSAO"  , "N" , 09 , 0})
+AADD(_aEstr,{"CAPTACAO"  , "N" , 09 , 0})
+AADD(_aEstr,{"REATIVACAO", "N" , 09 , 0})
+AADD(_aEstr,{"NLOCALIZ"  , "N" , 09 , 0})
+AADD(_aEstr,{"BAIXADO"   , "N" , 09 , 0})
+AADD(_aEstr,{"ATUAL"     , "N" , 09 , 0})
+AADD(_aEstr,{"ASSOC"     , "N" , 09 , 0})
+AADD(_aEstr,{"DESASSOC"  , "N" , 09 , 0})
+AADD(_aEstr,{"NSINDHOSP" , "N" , 09 , 0})
+AADD(_aEstr,{"SIMPLES"   , "N" , 09 , 0})
+AADD(_aEstr,{"OUTROS"    , "N" , 09 , 0})
+AADD(_aEstr,{"TOTAL"     , "N" , 09 , 0})
+c_ArqImp := CriaTrab(_aEstr,.t.)
+dbusearea(.t.,,c_ArqImp,"TMP",.T.)
+dbselectarea("TMP")
+CQUERY := " SELECT ZI_USUARIO,A1_ERSIN, "
+CQUERY += " SUM(CASE WHEN ZI_TIPO='1'  then 1 else 0 end) AS NT01,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='2'  then 1 else 0 end) AS NT02,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='3'  then 1 else 0 end) AS NT03,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='4'  then 1 else 0 end) AS NT04,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='5'  then 1 else 0 end) AS NT05,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='6'  then 1 else 0 end) AS NT06,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='7'  then 1 else 0 end) AS NT07,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='8'  then 1 else 0 end) AS NT08,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='9'  then 1 else 0 end) AS NT09,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='A'  then 1 else 0 end) AS NT10,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='B'  then 1 else 0 end) AS NT11,"
+CQUERY += " SUM(CASE WHEN ZI_TIPO='C'  then 1 else 0 end) AS NT12,"
+CQUERY += " COUNT(ZI_TIPO) AS TOTAL"                           
+CQUERY += " FROM SZI010 INNNER JOIN SA1010 ON ZI_CODCLI=A1_COD WHERE ZI_DATA >='"+DTOS(MV_PAR01)+"' AND ZI_DATA<='"+DTOS(MV_PAR02)+"' "
+CQUERY += " GROUP BY ZI_USUARIO,A1_ERSIN ORDER BY ZI_USUARIO,A1_ERSIN"
+
+TCQUERY cQuery NEW ALIAS "TRB"        
+
+dbselectarea("trb")
+SetRegua(RecCount())
+TT01 := TT02 := TT03 := TT04 := TT05 := TT06 := TT07 := TT08 := TT09 := TT10 := TT11 := TT12 := TTOTAL:= 0
+while !eof()
+    INCREGUA()
+    if Li >= 60
+       cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+       nLinha := prow() + 1
+    endif
+cabec2 := ""
+cabec1 := "Usuario         Ersin         Web     Inclusao     Captacao   Reativacao N.Localizado      Baixada  Atualizacao   Associacao    Desassoc.  N. Sindhosp  Simples Nac       Outros        Total" 
+        // 123456789012345 7890  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999  999,999,999
+        // 01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+        //           1         2         3         4         5         6         7         8         9         10        11        12        13        14        15        16        17        18        19        20        21        22         
+
+
+    @ li,000 PSAY TRB->zi_usuario
+	@ li,016 psay trb->a1_ersin
+	@ LI,022 psay TRB->nt01 PICTURE "@E 999,999,999"
+	@ LI,035 psay TRB->nt02 PICTURE "@E 999,999,999"
+	@ LI,048 psay TRB->nt03 PICTURE "@E 999,999,999"
+	@ LI,061 psay TRB->nt04 PICTURE "@E 999,999,999"
+	@ LI,074 psay TRB->nt05 PICTURE "@E 999,999,999"
+	@ LI,087 psay TRB->nt06 PICTURE "@E 999,999,999"
+	@ LI,100 psay TRB->nt07 PICTURE "@E 999,999,999"
+	@ LI,113 psay TRB->nt08 PICTURE "@E 999,999,999"
+	@ LI,126 psay TRB->nt09 PICTURE "@E 999,999,999"
+	@ LI,139 psay TRB->nt10 PICTURE "@E 999,999,999"
+	@ LI,152 psay TRB->nt11 PICTURE "@E 999,999,999"
+	@ LI,165 psay TRB->nt11 PICTURE "@E 999,999,999"
+	@ LI,178 psay TRB->total PICTURE "@E 999,999,999"
+    LI := LI +1
+	TT01 += nt01
+	TT02 += nt02
+	TT03 += nt03
+	TT04 += nt04
+	TT05 += nt05
+	TT06 += nt06
+	TT07 += nt07
+	TT08 += nt08
+	TT09 += nt09
+	TT10 += nt10
+	TT11 += nt11
+	TT12 += nt12
+	TTOTAL += TRB->total
+	IF MV_PAR03 == 2
+		CQUERY := " SELECT * "
+		CQUERY += " FROM SZI010 INNNER JOIN SA1010 ON ZI_CODCLI=A1_COD WHERE ZI_DATA >='"+DTOS(MV_PAR01)+"' AND ZI_DATA<='"+DTOS(MV_PAR02)+"' "
+		CQUERY += " AND ZI_USUARIO='"+TRB->ZI_USUARIO+"' AND A1_ERSIN='"+trb->a1_ersin+"' " 
+		TCQUERY cQuery NEW ALIAS "TRB2"        
+		@ li,000 psay "CNPJ               Razao                                              Cidade                         Ocorrencia   Observacao"
+                    // 11.222.222/0000-00 rrrrrrrrrrxxxxxxxxxx5555555555xxxxxxxxxx6666666666 ddddddddddxxxxxxxxxx5555555555 888888888888 cccc
+		            // 01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+        	        //           1         2         3         4         5         6         7         8         9         10        11        12        13        14        15        16        17        18        19        20        21        22         
+		li++
+    	if Li >= 60
+	       cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	       	nLinha := prow() + 1
+	    endif
+		dbselectarea("trb2")
+		do while !eof()
+			@ li,000 psay trb2->a1_cgc picture "@r 99.999.999/9999-99"
+			@ li,019 psay SUBS(trb2->a1_NOME,1,50)
+			@ LI,070 PSAY TRB2->A1_MUN
+			IF TRB2->ZI_TIPO=="1"
+				@ li,101 PSAY "Web "
+			elseIF TRB2->ZI_TIPO=="2"
+			@ li,101 PSAY "Inclusao"
+			elseIF TRB2->ZI_TIPO=="3"
+			@ li,101 PSAY "Captacao   "
+			elseIF TRB2->ZI_TIPO=="4"
+			@ li,101 PSAY "Reativacao "
+			elseIF TRB2->ZI_TIPO=="5"
+			@ li,101 PSAY "N.Localiz."
+			elseIF TRB2->ZI_TIPO=="6"
+			@ li,101 PSAY "Baixado   "
+			elseIF TRB2->ZI_TIPO=="7"
+			@ li,101 PSAY "Atualiz."  
+			elseIF TRB2->ZI_TIPO=="8"
+			@ li,101 PSAY "Aassoc     "
+			elseIF TRB2->ZI_TIPO=="9"
+			@ li,101 PSAY "Desassoc   "
+			elseIF TRB2->ZI_TIPO=="A"
+			@ li,101 PSAY "N.Sindhosp"
+			elseIF TRB2->ZI_TIPO=="B"
+			@ li,101 PSAY "Simples   "
+			else
+			@ li,101 PSAY "Outros     "
+			endif
+			@ LI,114 PSAY TRB2->ZI_OBSERV
+			LI++
+
+			dbselectarea("etiq")
+			reclock("etiq",.t.)
+			ETIQ->CODIGO   := trb2->A1_COD
+			ETIQ->NOME     := trb2->A1_nome
+			ETIQ->NOMEfanta:= trb2->A1_nreduz
+			ETIQ->ENDERECO := trb2->a1_end
+			ETIQ->BAIRRO   := trb2->A1_bairro
+			ETIQ->CEP      := trb2->a1_cep
+			etiq->CIDADE   := trb2->a1_mun
+			ETIQ->ESTADO   := trb2->a1_est
+			ETIQ->TIPOEND  := "ENTIDADE"
+			ETIQ->CNPJ      := trb2->a1_cgc
+			ETIQ->FONE      := trb2->a1_tel 
+			ETIQ->FONE2     := trb2->a1_tel2
+			ETIQ->FONE3     := trb2->a1_tel3
+			ETIQ->EMAIL     := trb2->a1_email
+			ETIQ->EMAIL2    := trb2->a1_email2
+			ETIQ->EMAIL3    := trb2->a1_email3
+			ETIQ->CONTATO   := trb2->a1_Scontat
+			ETIQ->BASE      := trb2->a1_base
+			ETIQ->SINDMED   := trb2->a1_base2
+			ETIQ->ERSIN     := trb2->a1_ersin
+			ETIQ->SOCIO     := trb2->a1_tpcli
+			ETIQ->CATEGORIA := trb2->a1_categ1
+			ETIQ->DESCCATEG := POSICIONE("SZU",1,XFILIAL("SZU")+ trb2->A1_CATEG1,"ZU_NOME")
+	
+			ETIQ->DATAINICIO:= STOD(trb2->a1_dtinass)
+			ETIQ->DATAFIM   := STOD(trb2->A1_dtfimas)
+			etiq->situacao  := trb2->A1_SITUAC
+			ETIQ->CODASSO   := trb2->A1_CODASSO
+			ETIQ->FAX       := trb2->A1_FAX
+			ETIQ->CARTAO    := trb2->a1_CARTAO
+			etiq->LEITOS    := trb2->a1_LEITOS
+			etiq->NUM_FUNC  := trb2->a1_NUMFUN
+			ETIQ->FILANT    := trb2->A1_FILANT
+			ETIQ->ESCCONT   := trb2->A1_ESCCONT
+			ETIQ->DTCADASTRO:= STOD(trb2->A1_DTCADAS)
+			ETIQ->VALASSO   := trb2->A1_VALASSO
+			ETIQ->SINDICA   := trb2->A1_SINDICA
+			ETIQ->CATLEIT   := trb2->A1_CATLEIT
+			ETIQ->FISICO    := trb2->A1_FISICO
+			ETIQ->HISTASS   := trb2->A1_HISTASS
+			ETIQ->SCONTAT   := trb2->A1_SCONTAT
+			ETIQ->EMAIL4    := trb2->A1_EMAIL4   
+			ETIQ->NOMPRES   := trb2->A1_NOMPRES
+			ETIQ->EMAIL5    := trb2->A1_EMAIL5
+			ETIQ->ADMPROV   := trb2->A1_ADMPROV
+			ETIQ->EMAIL6    := trb2->A1_EMAIL6
+			ETIQ->SUPERIN   := trb2->A1_SUPERIN
+			ETIQ->EMAIL7    := trb2->A1_EMAIL7
+			ETIQ->DIRCLIN   := trb2->A1_DIRCLIN
+			ETIQ->EMAIL8    := trb2->A1_EMAIL8
+			ETIQ->DIRFIN    := trb2->A1_DIRFIN
+			ETIQ->EMAIL9    := trb2->A1_EMAIL9
+			ETIQ->DIRRH     := trb2->A1_DIRRH
+			ETIQ->EMAIL0    := trb2->A1_EMAIL0
+			ETIQ->DIRADM    := trb2->A1_DIRADM
+			ETIQ->EMAIL10   := trb2->A1_EMAIL10
+			//
+			ETIQ->CODDESCINAT	:=	trb2->A1_CODDESC
+			ETIQ->DESCRINAT	:=	Posicione("SX5",1,xFilial("SX5")+"Z4"+trb2->A1_CODDESC,"X5DESCRI()" )					
+			ETIQ->TPCADAS				:=	trb2->A1_TPCADAS       
+			//
+			ETIQ->ADVOGA	:=	trb2->A1_ADVOGA
+			ETIQ->EMAIL11	:=	trb2->A1_EMAIL11
+			ETIQ->INAT		:=	trb2->A1_INAT
+			ETIQ->DATINAT	:=STOD( trb2->A1_DATINAT )
+			ETIQ->CAPITAL1	:=	trb2->A1_CAPITAL
+	   //
+			ETIQ->PREXORG := trb2->A1_PREXORG
+			ETIQ->EMAIL23  := trb2->A1_EMAIL23
+			ETIQ->SECRDIR  := trb2->A1_SECRDIR
+			ETIQ->EMAIL13  := trb2->A1_EMAIL13
+			ETIQ->DIRCOML  := trb2->a1_dircoml
+			etiq->email15  := trb2->a1_email15
+			ETIQ->ADVOGA   := trb2->a1_ADVOGA
+			etiq->email11  := trb2->a1_email11
+			ETIQ->TECSEGT  := trb2->a1_TECSEGT
+			etiq->email17  := trb2->a1_email17
+			ETIQ->SOCIO1   := trb2->a1_SOCIO1
+			etiq->email18  := trb2->a1_email18
+			ETIQ->SOCIO2   := trb2->a1_SOCIO2
+			etiq->email19  := trb2->a1_email19
+			ETIQ->SOCIO3   := trb2->a1_SOCIO3
+			etiq->email20  := trb2->a1_email20
+			ETIQ->SOCIO4   := trb2->a1_SOCIO4
+			etiq->email21  := trb2->a1_email21
+			ETIQ->SOCIO5   := trb2->a1_SOCIO5
+			etiq->email22  := trb2->a1_email22
+			ETIQ->FAT      := trb2->a1_COML
+			etiq->email12  := trb2->a1_email12
+			ETIQ->DATA_OC  := STOD(TRB2->ZI_DATA)
+			IF TRB2->ZI_TIPO=="1"
+				ETIQ->TIPO_OC :="Web "
+			elseIF TRB2->ZI_TIPO=="2"
+			ETIQ->TIPO_OC :="Inclusao"
+			elseIF TRB2->ZI_TIPO=="3"
+			ETIQ->TIPO_OC :="Captacao   "
+			elseIF TRB2->ZI_TIPO=="4"
+			ETIQ->TIPO_OC :="Reativacao "
+			elseIF TRB2->ZI_TIPO=="5"
+			ETIQ->TIPO_OC :="N.Localiz."
+			elseIF TRB2->ZI_TIPO=="6"
+			ETIQ->TIPO_OC :="Baixado   "
+			elseIF TRB2->ZI_TIPO=="7"
+			ETIQ->TIPO_OC :="Atualiz."  
+			elseIF TRB2->ZI_TIPO=="8"
+			ETIQ->TIPO_OC :="Aassoc     "
+			elseIF TRB2->ZI_TIPO=="9"
+			ETIQ->TIPO_OC := "Desassoc   "
+			elseIF TRB2->ZI_TIPO=="A"
+			ETIQ->TIPO_OC :="N.Sindhosp"
+			elseIF TRB2->ZI_TIPO=="B"
+			ETIQ->TIPO_OC :="Simples   "
+			else
+			ETIQ->TIPO_OC := "Outros     "
+			endif
+	
+			ETIQ->USUARIO_OC := trb2->zi_usuario
+			etiq->OBSERV_OC  := trb2->zi_observ
+			etiq->HORA_OC    := trb2->zi_hora
+			msunlock()		
+			DBSELECTAREA("TRB2")
+
+			DBSKIP()
+		ENDDO
+		LI++
+
+
+
+		DBCLOSEAREA("TRB2")        
+	ENDIF
+
+	dbselectarea("tmp")
+	reclock("tmp",.t.)
+	tmp->usuario := trb->ZI_usuario
+	TMP->ersin   := trb->a1_ersin
+	tmp->web        := trb->nt01
+	tmp->inclusao   := trb->nt02
+	tmp->captacao   := trb->nt03
+	tmp->reativacao := trb->nt04
+	tmp->nlocaliz	:= trb->nt05
+	tmp->baixado    := trb->nt06
+	tmp->atual      := trb->nt07 
+	tmp->assoc      := trb->nt08	
+	tmp->desassoc   := trb->nt09
+	tmp->nsindhosp  := trb->nt10
+	tmp->simples    := trb->nt11
+	tmp->outros     := trb->nt12
+	tmp->total:= trb->total
+	msunlock()
+
+	DBSELECTAREA("TRB")
+    DBSKIP()
+enddo
+li++
+@ li,000 PSAY "TOTAL"
+	@ LI,022 psay tt01 PICTURE "@E 999,999,999"
+	@ LI,035 psay tt02 PICTURE "@E 999,999,999"
+	@ LI,048 psay tt03 PICTURE "@E 999,999,999"
+	@ LI,061 psay tt04 PICTURE "@E 999,999,999"
+	@ LI,074 psay tt05 PICTURE "@E 999,999,999"
+	@ LI,087 psay tt06 PICTURE "@E 999,999,999"
+	@ LI,100 psay tt07 PICTURE "@E 999,999,999"
+	@ LI,113 psay tt08 PICTURE "@E 999,999,999"
+	@ LI,126 psay tt09 PICTURE "@E 999,999,999"
+	@ LI,139 psay tt10 PICTURE "@E 999,999,999"
+	@ LI,152 psay tt11 PICTURE "@E 999,999,999"
+	@ LI,165 psay tt12 PICTURE "@E 999,999,999"
+	@ LI,178 psay ttotal PICTURE "@E 999,999,999"  
+	LI++
+if LI <> 80
+    roda(cbcoNT,cbtxt,tamanho)
+endif
+set device to screen
+if aReturn[5] == 1
+   set priNter to
+   dbcommit()
+   ourspool(wnrel)                                  
+endif
+MS_FLUSH()
+DBSELECTAREA("TRB")
+DBCLOSEAREA("TRB")
+CARQ := "\arquivos\"+ALLTRIM(SUBS(CUSUARIO,7,15))
+if mv_par03 == 1
+	DBSELECTAREA("TMP")
+else
+	dbselectarea("ETIQ")
+ENDIF
+COPY TO &CARQ
+DBSELECTAREA("TMP")
+DBCLOSEAREA("TMP")
+dbselectarea("ETIQ")
+dbCLOSEAREA("ETIQ")
+dbselectarea(_cAlias)
+return

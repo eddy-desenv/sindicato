@@ -1,0 +1,114 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function RFINA21()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,_NEXCLUIDOS,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA21  ³ Autor ³ Luiz Eduardo D. Roz   ³ Data ³ 10/10/01 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Exclusao Titulos avulso Inadimplentes Confederativa        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Excl. Tit. Avulsos Confed. sem baixa e vencidos a + 30 dias³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cTitulo   := "Exclusao Titulos Inadimplentes Confederativa"
+n_Opc := 0
+
+
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+
+/*  @ 011,010 Say "Rotina para exclusao de titulos avulsos da"
+@ 012,010 Say "Contribuicao Confederativa nao pagos"
+@ 013,010 Say "e Vencidos a mais de 30 dias."
+*/
+@ 023,014 SAY "Rotina para exclusao de titulos avulsos da"
+@ 033,014 SAY "Contribuicao Confederativa nao pagos"
+@ 043,014 Say "e Vencidos a mais de 30 dias."
+
+@ 086,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+
+@ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+ACTIVATE DIALOG oDlg1 CENTERED
+
+Return
+
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Iniciar
+Static Function Iniciar()
+*-----------------*
+Close(oDlg1)
+Processa( {|| Exclui_Calote() })// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Processa( {|| Execute(Exclui_Calote) })
+Return
+*******************************
+Static Function Exclui_Calote()
+dbSelectArea("SE1")
+dbSetOrder(3)
+dbseek( xFilial()+"002")
+ProcRegua(RecCount(),22,05)
+_nExcluidos := 0
+Do While !Eof() .and. ALLTRIM(se1->e1_naturez)=="002"
+	IncProc(_cTitulo)
+	if SE1->E1_VENCREA<(date()-30)
+		if empty(SE1->E1_BAIXA) .and. substr(SE1->E1_PREFIXO,3,1)=="A" 
+			dbSelectArea("SE1")
+			RecLock("SE1",.F.)
+			DBDELETE()
+			msunlock()
+			_nExcluidos := _nExcluidos + 1
+		endif
+	Endif
+	dbSelectArea("SE1")
+	dbSkip()
+Enddo
+_cTitulo   := "Exclusao Titulos Inadimplentes Assistencial"
+dbSelectArea("SE1")
+dbSetOrder(3)
+dbseek( xFilial()+"0301")
+ProcRegua(RecCount(),22,05)
+//_nExcluidos := 0
+Do While !Eof() .and. ALLTRIM(se1->e1_naturez)=="0301"
+	IncProc(_cTitulo)
+	if SE1->E1_VENCREA<(date()-30)
+		if empty(SE1->E1_BAIXA) .and. substr(SE1->E1_PREFIXO,3,1)=="A" 
+			dbSelectArea("SE1")
+			RecLock("SE1",.F.)
+			DBDELETE()
+			msunlock()
+			_nExcluidos := _nExcluidos + 1
+		endif
+	Endif
+	dbSelectArea("SE1")
+	dbSkip()
+Enddo
+Tone (800,2)
+Tone (1500,2)
+@ 96,42 TO 290,405 DIALOG oDlg1 TITLE "Termino da Selecao"
+@ 8,10 TO 68,170
+@ 23,22 SAY "Titulos Excluidos"
+@ 23,95 GET _nExcluidos PICTURE "@E 999,999" WHEN .F.
+@ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+dbSelectArea("SZ9")
+dbSetOrder(1)
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder)
+Return

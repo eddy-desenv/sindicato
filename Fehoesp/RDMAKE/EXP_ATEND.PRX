@@ -1,0 +1,57 @@
+#include "rwmake.ch"
+#INCLUDE "TOPCONN.CH"
+User Function EXPATEND()
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,_CARQCONTRIB,_CARQASSOCIA")
+SetPrvt("_NINCLUIDOS,_NALTERADOS,_NINCONSIST,_CARQUIVO,_NCOD,ANOC")
+SetPrvt("_CTEXTO,W,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ EXPATEND ³ Autor ³ Luis Mattos Duarte Jr.³ Data ³ 17/01/05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ EXPORTAÇÃO PARA O ATEND.                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cTitulo  := "Exportação para o Atend"
+n_Opc := 0
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+@ 023,014 SAY "Este programa fara a exportacao para o ATEND"
+@ 033,014 SAY ""
+@ 086,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+
+@ 110,168 BMPBUTTON TYPE 1 ACTION Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+// @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+Return
+*************************
+Static Function Iniciar()
+Close(oDlg1)
+Processa( {|| exportar() })
+Return
+
+**************************
+Static Function exportar()
+DBSELECTAREA("SA1")
+COPY TO \ARQUIVOS\ATEND\SA1 FOR A1_MSEXP=SPACE(8)
+CQUERY := " UPDATE SA1010 SET A1_MSEXP='"+DTOS(DDATABASE)+"' WHERE A1_MSEXP='' "
+TCSQLEXEC(CQUERY)
+DBSELECTAREA("SE1")
+COPY TO \ARQUIVOS\ATEND\SE1 FOR E1_MSEXP=SPACE(8)
+CQUERY := " UPDATE SE1010 SET E1_MSEXP='"+DTOS(DDATABASE)+"' WHERE E1_MSEXP='' "
+TCSQLEXEC(CQUERY)
+ALERT("Exportação Terminada")
+dbSelectArea("SA1")
+dbSetOrder(1)
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder) // Atencao (UPDXFUN).
+Return

@@ -1,0 +1,443 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+#IFNDEF WINDOWS
+    #DEFINE PSAY SAY
+#ENDIF
+
+User Function RFIN490()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+SetPrvt("WNREL,CDESC1,CDESC2,CDESC3,CSTRING,CSAVCOR")
+SetPrvt("TITULO,ARETURN,NOMEPROG,NLASTKEY,CPERG,LI")
+SetPrvt("CEXTENSO,J,NREC,NCONTADOR,CDOCTO,CCHEQUE")
+SetPrvt("CBUSCA,NTIPO,MV_PAR01,MV_PAR02,MV_PAR03,MV_PAR04")
+SetPrvt("LEND,_CDESCR,CMENS1,CMENS2,CMENS3,CMENS4")
+SetPrvt("CMENS5,X6_CONTEUD,NFIRST,AGLUT,LAGLUT,NTAMANHO")
+SetPrvt("ADRIVER,AMES,CMES,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ FINR490  ³ Autor ³ Paulo Boschetti       ³ Data ³ 23.04.92 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ C¢pia de Cheques                                           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ FINR490(void)                                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Generico                                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Rdmake   ³ Autor  ³  Andreia dos Santos       ³ Data  ³ fri  15/05/98 ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+wnrel   := ""
+cDesc1  :="Este programa ir  imprimir as copias dos cheques emitidos."
+cDesc2  :="Ser  impresso 1 ou 2 cheques por folha."
+cDesc3  :=""
+cString :="SEF"
+cSavCor :=SetColor()
+
+titulo   :="Copias de Cheques"
+aReturn  := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog :="FINR490"
+nLastKey := 0
+cPerg    :="FIN490"
+li       :=0
+TAMANHO := "P"
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("FIN490",.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01                    // Codigo Do Banco               ³
+//³ mv_par02                    // Da Agencia                    ³
+//³ mv_par03                    // Da Conta                      ³
+//³ mv_par04                    // Do Cheque                     ³
+//³ mv_par05                    // Ate o Cheque                  ³
+//³ mv_par06                    // Imprime composicao do cheque  ³
+//³ mv_par07                    // Copias p/ pagina (1/2)        ³
+//³ mv_par08                    // Imprime Numeracao Sequencial  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT 							  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel := "FINR490"            //Nome Default do relatorio em Disco
+wnrel := SetPrint(cString,wnrel,cPerg,Titulo,cDesc1,cDesc2,cDesc3,.T.)
+
+If nLastKey == 27
+   Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey == 27
+   SetColor(cSavCor)
+   Return
+Endif
+
+#IFDEF WINDOWS
+    RptStatus({|| Fa490Imp() },titulo)  // Chamada do Relatorio// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     RptStatus({|| Execute(Fa490Imp) },titulo)  // Chamada do Relatorio
+    Return
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     Function Fa490Imp
+Static Function Fa490Imp()
+
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ FA490Imp ³ Autor ³ Wagner Xavier         ³ Data ³ 13.11.92 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Copia de cheques                                           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ FA490Imp(lEnd,wnRel,cString)                               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ lEnd    - A‡Æo do CodeBlock                                ³±±
+±±³          ³ wnRel   - T¡tulo do relat¢rio                              ³±±
+±±³Parametros³ cString - Mensagem                                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+cExtenso := ""
+j        := ""
+nRec     := ""
+nContador:=0
+cDocto   := ""
+cCheque  := ""
+cBusca   := ""
+
+nTipo    := IIF(aReturn[4]==1,15,18)
+mv_par01 :=mv_par01+Space( 3-Len(mv_par01))
+mv_par02 :=mv_par02+Space( 5-Len(mv_par02))
+mv_par03 :=mv_par03+Space(10-Len(mv_par03))
+mv_par04 :=mv_par04+Space(15-Len(mv_par04))
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica se existe o Banco                                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("SA6")
+dbSeek(xFilial()+mv_par01+mv_par02+mv_par03)
+IF !Found()
+   Set Device To Screen
+   Help(" ",1,"BCONOEXIST")
+   Return
+EndIF
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Localiza o 1.Cheque a ser impresso                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("SEF")
+dbSeek(xFilial()+mv_par01+mv_par02+mv_par03+mv_par04,.T.)
+SetRegua(RecCount())
+FA490Cabec()
+lEnd := .f.
+While !Eof() .And. SEF->EF_FILIAL+SEF->EF_BANCO==xFilial()+mv_par01 .And. ;
+                   SEF->EF_AGENCIA==mv_par02 .And. SEF->EF_CONTA==mv_par03 .And. ;
+                   SEF->EF_NUM<=mv_par05
+	If lEnd
+           @Prow()+1,1 PSAY "Cancelado pelo operador"
+           Exit
+	EndIF
+	IncRegua()
+    IF SEF->EF_IMPRESS == "A"
+       cBusca := xFilial()+SEF->EF_PREFIXO+SEF->EF_TITULO+SEF->EF_PARCELA+SEF->EF_TIPO+SEF->EF_FORNECE+SEF->EF_LOJA
+    endif
+    IF SEF->EF_IMPRESS $ "AC" .or. SubStr(SEF->EF_TIPO,1,2) == "TB"
+           dbSkip()
+           Loop
+	EndIF
+
+        IF mv_par07 == 1        //uma copia por folha
+           li:=0
+        Elseif li > 29          //so coube uma copia
+           li:=0
+        Else                   //2 copias por folha
+           IF nContador == 0
+              li:=0
+           Else
+              li:=35
+           EndIF
+	EndIF
+
+        nContador := nContador+1
+        IF nContador > 2
+           nContador := 1
+           li        := 0
+        EndIF
+//?       __LogPages()
+
+		@li, 0 PSAY Replicate("-",80)
+        li := li+1
+        @li,  0 PSAY "|  Numero Cheque: "+SEF->EF_NUM
+        @li,056 PSAY Transform(SEF->EF_VALOR,"@E 9999,999,999.99")
+
+	@li,79 PSAY "|"
+        li := li+1
+        @li,00 PSAY "|"
+	@li,79 PSAY "|"
+        li := li+1
+        @li,00 PSAY "|"
+	@li,79 PSAY "|"
+        li := li+1
+
+// EXTENSO( cVALOR,EXPRESSAO LOGICA,cVALOR2)
+// EXPRESSAO LOGICA = .T. -QUANTIDADE, .F.-VALORES
+
+        _cDescr := EXTENSO(SEF->EF_VALOR,.F.,,)
+        @li, 0 PSAY "|      "+ substr( _cDescr,1,69)
+	@li,79 PSAY "|"
+        li := li+1
+        @li, 0 PSAY "|  "+ substr( _cDescr,70)
+	@li,79 PSAY "|"
+        li := li+1
+        @li, 0 PSAY "|"
+	@li,79 PSAY "|"
+        li := li+1
+
+        @li, 0 PSAY "|  "+SEF->EF_BENEF
+	@li,79 PSAY "|"
+        li := li+1
+        @li, 0 PSAY "|"
+	@li,79 PSAY "|"
+        li := li+1
+        
+        @li, 0 PSAY "|"
+        @li,32 PSAY "SAO PAULO,"
+        @li,43 PSAY DAY(SEF->EF_DATA) Picture "99" //DIA
+        @li,47 PSAY "DE"
+        Data()
+        @li,50 PSAY cMes
+        @li,66 PSAY "DE"
+        @li,69 PSAY YEAR(SEF->EF_DATA) Picture "9999" //ANO
+
+	@li,79 PSAY "|"
+        li := li+1
+        @li, 0 PSAY "|"+Replicate("-",78)+"|"
+
+        li := li+1
+
+        cMens1 := "|  S I N D H O S P   Sindicato dos Hospitais do Estado de Sao Paulo            |"
+//      cMens2 := "|                    Laboratorio de Pesquisas e Analises Clinicas,Instituicoes |"
+//      cMens3 := "|                    Laboratorio de Pesquisas e Analises Clinicas,Instituicoes |"
+//      cMens4 := "|                    Beneficientes, Religiosas e Filantropicas do Estado de Sao|"
+//      cMens5 := "|                    Paulo.                                                    |"
+
+        cMens2 := "|                                                                              |"
+        cMens3 := "|                                                                              |"
+        cMens4 := "|                                                                              |"
+        cMens5 := "|                                                                              |"
+        @li, 0 PSAY  cMens1
+        li := li+1
+        @li, 0 PSAY  cMens2
+        li := li+1
+        @li, 0 PSAY  cMens3
+        li := li+1
+//      @li, 0 PSAY  cMens4
+//      li := li+1
+//      @li, 0 PSAY  cMens5
+//      li := li+1
+
+        @li, 0 PSAY "|"+Replicate("-",78)+"|"
+        li := li+1
+        @li, 0 PSAY "|"
+
+        @li,002 PSAY substr(SA6->A6_NOME,1,30)
+        @li,032 PSAY "|"
+        @li,034 PSAY "COD.CONTABIL "
+        @li,79 PSAY "|"
+        li := li+1
+        @li, 0 PSAY "|"+Replicate("-",78)+"|"
+        li := li+1
+
+        dbSelectArea("SE2")
+        dbSeek( cBusca)
+
+        @li, 0 PSAY "| Utilizado para  "+SE2->E2_HIST
+        @li,79 PSAY "|"
+
+        dbSelectArea("SEF")
+
+
+        li := li+1
+        @li, 0 PSAY "|"+Replicate("-",78)+"|"
+
+        li := li+1
+
+        If mv_par08 == 1
+
+	  //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³ Pegar e gravar o proximo numero da Copia do Cheque       ³
+	  //³ Posicionar no sx6 utilizando GetMv. N„o Utilize Seek !!! ³
+	  //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		cDocto := STRZERO(VAL(Getmv("MV_NUMCOP"))+1,6)
+		dbSelectArea("SX6")
+		GetMv("MV_NUMCOP")
+		RecLock("SX6",.F.)
+                X6_CONTEUD := cDocto
+		MsUnlock()
+		dbSelectArea("SEF")
+
+		@li, 0 PSAY "|  Copia de Cheque No. "+cDocto
+		@li,79 PSAY "|"
+	Else
+		@li, 0 PSAY "|"
+		@li,79 PSAY "|"
+	End
+
+        li := li+1
+    @li, 0 PSAY "|"   //Vistos"
+	@li,79 PSAY "|"
+        li := li+1
+        @li, 0 PSAY "|-------------------+-------------------+-------------------+------------------|"
+        li := li+1
+        @li, 0 PSAY "|    Financeiro     |   Administracao   |    Presidente     |    Tesoureiro    |"
+        li := li+1
+        @li, 0 PSAY "|-------------------+-------------------+-------------------+------------------|"
+        li := li+1
+	For j:=1 to 3
+		@li, 0 PSAY "|"
+                @li,20 PSAY "|"
+                @li,40 PSAY "|"
+                @li,60 PSAY "|"
+                @li,79 PSAY "|"
+                li := li+1
+	Next j
+	@li, 0 PSAY Replicate("-",80)
+        nRec := RecNo()
+	IF mv_par06 == 1
+           cCheque := SEF->EF_NUM
+           fr490Cpos()
+	EndIF
+	dbGoTo(nRec)
+	dbSkip()
+End
+
+Set Device To Screen
+Set Filter To
+
+If aReturn[5] == 1
+   Set Printer To
+   dbCommit()
+   ourspool(wnrel)
+Endif
+
+MS_FLUSH()
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ fr490Cpos³ Autor ³ Wagner Xavier         ³ Data ³ 13.11.92 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Copia de cheques                                           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ FINR490(void)                                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³                                                            ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function fr490Cpos
+Static Function fr490Cpos()
+nFirst := 00
+Aglut  := .F.
+DbSelectArea("SEF")
+
+dbSeek( xFilial()+mv_par01+mv_par02+mv_par03+cCheque )
+
+While !Eof() .And. SEF->EF_FILIAL+SEF->EF_BANCO==xFilial()+mv_par01 .And. ;
+        SEF->EF_AGENCIA==mv_par02 .And. SEF->EF_CONTA==mv_par03 .And. ;
+	SEF->EF_NUM==cCheque
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+        //³ Verifica se nao ‚ principal o cancelado                      ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	IF SEF->EF_IMPRESS == "C"
+           dbSkip()
+           Loop
+	End
+	IF li > 58
+           li:=1
+           @li,0 PSAY "COPIA DO CHEQUE : "+ cCheque + " - Continuacao"
+           li := li+1
+	EndIF
+	IF nFirst == 0
+           IF SEF->EF_IMPRESS == "A"
+              lAglut:=.T.
+           EndIF
+           IF !lAglut .and. Empty(SEF->EF_TITULO)
+              dbSkip()
+              Loop
+           End
+           li := li+1
+           @li,0 PSAY "|- Composicao do Cheque "+Replicate("-",55)+"|"
+           li := li+1
+           @li,0 PSAY "|Fornec|  Nome Fornecedor   |Prf|Numero|P| Natureza | Vencto |  Valor do Titulo|"
+	EndIF
+	IF Empty(SEF->EF_TITULO)
+           dbSkip()
+           Loop
+	End
+        nFirst := nFirst+1
+        li     := li+1
+	dbSelectArea("SE2")
+        dbSeek(xFilial()+SEF->EF_PREFIXO+SEF->EF_TITULO+SEF->EF_PARCELA+SEF->EF_TIPO+SEF->EF_FORNECE+SEF->EF_LOJA)
+	@li, 0 PSAY "|"
+	@li, 1 PSAY E2_FORNECE
+	@li, 7 PSAY "|"
+	@li, 8 PSAY SubStr(E2_NOMFOR,1,20)
+	@li,28 PSAY "|"
+	dbSelectArea("SEF")
+	@li,29 PSAY SEF->EF_PREFIXO+"|"+SEF->EF_TITULO+"|"+SEF->EF_PARCELA+"|"
+	@li,42 PSAY SE2->E2_NATUREZ
+	@li,52 PSAY "|"
+	@li,53 PSAY SE2->E2_VENCTO
+	@li,61 PSAY "|"
+	@li,62 PSAY SEF->EF_VALOR PicTure tm(SEF->EF_VALOR,17)
+	@li,79 PSAY "|"
+	dbSkip()
+EndDO
+IF nFirst>0
+   li:= li+1
+   @li, 0 PSAY Replicate("-",80)
+End
+Return .T.
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³FA490Cabec³ Autor ³ Alessandro B. Freire  ³ Data ³ 18.12.96 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Rotina de leitura do driver correto de impressao		  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ FA490cabec()                                               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ nTipo . 15-Comprimido , 18-Normal                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Finr490                                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+Static Function FA490cabec()
+nTamanho := "P"
+SetPrc(0,0)
+@pRow(),pCol() PSAY CHR(15)
+Return(.T.)
+**********************
+Static Function Data()
+aMes := {"JANEIRO","FEVEREIRO","MARCO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"}
+cMes := aMes[ MONTH(SEF->EF_DATA)]
+RETURN(.t.)

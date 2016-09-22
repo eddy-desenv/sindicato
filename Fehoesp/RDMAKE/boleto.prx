@@ -1,0 +1,156 @@
+#include "rwmake.ch"
+User Function BOLETO()
+SetPrvt("WNREL,CDESC1,CDESC2,CDESC3,CSTRING,CSAVCOR")
+SetPrvt("TITULO,ARETURN,NOMEPROG,NLASTKEY,CPERG,LI")
+SetPrvt("LEND,CEND1,CEND2,CCEP,NJUR,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ BOLETO   ³ Autor ³ Andreia dos Santos    ³ Data ³ 22.05.96 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressao de Boleto Bancario                               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ Boleto                                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+wnrel   := ""
+cDesc1  :="Este programa ir  imprimir os Boletos Bancarios."
+cDesc2  :=""
+cDesc3  :=""
+cString :="SE1"
+cSavCor :=SetColor()
+titulo   :="Emissao de Boletos"
+aReturn  := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog :="BOLETO"
+nLastKey := 0
+cPerg    :="BOLETO"
+li       :=0
+TAMANHO  := "P"
+pergunte(cPerg,.F.)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01                    // Codigo Do Banco               ³
+//³ mv_par02                    // duplicata                     ³
+//³ mv_par03                    // ate duplicata                 ³
+//³ mv_par04                    // Imprime Local de Pgto         ³
+//³ mv_par05                    // Local de Pgto                 ³
+//³ mv_par06                    // Qual Moeda                    ³
+//³ mv_par07                    // Somente Nao Impressos         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel := "BOLETO"
+wnrel := SetPrint(cString,wnrel,cPerg,@Titulo,cDesc1,cDesc2,cDesc3,.T.)
+If nLastKey == 27
+	Return
+Endif
+SetDefault(aReturn,cString)
+If nLastKey == 27
+	SetColor(cSavCor)
+	Return
+Endif
+
+RptStatus({|| Fa490Imp() },titulo)
+Return
+**************************
+Static Function Fa490Imp()
+dbSelectArea("SE1")
+if mv_par07==1
+	dbOrderNickName('23')  // DBSETORDER(23) // Alterado (UPDXFUN).
+	DBSEEK(xFilial()+"S")
+else
+	dbSeek(xFilial()+mv_par02,.T.)
+endif
+SetRegua(RecCount())
+lEnd := .f.
+LI := 1
+SetPrc(0,0)
+While !eof() .and.  ( SE1->E1_PREFIXO+SE1->E1_NUM <= mv_par03 .or. mv_par07==1 )
+	If lEnd
+		@Prow()+1,1 PSAY "Cancelado pelo operador"
+		Exit
+	EndIF
+	IncRegua()
+	if mv_par07==1
+		if SE1->E1_IMPRIME == "N"
+			Exit
+		endif
+	endif
+	dbSelectArea( "SA1" )
+	dbSeek(xFilial()+SE1->E1_CLIENTE+SE1->E1_LOJA)
+	cEnd1 := SA1->A1_END
+	cEnd2 := ALLTRIM(SA1->A1_MUN)+" - "+SA1->A1_EST
+	cCep := SA1->A1_CEP
+	dbSelectArea( "SE1" )
+	nJur := SE1->E1_SALDO/(25*30)
+	@pRow(),pCol() PSAY CHR(18)
+	if mv_par04 == 1
+		@ li,   001 PSAY mv_par05+substr(mv_par06,1,12)
+	endif
+	@ li,   052 PSAY DtoC( SE1->E1_VENCREA )
+	li := LI+4
+	@ li,   000 PSAY DtoC( SE1->E1_EMISSAO )
+	@ li,   010 PSAY SE1->E1_PREFIXO+SE1->E1_NUM+SE1->E1_PARCELA
+//	@ li,   035 PSAY ""
+	If VAL(mv_par01) == 237     && Boleto Bradesco
+		@ li,   034 PSAY dDatabase
+	else			  && Boleto Bco Real
+		@ li,   039 PSAY dDatabase
+	EndIf
+	LI := LI +1
+	if SE1->E1_VALOR > 0
+		@ li,   049 PSAY (SE1->E1_VALOR-SE1->E1_IRRF) PICTURE "@E 999,999,999.99" //VALOR
+	endif
+	li := LI+3 //11
+	@ li,   000 PSAY chr(15)
+	li := li + 1
+	@ li,   000  PSAY SE1->E1_MENS1
+	li := li + 1
+	@ li,   000  PSAY SE1->E1_MENS2
+	li := li + 1
+	@ li,   000  PSAY SE1->E1_MENS3
+	li := LI +3
+	If VAL(mv_par01) == 237
+		@ li,   003 PSAY ALLTRIM(SA1->A1_NOME)+" - "+TRANSFORM(SA1->A1_CGC,"@R 99.999.999/9999-99")
+	ELSE
+		@ li,   003 PSAY SA1->A1_NOME+"                         "+TRANSFORM(SA1->A1_CGC,"@R 99.999.999/9999-99")
+	EndIf
+	LI := LI +1
+	if LEN(ALLTRIM(cEnd1))>2
+		@ li,   003 PSAY ALLTRIM(cEnd1) + "  " + cEnd2
+	endif
+	LI := LI+1
+	if LEN(ALLTRIM(cEnd1))>2
+		@ li,   003 PSAY "CEP : "+SubStr(cCep,1,5) + "-" + SubStr(cCep,6,3)
+	Endif
+	li := li+08
+	dbSelectArea( "SE1" )
+	IF MV_PAR07 == 1
+		IF MV_PAR08 == 2
+			RecLock("SE1",.F.)
+			Replace E1_IMPRIME with "N"
+			Dbcommit()
+			MsUnLock()
+			DBSEEK(xFilial()+"S")
+		ELSE
+			DBSKIP()
+		ENDIF
+	ELSE
+		dBskip()
+	ENDIF
+end
+SetPrc(0,0)
+Set Device To Screen
+Set Filter To
+If aReturn[5] == 1
+	Set Printer To
+	dbCommit()
+	ourspool(wnrel)
+Endif
+dbSelectArea( "SE1" )
+dbSetOrder(1)
+MS_FLUSH()
+Return

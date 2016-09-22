@@ -1,0 +1,713 @@
+#include "rwmake.ch"
+#include "topconn.ch"
+User Function RELrepa()
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ RELrepa  ³ Autor ³ Luis Mattos Duarte Jr.³ Data ³ 17.05.12 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Impressao relatorio de Repasses	                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+SetPrvt("_CALIAS,CBCONT,CBTXT,WNREL,CDESC1,CDESC2")
+SetPrvt("CDESC3,CSTRING,TAMANHO,TIPO,LIMITE,TITULO")
+SetPrvt("CABEC2,CABEC1,ARETURN,NOMEPROG,NLASTKEY,CPERG")
+SetPrvt("M_PAG,LI,_AESTR,C_ARQIMP,CARQIND,CINDSA1")
+SetPrvt("NLINHA,")
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 := "Este programa irá imprimir a relacao de baixas"
+cDesc2 := ""
+cDesc3 := ""
+cString := "SE1"
+tamanho := "G"
+tipo := 15
+limite := 220
+Titulo := "Relação de Repasse"
+cabec2 := ""
+CABEC1 := "Sind. Nome                                               CNPJ               Natureza   Titulo        Vencto      Vlr.Titulo  Dt.Baixa  Vlr. Recebido Situacao No.Bancário   Arquivo       Base"
+//         xx    xxxxxxxxxxccccccccccddddddddddfffffffffftttttttttt 99.999.999/9999-99 xxxxxxxxxx 999-999999-9  99/99/99 99,999,999.99  99/99/99  99,999,999.99 zz       xXXXXXXXXXXXX 55555555V555
+//         01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+//                   1         2         3         4         5         6         7         8         9         10        11        12        13        14        15        16        17        18         
+aReturn := { "Zebrado", 1,"Administração", 4, 2, 1, "",1 }
+nomeprog := "RELREPA"
+nLastkey := 0
+
+cPerg := "RELREPA"
+/*BEGINDOC
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³01       ¦ Informacoes Cadastrais ?       ¦ N       ¦          1³
+//³02       ¦ Naturezas ?                    ¦ C       ¦         50³
+//³03       ¦ Data Emissao de ?              ¦ D       ¦          8³
+//³04       ¦ Data Emissao ate ?             ¦ D       ¦          8³
+//³05       ¦ Data da Baixa de ?             ¦ D       ¦          8³
+//³06       ¦ Data da Baixa Ate ?            ¦ D       ¦          8³
+//³07       ¦ Quais Situacoes ?              ¦ C       ¦         10³
+//³08       ¦ Quais Ersin ?                  ¦ C       ¦         30³
+//³09       ¦ Do Banco ?                     ¦ C       ¦          3³
+//³10       ¦ Até o Banco ?                  ¦ C       ¦          3³
+//³11       ¦ Nome do Arquivo ?              ¦ C       ¦         12³
+//³12       ¦ Data a Considerar ?            ¦ N       ¦          1³
+//³13       ¦ Valor de ?                     ¦ N       ¦         17³         
+//³14       ¦ Valor Ate ?                    ¦ N       ¦         17³
+//³15       ¦ Qto aos termos ?               ¦ N       ¦          1³
+//³16       ¦ Sindicato Hospitais            ¦ C       ¦          2³
+//³17       ¦ Data Inicio Sind. De ?         ¦ D       ¦          8³
+//³18       ¦ Data Inicio Sind. Ate ?        ¦ D       ¦          8³
+//³19       ¦ 1a Mensagem Boleto ?           ¦ C       ¦          8³
+//³20       ¦ Cliente ?                      ¦ C       ¦          6³
+//³21       ¦ Bordero ?                      ¦ C       ¦          6³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+ENDDOC*/
+
+m_pag := 1
+li := 80
+pergunte(cPerg,.f.)
+wnrel := "RELREPA"
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastkey == 27
+	return
+endif
+SetDefault(aReturn,cString)
+if nLastkey == 27
+	return
+endif
+RptStatus({|| impREL() },titulo)
+Return
+**********
+Static function ImpREL()
+_aEstr := {}
+AADD(_aEstr,{"CODIGO"    , "C" , 06 , 0})
+AADD(_aEstr,{"NOME"      , "C" , 50 , 0})
+AADD(_aEstr,{"ENDERECO"  , "C" , 50 , 0})
+AADD(_aEstr,{"BAIRRO"    , "C" , 50 , 0})
+AADD(_aEstr,{"CEP"       , "C" , 09 , 0})
+AADD(_aEstr,{"CIDADE"    , "C" , 30 , 0})
+AADD(_aEstr,{"UF"        , "C" , 02 , 0})
+AADD(_aEstr,{"CNPJ"      , "C" , 14 , 0})
+AADD(_aEstr,{"DTCADAS"   , "D" , 08 , 0})
+AADD(_aEstr,{"DTASSOC"   , "D" , 08 , 0})
+AADD(_aEstr,{"DDD"       , "C" , 02 , 0})
+AADD(_aEstr,{"TELEFONE"  , "C" , 25 , 0})
+AADD(_aEstr,{"CODASSO"   , "C" , 06 , 0})
+AADD(_aEstr,{"SITUACAO"  , "C" , 02 , 0})
+AADD(_aEstr,{"ERSIN"     , "C" , 02 , 0})
+AADD(_aEstr,{"CATEGORIA" , "C" , 05 , 0})
+AADD(_aEstr,{"NATUREZA"  , "C" , 10 , 0})
+AADD(_aEstr,{"TITULO"    , "C" , 12 , 0})
+AADD(_aEstr,{"VALORTIT"  , "N" , 15 , 2})
+AADD(_aEstr,{"DATAVENCTO", "D" , 08 , 0})
+AADD(_aEstr,{"DATAPAGTO" , "D" , 08 , 0})
+AADD(_aEstr,{"VALORREC"  , "N" , 15 , 2})
+AADD(_aEstr,{"VALORfed"  , "N" , 15 , 2})
+AADD(_aEstr,{"VALORconf" , "N" , 15 , 2})
+AADD(_aEstr,{"NUMBCO"    , "C" , 15 , 0})
+AADD(_aEstr,{"BASE"      , "C" , 04 , 0})
+AADD(_aEstr,{"INATIVO"   , "C" , 001, 0}) 
+AADD(_aEstr,{"DTABERT"   , "D" , 008, 0}) 
+AADD(_aEstr,{"DTINASS"   , "D" , 008, 0}) 
+AADD(_aEstr,{"DTFIMASS"  , "D" , 008, 0}) 
+AADD(_aEstr,{"VALASSOC"  , "N" , 017, 2})
+AADD(_aEstr,{"FOLHA"     , "N" , 017, 2})  
+AADD(_aEstr,{"CAPITAL"   , "N" , 017, 2}) 
+AADD(_aEstr,{"CAPCENT"   , "C" , 001, 0}) 
+AADD(_aEstr,{"FOLHA_CENT", "C" , 001, 0}) 
+AADD(_aEstr,{"LEITOS"    , "N" , 017, 0}) 
+AADD(_aEstr,{"FUNCION"   , "N" , 017, 0}) 
+AADD(_aEstr,{"ESCR_CONT" , "C" , 014, 0}) 
+AADD(_aEstr,{"FILANT"    , "C" , 001, 0}) 
+AADD(_aEstr,{"HISTORICO" , "C" , 255, 0}) 
+AADD(_aEstr,{"HISTORICO2", "C" , 255, 0}) 
+AADD(_aEstr,{"HISTASS"   , "C" , 080, 0}) 
+AADD(_aEstr,{"EMISSAO"   , "D" , 008, 0}) 
+AADD(_aEstr,{"VENCREA"   , "D" , 008, 0}) 
+AADD(_aEstr,{"JUROS"     , "N" , 017, 2}) 
+AADD(_aEstr,{"VALBAIXA"  , "N" , 017, 2}) 
+AADD(_aEstr,{"BOLETO"    , "C" , 015, 0}) 
+AADD(_aEstr,{"ARQBCO"    , "C" , 012, 0}) 
+AADD(_aEstr,{"VALCRED"   , "N" , 017, 2}) 
+AADD(_aEstr,{"DTCRED"    , "D" , 008, 0}) 
+AADD(_aEstr,{"NOMEESCR"  , "C" , 040, 0}) 
+AADD(_aEstr,{"ENDESCR"   , "C" , 040, 0}) 
+AADD(_aEstr,{"CEPESCR"   , "C" , 008, 0}) 
+AADD(_aEstr,{"BAIRESCR"  , "C" , 020, 0}) 
+AADD(_aEstr,{"MUNESCR"   , "C" , 020, 0}) 
+AADD(_aEstr,{"ESTESCR"   , "C" , 002, 0}) 
+AADD(_aEstr,{"FONEESCR"  , "C" , 020, 0}) 
+AADD(_aEstr,{"HIST_PAGTO", "C" , 050, 0}) 
+AADD(_aEstr,{"SINDICATO" , "C" , 002, 0}) 
+AADD(_aEstr,{"TPCADASTRO", "C" , 001, 0}) 
+c_ArqImp := CriaTrab(_aEstr,.t.)
+dbusearea(.t.,,c_ArqImp,"TMP",.T.)
+CQUERY := " SELECT A1_COD,A1_NOME,A1_END,A1_BAIRRO,A1_CEP,A1_MUN,A1_EST,A1_CGC,A1_DTCADAS,A1_DTINASS,A1_DDD,A1_TEL, "
+CQUERY += " A1_CODASSO,E1_NATUREZ,E1_PREFIXO,E1_NUM,E1_PARCELA, E1_VENCTO,E1_EMISSAO,E1_VALOR,E1_BAIXA, E1_SINDICA, "
+CQUERY += " E1_VALLIQ,E1_JUROS,A1_ERSIN,A1_SITUAC,E1_CONFED,A1_CATEG1,E1_HIST,E1_VALCRED,E1_DTCRED,A1_BASE,E1_ARQBCO, "
+CQUERY += " A1_INAT,A1_DTINIC,A1_DTINASS,A1_DTFIMAS,A1_VALASSO,A1_FOLHA,A1_CAPITAL,A1_CAPCENT,A1_FOLCENT,A1_LEITOS,A1_NUMFUN,A1_ESCCONT, "
+CQUERY += " A1_FILANT,A1_HIST,A1_HIST2,A1_HISTASS,E1_VENCREA,A1_TPCADAS "
+CQUERY += " FROM SE1010 SE1 LEFT JOIN SA1010 SA1 ON E1_CLIENTE=A1_COD AND E1_LOJA=A1_LOJA AND SA1.D_E_L_E_T_='' "
+IF mv_par12 == 1
+	CQUERY += " WHERE E1_BAIXA BETWEEN '"+DTOS(mv_par05)+"' AND '"+DTOS(mv_par06)+"' "
+ELSE
+	CQUERY += " WHERE E1_DTCRED BETWEEN '"+DTOS(mv_par05)+"' AND '"+DTOS(mv_par06)+"' "
+ENDIF
+CQUERY += " AND SE1.D_E_L_E_T_=''  "
+CQUERY += " AND E1_PORTADO between '"+mv_par09+"' and '"+mv_par10+"' "
+
+IF !EMPTY(MV_PAR03)
+	CQUERY += " AND E1_EMISSAO>='"+DTOS(MV_PAR03)+"' "
+ENDIF
+
+IF !EMPTY(MV_PAR04)
+	CQUERY += " AND E1_EMISSAO<='"+DTOS(MV_PAR04)+"' "
+ENDIF
+
+IF !EMPTY(mv_par11)
+	MV_PAR11 := RTRIM( MV_PAR11 ) 
+	CQUERY += " AND E1_ARQBCO LIKE '%" + MV_PAR11 + "%'  " 
+ENDIF
+                     
+CQUERY += " AND E1_SINDICA between '"+mv_par16+"'  and 	'"+mv_par17+"' "
+
+IF !EMPTY(MV_PAR18)
+	CQUERY += " AND A1_INISIND>='"+DTOS(MV_PAR18)+"' "
+ENDIF
+
+IF !EMPTY(MV_PAR19)
+	CQUERY += " AND A1_INISIND<='"+DTOS(MV_PAR19)+"' "
+ENDIF
+
+IF !EMPTY(MV_PAR20)
+	CQUERY += " AND E1_MENS1 LIKE '%"+ALLTRIM(MV_PAR20)+"%' "
+ENDIF
+
+IF !EMPTY(mv_par21)
+	CQUERY += " AND E1_CLIENTE='"+mv_par21+"' "
+ENDIF
+
+IF !EMPTY(mv_par22)
+	CQUERY += " AND E1_NUMBOR='"+mv_par22+"' "
+ENDIF
+
+IF !EMPTY(MV_PAR02)
+	CQUERY += " AND  E1_NATUREZ IN "+FORMATIN(alltrim(MV_PAR02),"/")
+ENDIF
+
+IF !EMPTY(mv_par07)
+	CQUERY += " AND  A1_SITUAC IN "+FORMATIN(alltrim(mv_par07),"/")
+ENDIF
+
+IF !EMPTY(mv_par08)
+	CQUERY += " AND  A1_ERSIN IN "+FORMATIN(alltrim(mv_par08),"/")
+ENDIF
+
+IF mv_par15 == 1
+	CQUERY += " AND SUBSTRING(E1_PREFIXO,3,1)='T' "
+ELSEIF mv_par15==2
+	CQUERY += " AND SUBSTRING(E1_PREFIXO,3,1)<>'T' "
+ENDIF
+if !empty(mv_par23)
+	cquery += " AND E1_PREFIXO='"+MV_PAR23+"' "
+ENDIF
+if !empty(mv_par24)
+	cquery += " AND E1_PARCELA='"+MV_PAR24+"' "
+ENDIF
+if !empty(mv_par25)
+	CQUERY += " AND  A1_BASE IN "+FORMATIN(alltrim(mv_par25),"/") 
+ENDIF
+
+IF mv_par12 == 1
+	CQUERY += " ORDER BY E1_NATUREZ,E1_BAIXA,E1_CONFED "
+ELSE
+	CQUERY += " ORDER BY E1_NATUREZ,E1_DTCRED,E1_CONFED "
+ENDIF
+
+TCQUERY cQuery NEW ALIAS "TRB"
+dbselectarea("trb")
+SetRegua(RecCount())
+VALTIT := VALPG := QTDPG := VALFED:= VALCONF := valtt := 0
+
+IF mv_par12 == 1
+
+	CABEC1 := "Sind. Nome                                               CNPJ               Natureza   Titulo        Vencto      Vlr.Titulo   Vlr Recebido Dt.Baixa  Vlr.Sindicato  Vlr Federacao  Vlr Confederação  Base"
+	//         xx    xxxxxxxxxxccccccccccddddddddddfffffffffftttttttttt 99.999.999/9999-99 xxxxxxxxxx 999-999999-9  99/99/99 99,999,999.99  99,999,999.99 99/99/99  99,999,999.99  99,999,999.99  99,999,999.99     xxxxxxxxxxxxx
+	//         01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+	//                   1         2         3         4         5         6         7         8         9         10        11        12        13        14        15        16        17        18        19           
+	XDATA := TRB->E1_BAIXA
+	CPODATA := "TRB->E1_BAIXA"
+	if Li >= 60
+		cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	endif
+//	@ LI,000 PSAY "DATA: "+DTOC(STOD(TRB->E1_BAIXA))
+ELSE
+	CABEC1 := "Sind. Nome                                               CNPJ               Natureza   Titulo        Vencto      Vlr.Titulo   Vlr Recebido Dt.Cred.  Vlr.Sindicato  Vlr Federacao  Vlr Confederação  Base"
+	//         xx    xxxxxxxxxxccccccccccddddddddddfffffffffftttttttttt 99.999.999/9999-99 xxxxxxxxxx 999-999999-9  99/99/99 99,999,999.99  99/99/99  99,999,999.99 zz       x
+	//         01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+	//                   1         2         3         4         5         6         7         8         9         10        11        12        13        14        15        16        17        18        19
+	XDATA := TRB->E1_DTCRED
+	CPODATA := "TRB->E1_DTCRED"
+	if Li >= 60
+		cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	endif
+//	@ LI,000 PSAY "DATA: "+DTOC(STOD(TRB->E1_DTCRED))
+ENDIF                                                    
+//li+= 2
+VALTIT1:= VALPG1  := 	QTDPG1  := VALFED1 := VALCONF1 := valtt1 := 0
+VALTIT2:= VALPG2  := 	QTDPG2 := VALFED2 := VALCONF2 := valtt2 := 0
+VALTIT3:= VALPG3  := 	QTDPG3  := VALFED3 := VALCONF3 := valtt3 := 0
+VALTIT4:= VALPG4  := 	QTDPG4  := VALFED4 := VALCONF4 := valtt4 := 0
+VALTIT5:= VALPG5  := 	QTDPG5  :=  VALFED5 := VALCONF5 := valtt5 := 0                         
+VALTIT6:= VALPG6  := 	QTDPG6  := VALFED6 := VALCONF6 := valtt6 := 0
+while !eof()
+	IF TRB->E1_VALLIQ < mv_par13 .OR. TRB->E1_VALLIQ>mv_par14
+		DBSELECTAREA("TRB")
+		DBSKIP()
+		LOOP
+	ENDIF
+	if Li >= 60
+		cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	endif
+	XNATUREZA := TRB->E1_NATUREZ
+	NATVALTIT := NATVALPG := NATQTDPG := NATVALFED := NATVALCONF := nATVALTT := 0
+	DBSELECTAREA("SED")
+	DBSETORDER(1)
+	DBSEEK(XFILIAL()+TRB->E1_NATUREZ)
+	@ LI,000 PSAY "NATUREZA: "+alLTRIM(TRB->E1_NATUREZ)+" "+SED->ED_DESCRIC
+	LI+= 2
+	dbselectarea("trb")
+	DO WHILE !EOF() .AND. TRB->E1_NATUREZ == XNATUREZA
+		IF TRB->E1_VALLIQ < mv_par13 .OR. TRB->E1_VALLIQ>mv_par14
+			DBSELECTAREA("TRB")
+			DBSKIP()
+			LOOP
+		ENDIF
+		
+		datVALTIT := datVALPG := DATQTDPG := DATVALFED:= DATVALCONF := DATVALTT :=0
+		INCREGUA()
+		if Li >= 60
+			cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+		endif
+		IF mv_par12 == 1
+
+//			CABEC1 := "Sind. Nome                                               CNPJ               Natureza   Titulo        Vencto      Vlr.Titulo  Dt.Baixa  Vlr.Sindicato  Vlr Federacao  Vlr Confederação"
+			//         xx    xxxxxxxxxxccccccccccddddddddddfffffffffftttttttttt 99.999.999/9999-99 xxxxxxxxxx 999-999999-9  99/99/99 99,999,999.99  99/99/99  99,999,999.99 zz       x
+			//         01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+			//                   1         2         3         4         5         6         7         8         9         10        11        12        13        14        15
+			
+			XDATA := TRB->E1_BAIXA
+			CPODATA := "TRB->E1_BAIXA"
+			@ LI,000 PSAY "DATA: "+DTOC(STOD(TRB->E1_BAIXA))
+		ELSE
+//			CABEC1 := "Sind. Nome                                               CNPJ               Natureza   Titulo        Vencto      Vlr.Titulo  Dt.Cred.  Vlr.Sindicato  Vlr Federacao  Vlr Confederação"
+			//         xx    xxxxxxxxxxccccccccccddddddddddfffffffffftttttttttt 99.999.999/9999-99 xxxxxxxxxx 999-999999-9  99/99/99 99,999,999.99  99/99/99  99,999,999.99 zz       x
+			//         01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+			//                   1         2         3         4         5         6         7         8         9         10        11        12        13        14        15
+			
+			XDATA := TRB->E1_DTCRED
+			CPODATA := "TRB->E1_DTCRED"
+			@ LI,000 PSAY "DATA: "+DTOC(STOD(TRB->E1_DTCRED))
+		
+		ENDIF
+		LI+= 2
+		dbselectarea("trb")
+		DO WHILE !EOF() .AND. &CPODATA == XDATA
+			IF TRB->E1_VALLIQ < mv_par13 .OR. TRB->E1_VALLIQ>mv_par14
+				DBSELECTAREA("TRB")
+				DBSKIP()
+				LOOP
+			ENDIF
+			
+			if Li >= 60
+				cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+			endif
+			dbselectarea("szc")
+			dbsetorder(2)
+			dbseek(xfilial("SZC")+TRB->A1_ESCCONT)
+			dbSelectArea("TMP")
+			RECLOCK("TMP",.T.)
+			TMP->CODIGO    := TRB->A1_COD
+			TMP->NOME      := TRB->A1_NOME
+			TMP->ENDERECO  := trb->a1_end
+			TMP->BAIRRO    := trb->a1_bairro
+			tmp->CEP       := trb->a1_cep
+			TMP->CIDADE    := TRB->A1_MUN
+			TMP->UF        := TRB->A1_EST
+			tmp->cnpj      := trb->A1_CGC
+			TMP->DTCADAS   := STOD(TRB->A1_DTCADAS)
+			TMP->DTASSOC   := STOD(TRB->A1_DTINASS)
+			TMP->DDD       := TRB->A1_DDD
+			TMP->TELEFONE  := TRB->A1_TEL
+			TMP->CODASSO   := TRB->A1_CODASSO
+			TMP->SITUACAO  := TRB->A1_SITUAC
+			TMP->ERSIN     := TRB->A1_ERSIN
+			TMP->CATEGORIA := TRB->A1_CATEG1 
+			TMP->NATUREZA  := alltrim(TRB->e1_naturez)
+			TMP->TITULO    := TRB->E1_PREFIXO+"-"+TRB->E1_NUM+"-"+TRB->E1_PARCELA
+			TMP->VALORTIT  := TRB->E1_VALOR+trb->e1_juros
+			TMP->DATAVENCTO:= STOD(TRB->E1_VENCTO)
+			IF mv_par12 == 1
+				TMP->DATAPAGTO := STOD(TRB->E1_BAIXA)
+			ELSE
+				TMP->DATAPAGTO := STOD(TRB->E1_DTCRED)
+			ENDIF
+			IF ALLTRIM(TRB->E1_NATUREZ) == "003"
+				TMP->VALORREC  := (TRB->E1_VALOR)*.6+TRB->E1_JUROS
+			else
+				TMP->VALORREC  := TRB->E1_VALLIQ
+			endif
+			TMP->HISTORICO := TRB->E1_HIST
+			TMP->NUMBCO    := TRB->E1_CONFED
+			TMP->BASE      := TRB->A1_BASE
+			TMP->INATIVO   := TRB->A1_INAT
+			TMP->DTABERT   := stod(TRB->A1_DTINIC)
+			TMP->DTINASS   := STOD(TRB->A1_DTINASS)
+			TMP->DTFIMASS  := STOD(TRB->A1_DTFIMAS)
+			TMP->VALASSOC  := TRB->A1_VALASSO      
+			TMP->FOLHA     := trb->A1_FOLHA
+			TMP->CAPITAL   := trb->A1_CAPITAL
+			TMP->CAPCENT   := trb->a1_capcent
+			TMP->FOLHA_CENT:= trb->a1_folcent
+			TMP->LEITOS    := trb->a1_leitos
+			TMP->FUNCION   := trb->A1_NUMFUN
+			TMP->ESCR_CONT := trb->A1_ESCCONT
+			TMP->FILANT    := trb->A1_FILANT
+			TMP->HISTORICO := trb->A1_HIST
+			TMP->HISTORICO2:= trb->A1_HIST2
+			TMP->HISTASS   := trb->A1_HISTASS
+			TMP->EMISSAO   := STOD(trb->e1_emissao)
+			TMP->VENCREA   := stod(trb->e1_vencrea)
+			TMP->JUROS     := trb->e1_juros 
+			TMP->VALBAIXA  := trb->e1_valliq
+			TMP->BOLETO    := trb->e1_confed 
+			TMP->ARQBCO    := trb->e1_arqbco
+			TMP->VALCRED   := trb->e1_valcred
+			TMP->DTCRED    := STOD(trb->e1_dtcred)
+			TMP->NOMEESCR  := SZC->ZC_NOMESC
+			TMP->ENDESCR   := SZC->ZC_END
+			TMP->CEPESCR   := SZC->ZC_CEP
+			TMP->BAIRESCR  := SZC->ZC_BAIRRO
+			TMP->MUNESCR   := SZC->ZC_MUN
+			TMP->ESTESCR   := SZC->ZC_EST
+			TMP->FONEESCR  := SZC->ZC_FONE
+			TMP->HIST_PAGTO:= TRB->E1_HIST
+			TMP->SINDICATO := TRB->E1_SINDICA                           
+			TMP->TPCADASTRO:= TRB->A1_TPCADAS
+			if trb->e1_sindica $ "02/03/04/06"
+				if alltrim(TRB->e1_naturez)=="0301"	
+					tmp->VALORfed := (trb->e1_valor+trb->e1_juros)*.75
+					tmp->VALORconf:= 0
+				elseif alltrim(TRB->e1_naturez)=="002"	
+					tmp->VALORfed := (trb->e1_valor+trb->e1_juros)*.70
+					tmp->VALORconf:= (trb->e1_valor+trb->e1_juros)*.05
+				elseif alltrim(TRB->e1_naturez)=="003
+					tmp->VALORfed := (trb->e1_valor)*.15
+					tmp->VALORconf:= (trb->e1_valor)*.05
+			    endif      
+			elseif trb->e1_sindica == "05"
+				if alltrim(TRB->e1_naturez)=="0301"	
+					tmp->VALORfed := (trb->e1_valor+trb->e1_juros)*.70
+					tmp->VALORconf:= 0
+				elseif alltrim(TRB->e1_naturez)=="002"	
+					tmp->VALORfed := (trb->e1_valor+trb->e1_juros)*.65
+					tmp->VALORconf:= (trb->e1_valor+trb->e1_juros)*.05
+				elseif alltrim(TRB->e1_naturez)=="003
+					tmp->VALORfed := (trb->e1_valor)*.15
+					tmp->VALORconf:= (trb->e1_valor)*.05
+			    endif      
+			endif
+			msunlock()
+			@ LI,000 PSAY TRB->e1_sindica
+			@ LI,006 PSAY TRB->A1_NOME
+			@ LI,057 PSAY TRB->A1_CGC PICTURE "@R 99.999.999/9999-99"
+			@ LI,076 PSAY TRB->E1_NATUREZ
+			@ LI,087 PSAY TRB->E1_PREFIXO+"-"+TRB->E1_NUM+"-"+TRB->E1_PARCELA
+			@ LI,101 PSAY STOD(TRB->E1_VENCTO)
+			@ LI,110 PSAY TRB->E1_VALOr PICTURE "@E 99,999,999.99"
+			@ LI,125 PSAY TRB->E1_VALOR+trb->e1_juros PICTURE "@E 99,999,999.99"
+			IF mv_par12 == 1
+				@ LI,140 PSAY STOD(TRB->E1_BAIXA)
+			ELSE
+				@ LI,140 PSAY STOD(TRB->E1_DTCRED)
+			ENDIF
+			IF ALLTRIM(TRB->E1_NATUREZ) == "003"
+				@ LI,150 PSAY TRB->E1_VALcred PICTURE "@E 99,999,999.99"
+				DATVALPG  += TRB->E1_VALcred
+				datvalfed += TMP->VALORFED
+				datvalconf += TMP->VALORconf
+			  if trb->e1_sindica == "01"
+                VALTT1 += TRB->E1_VALOR
+			  	VALTIT1+=TRB->E1_VALOR+trb->e1_juros
+			  	 VALPG1 += 	TRB->E1_VALcred
+				 VALFED1 += TMP->VALORFED
+				 VALCONF1 += TMP->VALORCONF
+			  	 QTDPG1  ++ 
+			   elseif trb->e1_sindica == "02"
+                VALTT2 += TRB->E1_VALOR
+                VALTIT2+=TRB->E1_VALOR+trb->e1_juros
+				 VALFED2 += TMP->VALORFED
+				 VALCONF2 += TMP->VALORCONF
+			  	 VALPG2 += 	TRB->E1_VALcred
+			  	 QTDPG2  ++ 
+			   elseif trb->e1_sindica == "03"
+                VALTT3 += TRB->E1_VALOR
+			  	VALTIT3+=TRB->E1_VALOR+trb->e1_juros
+			  	 VALPG3 += 	TRB->E1_VALcred
+			  	  VALFED3 += TMP->VALORFED
+				 VALCONF3 += TMP->VALORCONF
+			  	 QTDPG3  ++ 
+			   elseif trb->e1_sindica == "04"
+                VALTT4 += TRB->E1_VALOR
+			  	VALTIT4+=TRB->E1_VALOR+trb->e1_juros
+				 VALFED4 += TMP->VALORFED
+				 VALCONF4 += TMP->VALORCONF
+
+			  	 VALPG4 += 	TRB->E1_VALcred
+			  	 QTDPG4  ++ 
+			   elseif trb->e1_sindica == "05"
+                VALTT5 += TRB->E1_VALOR
+			  	VALTIT5+=TRB->E1_VALOR+trb->e1_juros
+				 VALFED5 += TMP->VALORFED
+				 VALCONF5 += TMP->VALORCONF
+
+			  	 VALPG5 += 	TRB->E1_VALcred
+			  	 QTDPG5  ++ 
+			   elseif trb->e1_sindica == "06"
+                VALTT6 += TRB->E1_VALOR
+			  	VALTIT6+=TRB->E1_VALOR+trb->e1_juros
+			  	 VALPG6 += 	TRB->E1_VALcred
+					VALFED6 += TMP->VALORFED
+				 VALCONF6 += TMP->VALORCONF
+
+			  	 QTDPG6  ++ 
+			   ENDIF
+			else
+				JRVALORREC:= TRB->E1_VALLIQ
+				IF ALLTRIM(TRB->E1_NATUREZ) $ "002/0301" .AND. TRB->E1_SINDICA<>"01"
+					JRVALORREC := TRB->E1_VALCRED
+				ENDIF
+				@ LI,150 PSAY JRVALORREC PICTURE "@E 99,999,999.99"
+				DATVALPG  += JRVALORREC
+				 DATVALFED += TMP->VALORFED
+				 DATVALCONF += TMP->VALORCONF
+ 			  if trb->e1_sindica == "01"
+                VALTT1 += TRB->E1_VALOR
+
+			  	VALTIT1+=TRB->E1_VALOR+trb->e1_juros
+				 VALFED1 += TMP->VALORFED
+				 VALCONF1 += TMP->VALORCONF
+
+			  	 VALPG1 += 	JRVALORREC
+			  	 QTDPG1  ++ 
+			   elseif trb->e1_sindica == "02"
+                VALTT2 += TRB->E1_VALOR
+
+			  	VALTIT2+=TRB->E1_VALOR+trb->e1_juros
+			  	 VALPG2 += 	JRVALORREC
+			  	VALFED2 += TMP->VALORFED
+				 VALCONF2 += TMP->VALORCONF
+			  	 QTDPG2  ++ 
+			   elseif trb->e1_sindica == "03"
+                VALTT3 += TRB->E1_VALOR
+			  	VALTIT3+=TRB->E1_VALOR+trb->e1_juros
+			  	 VALPG3 += 	JRVALORREC
+				 VALFED3 += TMP->VALORFED
+				 VALCONF3 += TMP->VALORCONF
+			  	 QTDPG3  ++ 
+			   elseif trb->e1_sindica == "04"
+                VALTT4 += TRB->E1_VALOR
+			  	VALTIT4+=TRB->E1_VALOR+trb->e1_juros
+			  	 VALPG4 += 	JRVALORREC
+				 VALFED4 += TMP->VALORFED
+				 VALCONF4 += TMP->VALORCONF
+			  	 QTDPG4  ++ 
+			   elseif trb->e1_sindica == "05"
+                VALTT5 += TRB->E1_VALOR
+			  	VALTIT5+=TRB->E1_VALOR+trb->e1_juros
+			  	 VALPG5 += 	JRVALORREC
+				 VALFED5 += TMP->VALORFED
+				 VALCONF5 += TMP->VALORCONF
+			  	 QTDPG5  ++ 
+			   elseif trb->e1_sindica == "06"
+                VALTT6 += TRB->E1_VALOR
+			  	VALTIT6+=TRB->E1_VALOR+trb->e1_juros
+			  	 VALPG6 += 	JRVALORREC
+				 VALFED6 += TMP->VALORFED
+				 VALCONF6 += TMP->VALORCONF
+			  	 QTDPG6  ++ 
+			   ENDIF
+
+			ENDIF
+			@ LI,165 PSAY TMP->VALORFED PICTURE "@E 99,999,999.99"
+			@ LI,180 PSAY TMP->VALORCONF PICTURE "@E 99,999,999.99"
+			@ li,197 psay tmp->base    
+			LI++
+			DATVALTIT += TRB->E1_VALOR+trb->e1_juros
+			DATVALTT += TRB->E1_VALOR
+			DATQTDPG ++
+			dbselectarea("trb")
+			DBSKIP()
+		ENDDO
+		li++
+		@ LI,000 PSAY "Total da Data: "+DTOC(STOD(xDATA))
+		@ LI,060 PSAY "Qtde.Titulos:"
+		@ li,074 psay datqtdpg picture "@e 999,999"
+		@ LI,110 PSAY datvaltt PICTURE "@E 99,999,999.99"
+		@ LI,125 PSAY datvaltit PICTURE "@E 99,999,999.99"
+		@ LI,150 PSAY datvalpg  PICTURE "@E 99,999,999.99"
+		@ LI,165 PSAY DATVALFED PICTURE "@E 99,999,999.99"
+		@ LI,180 PSAY DATVALCONF PICTURE "@E 99,999,999.99"
+		natVALTT += dATVALTT
+		natVALTIT += dATVALTIT
+		natVALPG  += dATVALPG
+		NATQTDPG += DATQTDPG
+		NATVALFED += DATVALFED
+		NATVALCONF+= DATVALCONF
+		LI+=2
+	ENDDO
+	li++
+	@ LI,000 PSAY "Total da Natureza: "
+	@ LI,060 PSAY "Qtde.Titulos:"
+	@ li,074 psay natqtdpg picture "@e 999,999"
+	@ LI,110 PSAY natvaltt PICTURE "@E 99,999,999.99"
+	@ LI,125 PSAY natvaltit PICTURE "@E 99,999,999.99"
+	@ LI,150 PSAY natvalpg  PICTURE "@E 99,999,999.99"
+	@ LI,165 PSAY NATVALFED PICTURE "@E 99,999,999.99"
+	@ LI,180 PSAY NATVALCONF PICTURE "@E 99,999,999.99"
+	VALTT  += NATVALTT
+	VALTIT += NATVALTIT
+	VALPG  += NATVALPG
+	VALFED += NATVALFED
+	VALCONF+= NATVALCONF
+	QTDPG  += NATQTDPG
+	li+= 2
+enddo
+IF LI <> 80
+	if Li >= 60
+			cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	endif
+	IF QTDPG1 <> 0
+		@ LI,000 PSAY "Total Geral Sindicato 01:"
+		@ LI,060 PSAY "Qtde.Titulos:"
+	   	@ li,074 psay qtdpg1 picture "@e 999,999"
+	   @ LI,110 PSAY valTt1 PICTURE "@E 99,999,999.99"
+	   @ LI,125 PSAY valtit1 PICTURE "@E 99,999,999.99"
+	   @ LI,150 PSAY valpg1  PICTURE "@E 99,999,999.99"
+		@ LI,165 PSAY VALFED1 PICTURE "@E 99,999,999.99"
+		@ LI,180 PSAY VALCONF1 PICTURE "@E 99,999,999.99"
+
+		li++
+	endif
+	if Li >= 60
+			cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	endif
+
+	IF QTDPG2 <> 0
+		@ LI,000 PSAY "Total Geral Sindicato 02:"
+		@ LI,060 PSAY "Qtde.Titulos:"
+   	@ li,074 psay qtdpg2 picture "@e 999,999"
+	   @ LI,110 PSAY valTt2 PICTURE "@E 99,999,999.99"
+	   	   @ LI,125 PSAY valtit2 PICTURE "@E 99,999,999.99"
+	   @ LI,150 PSAY valpg2  PICTURE "@E 99,999,999.99"
+		@ LI,165 PSAY VALFED2 PICTURE "@E 99,999,999.99"
+		@ LI,180 PSAY VALCONF2 PICTURE "@E 99,999,999.99"
+		li++
+	endif                             
+	if Li >= 60
+			cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	endif
+	
+	IF QTDPG3 <> 0
+		@ LI,000 PSAY "Total Geral Sindicato 03:"
+		@ LI,060 PSAY "Qtde.Titulos:"
+   	@ li,074 psay qtdpg3 picture "@e 999,999"
+	   @ LI,110 PSAY valTt3 PICTURE "@E 99,999,999.99"
+	   @ LI,125 PSAY valtit3 PICTURE "@E 99,999,999.99"
+	   @ LI,150 PSAY valpg3  PICTURE "@E 99,999,999.99"
+		@ LI,165 PSAY VALFED3 PICTURE "@E 99,999,999.99"
+		@ LI,180 PSAY VALCONF3 PICTURE "@E 99,999,999.99"
+	LI++
+	endif
+	if Li >= 60
+			cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	endif
+
+	IF QTDPG4 <> 0
+		@ LI,000 PSAY "Total Geral Sindicato 04:"
+		@ LI,060 PSAY "Qtde.Titulos:"
+   	@ li,074 psay qtdpg4 picture "@e 999,999"
+	   @ LI,110 PSAY valTt4 PICTURE "@E 99,999,999.99"
+	   @ LI,125 PSAY valtit4 PICTURE "@E 99,999,999.99"
+	   @ LI,150 PSAY valpg4  PICTURE "@E 99,999,999.99"
+		@ LI,165 PSAY VALFED4 PICTURE "@E 99,999,999.99"
+		@ LI,180 PSAY VALCONF4 PICTURE "@E 99,999,999.99"
+		LI++
+	endif   
+		if Li >= 60
+			cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	endif
+                        
+	
+	IF QTDPG5 <> 0
+		@ LI,000 PSAY "Total Geral Sindicato 05:"
+		@ LI,060 PSAY "Qtde.Titulos:"
+   	@ li,074 psay qtdpg5 picture "@e 999,999"
+	   @ LI,110 PSAY valTt5 PICTURE "@E 99,999,999.99"
+	   @ LI,125 PSAY valtit5 PICTURE "@E 99,999,999.99"
+	   @ LI,150 PSAY valpg5  PICTURE "@E 99,999,999.99"
+		@ LI,165 PSAY VALFED5 PICTURE "@E 99,999,999.99"
+		@ LI,180 PSAY VALCONF5 PICTURE "@E 99,999,999.99"
+		LI++
+	endif
+	if Li >= 60
+			cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	endif
+
+	IF QTDPG6 <> 0
+		@ LI,000 PSAY "Total Geral Sindicato 06:"
+		@ LI,060 PSAY "Qtde.Titulos:"
+   	@ li,074 psay qtdpg6 picture "@e 999,999"
+	   @ LI,110 PSAY valTt6 PICTURE "@E 99,999,999.99"
+	   	   @ LI,125 PSAY valtit6 PICTURE "@E 99,999,999.99"
+	   @ LI,150 PSAY valpg6  PICTURE "@E 99,999,999.99"
+		@ LI,165 PSAY VALFED6 PICTURE "@E 99,999,999.99"
+		@ LI,180 PSAY VALCONF6 PICTURE "@E 99,999,999.99"
+		LI++
+	endif
+	li++
+	@ LI,000 PSAY "Total Geral:"
+	@ LI,060 PSAY "Qtde.Titulos:"
+	@ li,074 psay qtdpg picture "@e 999,999"
+	   @ LI,110 PSAY valTt PICTURE "@E 99,999,999.99"
+	@ LI,125 PSAY valtit PICTURE "@E 99,999,999.99"
+	@ LI,150 PSAY valpg  PICTURE "@E 99,999,999.99"
+	@ LI,165 PSAY VALFED PICTURE "@E 99,999,999.99"
+	@ LI,180 PSAY VALCONF PICTURE "@E 99,999,999.99"
+
+	li++
+ENDIF    
+
+
+if LI <> 80
+	roda(cbcont,cbtxt,tamanho)
+endif
+DBSELECTAREA("TRB")
+DBCLOSEAREA("TRB")
+DBSELECTAREA("Tmp")
+CARQ := "\arquivos\"+ALLTRIM(SUBS(CUSUARIO,7,15))
+COPY TO &CARQ
+DBCLOSEAREA("Tmp")
+set device to screen
+if aReturn[5] == 1
+	set printer to
+	dbcommit()
+	ourspool(wnrel)
+endif
+MS_FLUSH()
+dbselectarea(_cAlias)
+return

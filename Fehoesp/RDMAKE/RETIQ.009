@@ -1,0 +1,1000 @@
+#include "rwmake.ch"
+#include "topconn.ch"
+User Function RETIQ()
+SetPrvt("_CALIAS,CBCONT,CBTXT,WNREL,CDESC1,CDESC2")
+SetPrvt("CDESC3,CSTRING,TAMANHO,TIPO,LIMITE,TITULO")
+SetPrvt("CABEC1,CABEC2,ARETURN,NOMEPROG,NLASTKEY,CPERG")
+SetPrvt("M_PAG,LI,_AESTR,C_ARQIMP,CARQIND,CINDSA1")
+SetPrvt("XNOME1,XNOME2,XNOME3,XNOME4,XEND1,XEND2")
+SetPrvt("XEND3,XEND4,XBAIRRO1,XBAIRRO2,XBAIRRO3,XBAIRRO4")
+SetPrvt("XCEP1,XCEP2,XCEP3,XCEP4,XCIDADE1,XCIDADE2")
+SetPrvt("XCIDADE3,XCIDADE4,XESTADO1,XESTADO2,XESTADO3,XESTADO4")
+SetPrvt("NVEZ,LIMPRIME,VEZ,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ Retiq    ³ Autor ³ Luiz M. Duarte Junior ³ Data ³ 13.12.04 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Impressao de etiquetas                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 := "Este programa ir  imprimir as etiquetas"
+cDesc2 := ""
+cDesc3 := ""
+cString := "SA1"
+tamanho := "G"
+tipo := 15
+limite := 220
+titulo := "Etiquetas de Contribuintes"
+cabec1 := ""
+cabec2 := ""
+//	     1	       2	 3	   4	     5	       6	 7	   8	     9	      10	11	  12	    13	      14	15	  16	    17
+// 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+// 123456 123456789012345678901234567890123456789012345  12.345.678/9012-34    12   1234 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 99.999,99
+// XXXXXXXXXXXXXXXXXX(40)XXXXXXXXXXXXXXXXXX XXXXX(15)XXXXXX XXXXXXX(15)XXXX
+//
+aReturn := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog := "RETIQ"
+nLastkey := 0
+cPerg := "RETIQ "
+m_pag := 1
+li := 0
+
+pergunte(cPerg,.f.)
+/*BEGINDOC
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³01       ¦ Quais Dir                      ¦ C       ¦         30³
+//³02       ¦ Quais Ersin                    ¦ C       ¦         30³
+//³03       ¦ Quais Bases                    ¦ C       ¦         50³
+//³04       ¦ Quais Sind.Medicos             ¦ C       ¦         50³
+//³05       ¦ Qual Cidade                    ¦ C       ¦         25³
+//³06       ¦ Quais Categorias               ¦ C       ¦         50³
+//³07       ¦ Filantropico                   ¦ N       ¦          1³
+//³08       ¦ Socios                         ¦ N       ¦          1³
+//³09       ¦ Qual E-mail                    ¦ C       ¦         40³
+//³10       ¦ Data de Cadastro               ¦ D       ¦          8³
+//³11       ¦ CEP de                         ¦ C       ¦          8³
+//³12       ¦ CEP ate'                       ¦ C       ¦          8³
+//³13       ¦ Capital Centralizado           ¦ N       ¦          1³
+//³14       ¦ Folha Centralizada             ¦ N       ¦          1³
+//³15       ¦ Convenio SUS                   ¦ N       ¦          1³
+//³16       ¦ Qual Destino                   ¦ N       ¦          1³
+//³17       ¦ Quais Contribuintes            ¦ N       ¦          1³
+//³18       ¦ Qual Ordem                     ¦ N       ¦          1³
+//³19       ¦ Quanto ao Crédito              ¦ N       ¦          1³
+//³20       ¦ 1a. parc. Confed./Assistencial ¦ C       ¦          6³
+//³21       ¦ 2a. parc. Confed./Assistencial ¦ C       ¦          6³
+//³22       ¦ 1a. parc. Sindical             ¦ C       ¦          4³
+//³23       ¦ 2a. parc. Sindical             ¦ C       ¦          4³
+//³24       ¦ Circular                       ¦ C       ¦         25³
+//³25       ¦ Contato                        ¦ C       ¦         50³
+//³26       ¦ Categoria de                   ¦ C       ¦          5³
+//³27       ¦ Categoria Ate                  ¦ C       ¦          5³
+//³28       ¦ Quais Contribuintes            ¦ N       ¦          1³
+//³29       ¦ Qual Inscricao ?               ¦ N       ¦          1³
+//³30       ¦ Qual Tp.Cadastro ?             ¦ N       ¦          1³
+//³31       ¦ Data do 1o.Alvara de           ¦ D       ¦          8³
+//³32       ¦ Data do 1o.Alvara Ate          ¦ D       ¦          8³
+//³33       ¦ Sindicato Hospitais            ¦ C       ¦          2³
+//³34       ¦ Possui Instalacao Fisica       ¦ C       ¦          1³
+//³35       ¦ Aos Cargos de                  ¦ C       ¦          1³
+//³36       ¦ Mescla Arquivo de Etiquetas    ¦ C       ¦          1³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+ENDDOC*/
+
+lImprime := .F.
+
+wnrel := "RETIQ"
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastkey == 27
+	return
+endif
+SetDefault(aReturn,cString)
+if nLastkey == 27
+	return
+endif           
+If aReturn[5]<>1
+	VERIMP()
+ENDIF
+
+cArqEtiq := "\arquivos\RETIQ.DBF"
+
+IF FILE( cArqEtiq )
+	IF MsgYesNo( "Arquivo de Etiquetas Externo RETIQ Existe" + CHR(10)+CHR(13) + "Devo Utilizá-lo ?", "Arquivo Externo de Etiquetas" )
+		lImprime := .T.
+		dbUseArea(.t.,,cArqEtiq,"ETIQ")
+//		Processa({|| ImprimeEtiq() },"Imprimindo Arquivo Externo ...")
+		RptStatus({|| ImprimeEtiq() },titulo) // Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     RptStatus({|| Execute(impETIQ) },titulo)
+		RETURN
+	ENDIF
+ENDIF				
+
+cArqEtiq := "\arquivos\RETIQ3.DBF"
+
+IF MV_PAR36 == 1
+	IF ! FILE( cArqEtiq )
+		GeraRetiq3()
+	ENDIF
+	IF MsgYesNo( "Arquivo de Etiquetas Externo RETIQ3 Existe" + CHR(10)+CHR(13) + "Devo Utilizá-lo ?", "Arquivo Externo de Etiquetas" )
+		lImprime := .T.
+		dbUseArea(.t.,,cArqEtiq,"ETIQ")
+//		Processa({|| ImprimeEtiq() },"Imprimindo Arquivo Externo ...")
+		RptStatus({|| ImprimeEtiq() },titulo) // Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     RptStatus({|| Execute(impETIQ) },titulo)
+		RETURN
+	ENDIF
+ENDIF				
+
+RptStatus({|| CriaEtiq() },titulo) // Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     RptStatus({|| Execute(impETIQ) },titulo)
+
+RETURN
+
+*------------------------------------------------------------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function ImpETIQ
+Static Function CriaEtiq()
+*------------------------------------------------------------------------*
+
+_aEstr := {}
+AADD(_aEstr,{"CODIGO"    , "C" , 06 , 0})
+AADD(_aEstr,{"NOME"      , "C" , 50 , 0})
+AADD(_aEstr,{"ENDERECO"  , "C" , 40 , 0})
+AADD(_aEstr,{"BAIRRO"    , "C" , 25 , 0})
+AADD(_aEstr,{"CEP"       , "C" , 08 , 0})
+AADD(_aEstr,{"CIDADE"    , "C" , 25 , 0})
+AADD(_aEstr,{"ESTADO"    , "C" , 02 , 0})
+AADD(_aEstr,{"TIPOEND"   , "C" , 10 , 0})
+AADD(_aEstr,{"CNPJ"      , "C" , 14 , 0})
+AADD(_aEstr,{"FONE"      , "C" , 15 , 0})
+AADD(_aEstr,{"FONE2"     , "C" , 15 , 0})
+AADD(_aEstr,{"FONE3"     , "C" , 15 , 0})
+AADD(_aEstr,{"EMAIL"     , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL2"    , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL3"    , "C" , 40 , 0})
+AADD(_aEstr,{"CONTATO"   , "C" , 40 , 0})
+AADD(_aEstr,{"BASE"      , "C" , 04 , 0})
+AADD(_aEstr,{"SINDMED"   , "C" , 04 , 0})
+AADD(_aEstr,{"ERSIN"     , "C" , 02 , 0})
+AADD(_aEstr,{"SOCIO"     , "C" , 01 , 0})
+AADD(_aEstr,{"CATEGORIA" , "C" , 05 , 0})
+AADD(_aEstr,{"DATAINICIO", "D" , 08 , 0})
+AADD(_aEstr,{"DATAFIM"   , "D" , 08 , 0})
+AADD(_aEstr,{"DTCADASTRO", "D" , 08 , 0})
+AADD(_aEstr,{"SITUACAO"  , "C" , 02 , 0})
+AADD(_aEstr,{"CODASSO"   , "C" , 06 , 0})
+AADD(_aEstr,{"FAX"       , "C" , 25 , 0})
+AADD(_aEstr,{"CARTAO"    , "C" , 06 , 0}) 
+AADD(_aEstr,{"LEITOS"    , "N" , 10 , 0}) 
+AADD(_aEstr,{"NUM_FUNC"  , "N" , 10 , 0}) 
+AADD(_aEstr,{"FILANT"    , "C" , 01 , 0})
+AADD(_aEstr,{"ESCCONT"   , "C" , 14 , 0})
+AADD(_aEstr,{"SINDICA"   , "C" , 02 , 0})
+AADD(_aEstr,{"VALASSO"   , "N" , 08 , 2})
+AADD(_aEstr,{"CATLEIT"   , "C" , 02 , 0})
+AADD(_aEstr,{"FISICO"    , "C" , 01 , 0})
+AADD(_aEstr,{"HISTASS"   , "C" , 80 , 0})
+AADD(_aEstr,{"SCONTAT"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL4"    , "C" , 60 , 0})
+AADD(_aEstr,{"NOMPRES"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL5"    , "C" , 60 , 0})
+AADD(_aEstr,{"ADMPROV"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL6"    , "C" , 60 , 0})
+AADD(_aEstr,{"SUPERIN"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL7"    , "C" , 60 , 0})
+AADD(_aEstr,{"DIRCLIN"   , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL8"    , "C" , 60 , 0})
+AADD(_aEstr,{"DIRFIN"    , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL9"    , "C" , 60 , 0})
+AADD(_aEstr,{"DIRRH"     , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL0"    , "C" , 60 , 0})
+AADD(_aEstr,{"DIRADM"    , "C" , 40 , 0})
+AADD(_aEstr,{"EMAIL10"   , "C" , 60 , 0})
+//
+AADD(_aEstr,{"CODDESCINA"	, "C" , 02 , 0})
+AADD(_aEstr,{"DESCRINAT"	, "C" , 60 , 0})
+AADD(_aEstr,{"TPCADAS"	 	, "C" , 01 , 0})
+//
+AADD(_aEstr,{"ADVOGA"		, "C" , 40 , 0})	
+AADD(_aEstr,{"EMAIL11"		, "C" , 60 , 0})
+AADD(_aEstr,{"INAT"			, "C" , 01 , 0})		
+AADD(_aEstr,{"DATINAT"		, "D" , 08 , 0})		
+//
+
+
+
+c_ArqImp := CriaTrab(_aEstr,.t.)
+dbusearea(.t.,,c_ArqImp,"ETIQ",.T.)
+dbselectarea("ETIQ")
+cArqIND := criatrab("",.f.)
+if mv_par18 == 2
+	IndRegua("ETIQ",cArqIND,"CEP+NOME",,,"Selecionando Registros...")
+else
+	IndRegua("ETIQ",cArqIND,"NOME",,,"Selecionando Registros...")
+endif
+CQUERY := " SELECT * FROM "+RETSQLNAME("SA1")+" SA1 "
+CQUERY += " WHERE D_E_L_E_T_='' AND A1_CEP BETWEEN '"+MV_PAR11+"' AND '"+MV_PAR12+"' "
+CQUERY += " AND A1_CATEG1 BETWEEN '"+MV_PAR26+"' AND '"+MV_PAR27+"' "
+
+IF !EMPTY(MV_PAR33)
+	CQUERY += " AND  A1_SINDICA = '" + MV_PAR33 + "' "
+ENDIF
+
+IF MV_PAR34 <> 3
+	CQUERY += " AND  A1_FISICO = '" + STR(MV_PAR34,1) + "' "
+ENDIF
+
+IF !EMPTY(MV_PAR01)
+	CQUERY += " AND  A1_DIR IN "+FORMATIN(alltrim(MV_PAR01),"/")
+ENDIF
+IF !EMPTY(MV_PAR02)
+	CQUERY += " AND  A1_ERSIN IN "+FORMATIN(alltrim(MV_PAR02),"/")
+ENDIF
+IF !EMPTY(MV_PAR03)
+	CQUERY += " AND  A1_BASE IN "+FORMATIN(alltrim(MV_PAR03),"/")
+ENDIF
+IF !EMPTY(MV_PAR04)
+	CQUERY += " AND  A1_BASE2 IN "+FORMATIN(alltrim(MV_PAR04),"/")
+ENDIF
+IF !EMPTY(MV_PAR05)
+	CQUERY += " AND  A1_MUN IN " + FORMATIN(alltrim(MV_PAR05),"/")
+ENDIF
+IF !EMPTY(MV_PAR06)
+	CQUERY += " AND  A1_CATEG1 IN "+FORMATIN(alltrim(MV_PAR06),"/")
+ENDIF
+IF MV_PAR07 == 2
+	CQUERY += " AND  A1_FILANT IN ('X','S') "
+ELSEIF MV_PAR07 == 3
+	CQUERY += " AND  A1_FILANT NOT IN ('X','S') "
+ENDIF
+IF MV_PAR08 == 2
+	CQUERY += " AND  A1_SITUAC= 'AS' "
+ELSEIF MV_PAR08 == 3
+	CQUERY += " AND  A1_SITUAC= 'SS' "
+ELSEIF MV_PAR08 == 4
+	CQUERY += " AND  A1_SITUAC= 'CT' "
+ELSEIF MV_PAR08 == 5
+	CQUERY += " AND  A1_SITUAC= 'IS' "
+ENDIF
+IF !EMPTY(MV_PAR09)
+	CQUERY += " AND  A1_EMAIL ='"+MV_PAR09+"' "
+ENDIF
+IF !EMPTY(MV_PAR10)
+	CQUERY += " AND  A1_DTCADAS >='"+DTOS(MV_PAR10)+"' "
+ENDIF
+IF MV_PAR13 == 2
+	CQUERY += " AND  A1_CAPCENT ='S' "
+ELSEIF MV_PAR13 == 3
+	CQUERY += " AND  A1_CAPCENT <> 'S' "
+ENDIF
+IF MV_PAR14 == 2
+	CQUERY += " AND  A1_FOLCENT ='S' "
+ELSEIF MV_PAR14 == 3
+	CQUERY += " AND  A1_FOLCENT <> 'S' "
+ENDIF
+IF MV_PAR15 == 2
+	CQUERY += " AND  A1_CONVSUS ='S' "
+ELSEIF MV_PAR15 == 3
+	CQUERY += " AND  A1_CONVSUS <> 'S' "
+ENDIF
+IF MV_PAR16 == 2
+	CQUERY += " AND  A1_ESCCONT ='' "
+ELSEIF MV_PAR16 == 3
+	CQUERY += " AND  A1_ESCCONT <> '' "
+ENDIF
+IF MV_PAR17 == 2
+	CQUERY += " AND  A1_INAT NOT IN('X','S') "
+ELSEIF MV_PAR17 == 3
+	CQUERY += " AND  A1_INAT IN('X','S') "
+ENDIF
+IF MV_PAR28 == 2
+	CQUERY += " AND  A1_CODASSO<>'' "
+ELSEIF MV_PAR28 == 3
+	CQUERY += " AND  A1_CODASSO='' "
+ENDIF       
+if mv_par30 == 2
+	cquery += " AND A1_TPCADAS='E'"
+ELSEif mv_par30 == 3
+	cquery += " AND A1_TPCADAS='N'"
+ELSEif mv_par30 == 4
+	cquery += " AND A1_TPCADAS='A'"
+ELSEif mv_par30 == 5
+	cquery += " AND A1_TPCADAS='D' "
+endif
+if !empty(mv_par31)
+    CQUERY += "	AND A1_DT1ALV BETWEEN '"+DTOS(MV_PAR31)+"' AND '"+DTOS(MV_PAR32)+"' "
+ENDIF
+CQUERY += " ORDER BY A1_NOME "
+TCQUERY cQuery NEW ALIAS "TRB"
+dbselectarea("trb")
+SetRegua(RecCount())
+while !eof()
+	IncRegua()
+	if mv_par29 == 2
+		if len(alltrim(trb->a1_cgc))<14
+			DBSELECTAREA("TRB")
+			DBSKIP()
+			LOOP
+		ENDIF
+	ELSEif mv_par29 == 3
+		if len(alltrim(trb->a1_cgc))==14
+			DBSELECTAREA("TRB")
+			DBSKIP()
+			LOOP
+		ENDIF
+	ENDIF
+	if mv_par19 == 1
+		IF !EMPTY(MV_PAR20)
+			PAGOU := .F.
+			dbSelectArea("SE1")
+/*
+			Dbsetorder(1)
+			E1_FILIAL+E1_PREFIXO+E1_NUM+E1_PARCELA+E1_TIPO			
+			if !(dbseek( xFilial()+SUBS(mv_par20,5,2)+" "+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par20,5,2)+"E"+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP") .or.;
+				Dbseek( xFilial()+SUBS(mv_par20,5,2)+"A"+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP"))
+*/  
+			// E1_FILIAL+E1_CGC+E1_PREFIXO+E1_PARCELA+E1_TIPO+E1_NATUREZ
+			SE1->( DbOrderNickName( '20' ) )
+			IF ! SE1->(	DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par20,5,2)+" " + SUBS(mv_par20,1,1) + "DP" ) .OR. ;
+							DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par20,5,2)+"E" + SUBS(mv_par20,1,1) + "DP" ) .OR. ;
+							DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par20,5,2)+"A" + SUBS(mv_par20,1,1) + "DP" ) )
+				IF EMPTY(MV_PAR21)
+					dbSelectArea("TRB")
+					dbskip()
+					loop
+				ENDIF
+			ELSE
+				PAGOU := .T.				
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR21) .AND. !PAGOU
+			dbSelectArea("SE1")
+/*
+			Dbsetorder(1)
+			if !(dbseek( xFilial()+SUBS(mv_par21,5,2)+" "+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par21,5,2)+"E"+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par21,5,2)+"A"+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP"))
+*/
+			// E1_FILIAL+E1_CGC+E1_PREFIXO+E1_PARCELA+E1_TIPO+E1_NATUREZ
+			SE1->( DbOrderNickName( '20' ) )
+			IF ! SE1->(	DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par21,5,2)+" " + SUBS(mv_par21,1,1) + "DP" ) .OR. ;
+							DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par21,5,2)+"E" + SUBS(mv_par21,1,1) + "DP" ) .OR. ;
+							DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par21,5,2)+"A" + SUBS(mv_par21,1,1) + "DP" ) )
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR22)
+			dbSelectArea("SE1")
+/*
+			Dbsetorder(1)
+			E1_FILIAL+E1_PREFIXO+E1_NUM+E1_PARCELA+E1_TIPO			
+			if !dbseek( xFilial()+SUBS(mv_par22,3,2)+"S"+TRB->A1_COD+" DP")
+*/  
+			// E1_FILIAL+E1_CGC+E1_PREFIXO+E1_PARCELA+E1_TIPO+E1_NATUREZ
+			SE1->( DbOrderNickName( '20' ) )
+			IF ! SE1->(	DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par22, 3,2)+"S" + " DP" ) )
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR23)
+			dbSelectArea("SE1")
+/*
+			Dbsetorder(1)
+			E1_FILIAL+E1_PREFIXO+E1_NUM+E1_PARCELA+E1_TIPO			
+			if !dbseek( xFilial()+SUBS(mv_par23,3,2)+"S"+TRB->A1_COD+" DP")
+*/  
+			// E1_FILIAL+E1_CGC+E1_PREFIXO+E1_PARCELA+E1_TIPO+E1_NATUREZ
+			SE1->( DbOrderNickName( '20' ) )
+			IF ! SE1->(	DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par23, 3,2)+"S" + " DP" ) )
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+	ELSEIf mv_par19 == 2
+		IF !EMPTY(MV_PAR20)
+			dbSelectArea("SE1")
+/*
+			Dbsetorder(1)
+			if (dbseek( xFilial()+SUBS(mv_par20,5,2)+" "+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par20,5,2)+"E"+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par20,5,2)+"A"+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP"))
+*/
+			// E1_FILIAL+E1_CGC+E1_PREFIXO+E1_PARCELA+E1_TIPO+E1_NATUREZ
+			SE1->( DbOrderNickName( '20' ) )
+			IF SE1->(	DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par20,5,2)+" " + SUBS(mv_par20,1,1) + "DP" ) .OR. ;
+							DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par20,5,2)+"E" + SUBS(mv_par20,1,1) + "DP" ) .OR. ;
+							DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par20,5,2)+"A" + SUBS(mv_par20,1,1) + "DP" ) )
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR21)
+			dbSelectArea("SE1")
+/*
+			Dbsetorder(1)
+			if (dbseek( xFilial()+SUBS(mv_par21,5,2)+" "+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par21,5,2)+"E"+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par21,5,2)+"A"+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP"))
+*/
+			// E1_FILIAL+E1_CGC+E1_PREFIXO+E1_PARCELA+E1_TIPO+E1_NATUREZ
+			SE1->( DbOrderNickName( '20' ) )
+			IF SE1->(	DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par21,5,2)+" " + SUBS(mv_par21,1,1) + "DP" ) .OR. ;
+							DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par21,5,2)+"E" + SUBS(mv_par21,1,1) + "DP" ) .OR. ;
+							DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par21,5,2)+"A" + SUBS(mv_par21,1,1) + "DP" ) )
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR22)
+			dbSelectArea("SE1")
+/*
+			Dbsetorder(1)
+			E1_FILIAL+E1_PREFIXO+E1_NUM+E1_PARCELA+E1_TIPO			
+			if dbseek( xFilial()+SUBS(mv_par22,3,2)+"S"+TRB->A1_COD+" DP")
+*/  
+			// E1_FILIAL+E1_CGC+E1_PREFIXO+E1_PARCELA+E1_TIPO+E1_NATUREZ
+			SE1->( DbOrderNickName( '20' ) )
+			IF SE1->(	DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par22, 3,2)+"S" + " DP" ) )
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR23)
+			dbSelectArea("SE1")
+/*
+			Dbsetorder(1)
+			E1_FILIAL+E1_PREFIXO+E1_NUM+E1_PARCELA+E1_TIPO			
+			if dbseek( xFilial()+SUBS(mv_par23,3,2)+"S"+TRB->A1_COD+" DP")
+*/  
+			// E1_FILIAL+E1_CGC+E1_PREFIXO+E1_PARCELA+E1_TIPO+E1_NATUREZ
+			SE1->( DbOrderNickName( '20' ) )
+			IF SE1->(	DbSeek( xFilial("SE1") + TRB->A1_CGC + SUBS(mv_par23, 3,2)+"S" + " DP" ) )
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+	ENDIF
+	DBSELECTAREA("TRB")
+	IF !EMPTY(TRB->A1_ESCCONT)
+		DBSELECTAREA("SZC")
+		DBSETORDER(2)
+		DBSEEK(xfilial()+TRB->A1_ESCCONT)
+	ENDIF
+	dbselectarea("ETIQ")
+	RECLOCK("ETIQ",.t.)
+	IF !EMPTY(TRB->A1_ESCCONT) .AND. !EMPTY(SZC->ZC_CEP) .AND. MV_PAR16==3
+		ETIQ->CODIGO    := TRB->A1_COD
+		ETIQ->NOME      := TRB->A1_nome
+		ETIQ->ENDERECO  := SZC->ZC_END
+		ETIQ->BAIRRO    := SZC->ZC_BAIRRO
+		ETIQ->CEP       := SZC->ZC_CEP
+		ETIQ->CIDADE    := SZC->ZC_MUN
+		ETIQ->ESTADO    := SZC->ZC_EST
+		ETIQ->TIPOEND   := "ESCRITORIO"
+		ETIQ->CNPJ      := TRB->a1_cgc
+		ETIQ->FONE      := TRB->a1_tel
+		ETIQ->FONE2     := TRB->a1_tel2
+		ETIQ->FONE3     := TRB->a1_tel3
+		ETIQ->EMAIL     := TRB->a1_email
+		ETIQ->EMAIL2    := TRB->a1_email2
+		ETIQ->EMAIL3    := TRB->a1_email3
+		ETIQ->CONTATO   := SZC->ZC_CONTATO
+		ETIQ->BASE      := TRB->a1_base
+		ETIQ->SINDMED   := TRB->a1_base2
+		ETIQ->ERSIN     := TRB->a1_ersin
+		ETIQ->SOCIO     := TRB->a1_tpcli
+		ETIQ->CATEGORIA := TRB->a1_categ1
+		ETIQ->DATAINICIO:= STOD(TRB->a1_dtinass)
+		ETIQ->DATAFIM   := STOD(TRB->A1_dtfimas)
+		etiq->situacao  := trb->A1_SITUAC
+		ETIQ->CODASSO   := TRB->A1_CODASSO
+		ETIQ->FAX       := TRB->A1_FAX
+		ETIQ->CARTAO    := trb->a1_CARTAO
+		etiq->LEITOS    := trb->a1_LEITOS
+		etiq->NUM_FUNC  := trb->a1_NUMFUN
+		ETIQ->FILANT    := TRB->A1_FILANT
+		ETIQ->ESCCONT   := TRB->A1_ESCCONT
+		ETIQ->DTCADASTRO:= STOD(TRB->A1_DTCADAS)
+		ETIQ->SINDICA   := TRB->A1_SINDICA
+		ETIQ->VALASSO   := TRB->A1_VALASSO
+		ETIQ->CATLEIT   := TRB->A1_CATLEIT
+		ETIQ->FISICO    := TRB->A1_FISICO
+		ETIQ->HISTASS   := TRB->A1_HISTASS
+		ETIQ->SCONTAT   := TRB->A1_SCONTAT
+		ETIQ->EMAIL4    := TRB->A1_EMAIL4   
+		ETIQ->NOMPRES   := TRB->A1_NOMPRES
+		ETIQ->EMAIL5    := TRB->A1_EMAIL5
+		ETIQ->ADMPROV   := TRB->A1_ADMPROV
+		ETIQ->EMAIL6    := TRB->A1_EMAIL6
+		ETIQ->SUPERIN   := TRB->A1_SUPERIN
+		ETIQ->EMAIL7    := TRB->A1_EMAIL7
+		ETIQ->DIRCLIN   := TRB->A1_DIRCLIN
+		ETIQ->EMAIL8    := TRB->A1_EMAIL8
+		ETIQ->DIRFIN    := TRB->A1_DIRFIN
+		ETIQ->EMAIL9    := TRB->A1_EMAIL9
+		ETIQ->DIRRH     := TRB->A1_DIRRH
+		ETIQ->EMAIL0    := TRB->A1_EMAIL0
+		ETIQ->DIRADM    := TRB->A1_DIRADM
+		ETIQ->EMAIL10   := TRB->A1_EMAIL10    
+				//
+		ETIQ->DESCINAT	 :=	TRB->A1_CODDESC
+		ETIQ->DESCRINAT :=	Posicione("SX5",1,xFilial("SX5")+"Z4"+TRB->A1_CODDESC,"X5DESCRI()" )					
+		ETIQ->TPCADAS	 :=	TRB->A1_TPCADAS        
+				//
+		ETIQ->ADVOGA	:=	TRB->A1_ADVOGA
+		ETIQ->EMAIL11	:=	TRB->A1_EMAIL11
+		ETIQ->INAT		:=	TRB->A1_INAT
+		ETIQ->DATINAT	:=STOD( TRB->A1_DATINAT )
+   //
+
+	ELSE
+
+		ETIQ->CODIGO   := TRB->A1_COD
+		ETIQ->NOME     := TRB->A1_nome
+		ETIQ->ENDERECO := TRB->a1_end
+		ETIQ->BAIRRO   := TRB->A1_bairro
+		ETIQ->CEP      := TRB->a1_cep
+		etiq->CIDADE   := TRB->a1_mun
+		ETIQ->ESTADO   := TRB->a1_est
+		ETIQ->TIPOEND  := "ENTIDADE"
+		ETIQ->CNPJ      := TRB->a1_cgc
+		ETIQ->FONE      := TRB->a1_tel 
+		ETIQ->FONE2     := TRB->a1_tel2
+		ETIQ->FONE3     := TRB->a1_tel3
+		ETIQ->EMAIL     := TRB->a1_email
+		ETIQ->EMAIL2    := TRB->a1_email2
+		ETIQ->EMAIL3    := TRB->a1_email3
+		ETIQ->CONTATO   := TRB->a1_Scontat
+		ETIQ->BASE      := TRB->a1_base
+		ETIQ->SINDMED   := TRB->a1_base2
+		ETIQ->ERSIN     := TRB->a1_ersin
+		ETIQ->SOCIO     := TRB->a1_tpcli
+		ETIQ->CATEGORIA := TRB->a1_categ1
+		ETIQ->DATAINICIO:= STOD(TRB->a1_dtinass)
+		ETIQ->DATAFIM   := STOD(TRB->A1_dtfimas)
+		etiq->situacao  := trb->A1_SITUAC
+		ETIQ->CODASSO   := TRB->A1_CODASSO
+		ETIQ->FAX       := TRB->A1_FAX
+		ETIQ->CARTAO    := trb->a1_CARTAO
+		etiq->LEITOS    := trb->a1_LEITOS
+		etiq->NUM_FUNC  := trb->a1_NUMFUN
+		ETIQ->FILANT    := TRB->A1_FILANT
+		ETIQ->ESCCONT   := TRB->A1_ESCCONT
+		ETIQ->DTCADASTRO:= STOD(TRB->A1_DTCADAS)
+		ETIQ->VALASSO   := TRB->A1_VALASSO
+		ETIQ->SINDICA   := TRB->A1_SINDICA
+		ETIQ->CATLEIT   := TRB->A1_CATLEIT
+		ETIQ->FISICO    := TRB->A1_FISICO
+		ETIQ->HISTASS   := TRB->A1_HISTASS
+		ETIQ->SCONTAT   := TRB->A1_SCONTAT
+		ETIQ->EMAIL4    := TRB->A1_EMAIL4   
+		ETIQ->NOMPRES   := TRB->A1_NOMPRES
+		ETIQ->EMAIL5    := TRB->A1_EMAIL5
+		ETIQ->ADMPROV   := TRB->A1_ADMPROV
+		ETIQ->EMAIL6    := TRB->A1_EMAIL6
+		ETIQ->SUPERIN   := TRB->A1_SUPERIN
+		ETIQ->EMAIL7    := TRB->A1_EMAIL7
+		ETIQ->DIRCLIN   := TRB->A1_DIRCLIN
+		ETIQ->EMAIL8    := TRB->A1_EMAIL8
+		ETIQ->DIRFIN    := TRB->A1_DIRFIN
+		ETIQ->EMAIL9    := TRB->A1_EMAIL9
+		ETIQ->DIRRH     := TRB->A1_DIRRH
+		ETIQ->EMAIL0    := TRB->A1_EMAIL0
+		ETIQ->DIRADM    := TRB->A1_DIRADM
+		ETIQ->EMAIL10   := TRB->A1_EMAIL10
+		//
+		ETIQ->CODDESCINAT	:=	TRB->A1_CODDESC
+		ETIQ->DESCRINAT	:=	Posicione("SX5",1,xFilial("SX5")+"Z4"+TRB->A1_CODDESC,"X5DESCRI()" )					
+		ETIQ->TPCADAS				:=	TRB->A1_TPCADAS       
+		//
+		ETIQ->ADVOGA	:=	TRB->A1_ADVOGA
+		ETIQ->EMAIL11	:=	TRB->A1_EMAIL11
+		ETIQ->INAT		:=	TRB->A1_INAT
+		ETIQ->DATINAT	:=STOD( TRB->A1_DATINAT )
+   //
+
+	ENDIF
+	MSUNLOCK()                          
+	DBSELECTAREA("TRB")
+	DBSKIP()
+ENDDO
+
+ImprimeEtiq()
+
+/*-----------------------------*/
+  STATIC FUNCTION ImprimeEtiq()
+/*-----------------------------*/
+
+DBSELECTAREA("eTIQ")
+dbgotop()
+SetRegua(RecCount())
+Xnome1 := Xnome2 := Xnome3 := Xnome4 := ""
+XEND1 := XEND2 := XEND3:= XEND4 :=""
+XBAIRRO1 := XBAIRRO2 := XBAIRRO3 := XBAIRRO4 := ""
+Xcep1 := Xcep2 := Xcep3 := Xcep4 := ""
+Xcidade1 := Xcidade2 := Xcidade3 := Xcidade4 := ""
+Xestado1 := Xestado2 := Xestado3 := Xestado4 := ""
+XCONTATO1 := XCONTATO2 := XCONTATO3 := XCONTATO4 := ""
+XcGC1 := XcGC2 := XcGC3 := XcGC4 := ""
+Nvez := 1
+limprime := .t.
+NUMETIQ := 0
+DO WHILE !eof()
+	INCREGUA()
+
+	if Nvez == 1
+		xcgc1     := etiq->CNPJ
+		Xnome1    := etiq->nome
+		Xend1     := etiq->endereco
+		Xbairro1  := etiq->bairro
+		Xcep1     := etiq->cep
+		Xcidade1  := etiq->cidade
+		Xestado1  := etiq->estado
+
+		DO CASE
+		   CASE MV_PAR35 == 1 //NENHUM
+					XCONTATO1 := ETIQ->DIRADM
+		   CASE MV_PAR35 == 2 // PRESIDENTE
+					XCONTATO1 := ETIQ->NOMPRES
+		   CASE MV_PAR35 == 3 // DIRETOR RH
+					XCONTATO1 := ETIQ->DIRRH
+		   CASE MV_PAR35 == 4 // DIRETOR CLINICO
+					XCONTATO1 := ETIQ->DIRCLIN
+		ENDCASE
+
+		Nvez := NVEZ +1
+		limprime := .t.
+
+	elseif Nvez == 2
+
+		xcgc2     := etiq->CNPJ
+		Xnome2    := etiq->nome
+		Xend2     := etiq->endereco
+		Xbairro2  := etiq->bairro
+		Xcep2     := etiq->cep
+		Xcidade2  := etiq->cidade
+		Xestado2  := etiq->estado
+
+		DO CASE
+		   CASE MV_PAR35 == 1 //NENHUM
+					XCONTATO2 := ETIQ->DIRADM
+		   CASE MV_PAR35 == 2 // PRESIDENTE
+					XCONTATO2 := ETIQ->NOMPRES
+		   CASE MV_PAR35 == 3 // DIRETOR RH
+					XCONTATO2 := ETIQ->DIRRH
+		   CASE MV_PAR35 == 4 // DIRETOR CLINICO
+					XCONTATO2 := ETIQ->DIRCLIN
+		ENDCASE
+
+		Nvez := NVEZ +1
+		limprime := .t.
+
+	elseif Nvez == 3
+
+		xcgc3     := etiq->CNPJ
+		Xnome3    := etiq->nome
+		Xend3     := etiq->endereco
+		Xbairro3  := etiq->bairro
+		Xcep3     := etiq->cep
+		Xcidade3  := etiq->cidade
+		Xestado3  := etiq->estado
+
+		DO CASE
+		   CASE MV_PAR35 == 1 //NENHUM
+					XCONTATO3 := ETIQ->DIRADM
+		   CASE MV_PAR35 == 2 // PRESIDENTE
+					XCONTATO3 := ETIQ->NOMPRES
+		   CASE MV_PAR35 == 3 // DIRETOR RH
+					XCONTATO3 := ETIQ->DIRRH
+		   CASE MV_PAR35 == 4 // DIRETOR CLINICO
+					XCONTATO3 := ETIQ->DIRCLIN
+		ENDCASE
+
+		Nvez := NVEZ +1
+		limprime := .t.
+
+	endif
+
+	if Nvez == 4 .and. limprime
+		IF !EMPTY(XCGC1)
+			NUMETIQ ++
+		ENDIF
+		IF !EMPTY(XCGC2)
+			NUMETIQ ++
+		ENDIF
+		IF !EMPTY(XCGC3)
+			NUMETIQ ++
+		ENDIF
+		@ li,000 PSAY XCGC1 PICTURE "@R 99.999.999/9999-99"
+		@ li,020 psay MV_PAR24
+		@ li,060 PSAY XCGC2 PICTURE "@R 99.999.999/9999-99"
+		@ li,080 psay MV_PAR24
+		@ li,120 PSAY XCGC3 PICTURE "@R 99.999.999/9999-99"
+		@ li,140 psay MV_PAR24
+		li:= LI +1
+		@ li,000 PSAY Xnome1
+		@ li,060 PSAY Xnome2
+		@ li,120 PSAY Xnome3
+		li:= LI +1
+
+		IF !EMPTY(MV_PAR25) .AND. MV_PAR35 == 1
+			@ li,000 PSAY MV_PAR25
+			@ li,060 PSAY MV_PAR25
+			@ li,120 PSAY MV_PAR25
+		ELSE             
+			@ li,000 PSAY XCONTATO1
+			@ li,060 PSAY XCONTATO2
+			@ li,120 PSAY XCONTATO3
+		ENDIF
+
+		li:= LI +1
+		@ li,000 PSAY Xend1
+		@ li,060 PSAY Xend2
+		@ li,120 PSAY Xend3
+		li:= LI +1
+		@ li,000 PSAY Xcep1 picture "@r 99999-999"
+		@ li,012 PSAY ALLTRIM(Xcidade1)+"/"+Xestado1
+		@ li,060 PSAY Xcep2 picture "@r 99999-999"
+		@ li,072 PSAY ALLTRIM(Xcidade2)+"/"+Xestado2
+		@ li,120 PSAY Xcep3 picture "@r 99999-999"
+		@ li,132 PSAY ALLTRIM(Xcidade3)+"/"+Xestado3
+		li:= LI +2
+		Nvez := 1
+		Xnome1 := Xnome2 := Xnome3 := Xnome4 := ""
+		XEND1 := XEND2 := XEND3:= XEND4 :=""
+		XBAIRRO1 := XBAIRRO2 := XBAIRRO3 := XBAIRRO4 := ""
+		Xcep1 := Xcep2 := Xcep3 := Xcep4 := ""
+		Xcidade1 := Xcidade2 := Xcidade3 := Xcidade4 := ""
+		Xestado1 := Xestado2 := Xestado3 := Xestado4 := ""
+		XcGC1 := XcGC2 := XcGC3 := XcGC4 := ""
+		limprime := .F.
+	endif
+	dbselectAREA("ETIQ")
+	DBSKIP()
+ENDDO
+if  limprime
+	IF !EMPTY(XCGC1)
+		NUMETIQ ++
+	ENDIF
+	IF !EMPTY(XCGC2)
+		NUMETIQ ++
+	ENDIF
+	IF !EMPTY(XCGC3)
+		NUMETIQ ++
+	ENDIF
+	@ li,000 PSAY XCGC1 PICTURE "@R 99.999.999/9999-99"
+	@ li,020 psay MV_PAR24
+	@ li,060 PSAY XCGC2 PICTURE "@R 99.999.999/9999-99"
+	@ li,080 psay MV_PAR24
+	@ li,120 PSAY XCGC3 PICTURE "@R 99.999.999/9999-99"
+	@ li,140 psay MV_PAR24
+	li:= LI +1
+	@ li,000 PSAY Xnome1
+	@ li,060 PSAY Xnome2
+	@ li,120 PSAY Xnome3
+	li:= LI +1
+
+	IF !EMPTY(MV_PAR25) .AND. MV_PAR35 == 1
+		@ li,000 PSAY MV_PAR25
+		@ li,060 PSAY MV_PAR25
+		@ li,120 PSAY MV_PAR25
+	ELSE             
+		@ li,000 PSAY XCONTATO1
+		@ li,060 PSAY XCONTATO2
+		@ li,120 PSAY XCONTATO3
+	ENDIF
+
+	li:= LI +1
+	@ li,000 PSAY Xend1
+	@ li,060 PSAY Xend2
+	@ li,120 PSAY Xend3
+	li:= LI +1
+	@ li,000 PSAY Xcep1 picture "@r 99999-999"
+	@ li,012 PSAY ALLTRIM(Xcidade1)+"/"+Xestado1
+	@ li,060 PSAY Xcep2 picture "@r 99999-999"
+	@ li,072 PSAY ALLTRIM(Xcidade2)+"/"+Xestado2
+	@ li,120 PSAY Xcep3 picture "@r 99999-999"
+	@ li,132 PSAY ALLTRIM(Xcidade3)+"/"+Xestado3
+	li:= LI +2
+	vez := 1
+	limprime := .F.
+endif
+@ li,000 psay chr(18)
+li ++
+@ li,000 PSAY "Numero de etiquetas "
+li++
+@ li,000 psay "impressas: "+strzero(numetiq,6)
+li++
+ALERT("Etiquetas: "+strzero(numetiq,6))
+dbselectarea("ETIQ")
+CARQ := "\arquivos\"+ALLTRIM(SUBS(CUSUARIO,7,15))
+COPY TO &CARQ
+dbclosearea()
+
+IF Select("TRB")>0
+	dbselectarea("TRB")
+	dbclosearea()
+ENDIF
+
+DBSELECTAREA("SA1")
+RETINDEX("SA1")
+set device to screen
+if aReturn[5] == 1
+	set printer to
+	dbcommit()
+	ourspool(wnrel)
+endif
+MS_FLUSH()
+dbselectarea(_cAlias)
+Return
+*************************
+Static Function VerImp()
+Li:= 0                // Contador de Linhas
+nLinIni:=0
+If aReturn[5]<>1
+	nOpc       := 1
+	SetPrc(0,0)
+	@ li,000 PSAY chr(15)
+	dbCommitAll()
+	While .T.
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)                                                                            	
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+		IF MsgYesNo("Fomulario esta posicionado ? ")
+			nOpc := 1
+		ElseIF MsgYesNo("Tenta Novamente ? ")
+			nOpc := 2
+		Else
+			nOpc := 3
+		Endif
+		Do Case
+			Case nOpc==1
+				lContinua:=.T.
+				Exit
+			Case nOpc==2
+				Loop
+			Case nOpc==3
+				lContinua:=.F.
+				Return
+		EndCase
+	End
+Endif
+
+
+STATIC FUNCTION GERARETIQ3()
+
+LOCAL cArqRetiq1, cArqRetiq3
+
+cArqRetiq1 := "\arquivos\retiq1.dbf" 
+cArqRetiq2 := "\arquivos\retiq2.dbf" 
+
+IF !FILE( cArqRetiq1 ) 
+	MsgStop( "Falta Arquivo RETIQ1.DBF")
+	RETURN
+endif
+
+IF !FILE( cArqRetiq2 ) 
+	MsgStop( "Falta Arquivo RETIQ2.DBF")
+	RETURN
+endif
+	                                    
+FERASE( "\arquivos\RETIQ1.CDX" )
+FERASE( "\arquivos\RETIQ2.CDX" )
+FERASE( "\arquivos\RETIQ3.DBF" )
+
+DbUseArea(.T.,"DBFCDX", "arquivos\RETIQ2",  "RETIQ2", if(.F. .OR. .F., !.F., NIL), .F. )
+MsOpenIdx( "RETIQ2","CODIGO",,,,"arquivos\RETIQ2" )
+
+DbUseArea(.T.,"DBFCDX", "arquivos\RETIQ1",  "RETIQ1", if(.F. .OR. .F., !.F., NIL), .F. )
+
+RETIQ1->( DbGoTop() )
+
+DO WHILE ! RETIQ1->( EOF() )
+
+	IF RETIQ2->( DbSeek( RETIQ1->CODIGO ) )
+		RecLock( "RETIQ2", .F. )
+		RETIQ2-> ( DbDelete() )
+		MsUnLock()
+		RecLock( "RETIQ1", .F. )
+		RETIQ1-> ( DbDelete() )
+		MsUnLock()
+	ENDIF
+	
+	RETIQ1->( DbSkip() )
+
+ENDDO
+
+DbSelectArea( "RETIQ2" )
+COPY TO ( "arquivos\AP2.DBF" )
+
+DbSelectArea( "RETIQ1" )
+COPY TO ( "arquivos\AP1.DBF" )
+COPY TO ( "arquivos\RETIQ3.DBF" ) FOR ! Deleted()
+
+RETIQ1->( DbCloseArea() )
+RETIQ2->( DbCloseArea() )
+
+DbUseArea(.T.,"DBFCDX", "arquivos\RETIQ3",  "RETIQ3", if(.F. .OR. .F., !.F., NIL), .F. )
+APPEND FROM ( "arquivos\retiq2" )  FOR ! DELETED() 
+
+RETIQ3->( DbCloseArea() )
+
+FERASE( "\arquivos\RETIQ1.DBF" )
+FERASE( "\arquivos\RETIQ2.DBF" )
+FERASE( "\arquivos\RETIQ2.CDX" )
+
+RETURN	
+	

@@ -1,0 +1,322 @@
+#include "rwmake.ch"
+User Function RFINA09()
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,_CLOTE,N_OPC,CPERG")
+SetPrvt("C_BORDERO,_CARQ,_NTOTAL,_NTOTAL2,_ASTRU,C_ARQTMP")
+SetPrvt("_DATAPROC,_CPERIODO,_CCONTA,_CCGC,_DVENC,_NPREF")
+SetPrvt("_NPARC,_LMOVIMENTA,_ALTCONF,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA09  ³ Autor ³ Luiz E. D. Roz        ³ Data ³ 24/04/01 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Retorno de Contribuicoes   (Banco Bradesco)                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Obs.:     ³ E' atualizado os arquivo SE1, SEA                          ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+* Banco = 237
+/* Assistencial
+agencia=> "0198"
+conta  => "169641"
+*/
+/* Termos
+agencia=> "0198"
+conta  => "162159"
+*/
+** Definir parametros p/ Baixa Termos
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo   := "Retorno de Contribuicoes - Banco BRADESCO"
+_cLote:=""
+n_Opc := 0
+cPerg    := "FINA09"
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis utilizadas para parametros                                       ³
+³ mv_par01   // Arquivo de entrada                                           ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+Pergunte(cPerg,.T.)
+C_BORDERO := ""
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+@ 023,014 SAY "Este programa fara a recepcao Bancaria das cobrancas "
+@ 033,014 SAY "vindas pelo Banco Bradesco"
+@ 063,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+@ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()
+@ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+Return
+***************************
+Static Function Iniciar()
+Close(oDlg1)
+Processa( {|| Receber() })
+Return
+***************************
+Static Function Receber()
+_cArq  := ARQ := "\arquivos\retorno\"+mv_par01
+If !File( allTrim( _cArq ))
+	Help(" ",1,"ARRVAZ")
+	Return
+endif
+_nTotal:= 0
+_nTotal2:= 0
+_aStru := {}
+AADD( _aStru, { "COD_REGIST"  , "C" , 001 , 0 } )
+AADD( _aStru, { "CAMPO"       , "C" , 399 , 0 } )
+c_ArqTmp := CriaTrab(_aStru,.t.)
+dbUseArea(.t.,,c_ArqTmp,"TMP")
+dbSelectArea("TMP")
+Append From &(alltrim(_cArq)) SDF
+dbGotop()
+ProcRegua(RecCount(),22,05)
+if TMP->COD_REGIST == "0"  //registro Header
+	dbskip()
+	_dataproc := ctod(substr(TMP->CAMPO,110,2)+"/"+substr(TMP->CAMPO,112,2)+"/"+substr(TMP->CAMPO,114,2))
+	_cPeriodo := substr(TMP->CAMPO,112,2) + substr(TMP->CAMPO,114,2)
+	dbSelectArea("TMP")
+	while !eof() .and. TMP->COD_REGIST == "1"
+		IncProc(_cTitulo)
+		_cConta := substr( TMP->CAMPO,29,7)
+		if _cConta == "0169641"    && C/C Assistencial
+			_cLote:="7555"	 && Lote para ASSISTENCIAL
+			XNATUREZA := "0301"
+		elseif _cConta == "0162159"    && C/C Termos
+			_cLote:="7560"	 && Lote para Termos
+			XNATUREZA:="002"
+		else
+			_cLote:="7560"	 && Lote para Termos
+			XNATUREZA:="314"
+		endif
+		if  substr(TMP->CAMPO,108,2) =="06" //LIQUIDACAO NORMAL
+			_dataproc := ctod(substr(TMP->CAMPO,110,2)+"/"+substr(TMP->CAMPO,112,2)+"/"+substr(TMP->CAMPO,114,2))
+			_cPeriodo := substr(TMP->CAMPO,112,2) + substr(TMP->CAMPO,114,2)
+			_cCGC  := ""
+			_dVENC := ctod("")
+			_nPREF := ""
+			_nPARC := ""
+			dbSelectArea("SZ9")
+			DBSETORDER(1)
+			if dbseek( xFilial()+substr(TMP->CAMPO,70,12) ) // Num_tit
+				_cCGC  := SZ9->Z9_CGC
+				_dVenc := SZ9->Z9_VENCTO
+				_nPREF := substr(SZ9->Z9_PARCELA,1,2)
+				_nPARC := substr(SZ9->Z9_PARCELA,4,1)
+			else
+				_cCGC   := "99"   && Boleto Avulso / Termo
+			endif
+			if _cConta == "0162159"    && C/C Termos
+    			_NPREF := ALLTRIM(_NPREF)+"E"
+			ENDIF
+			if empty( _cCGC )
+				dbSelectArea("TMP")
+				dbskip()
+				loop
+			endif
+			if _cCGC <> "99"
+				dbSelectArea("SA1")
+				dbSetOrder(3)
+				dbseek( xFilial()+ _cCGC )
+				if eof()
+					dbSetOrder(1) // Atencao (UPDXFUN).
+					dbSelectArea("TMP")
+					dbskip()
+					loop
+				endif
+			endif
+			dbSelectArea("SE1")  //GERANDO Contas a receber
+			dbSetOrder(18)
+			dbseek( xFilial()+substr(TMP->CAMPO,70,12) )
+			_lMovimenta := .f.
+			if eof() .and. _cCGC <> "99"	  && Gera titulo se nao existe (Recepcao normal)
+				_lMovimenta := .t.
+				RecLock("SE1",.T.)
+				SE1->E1_FILIAL   := xFilial()
+				SE1->E1_PREFIXO  := _nPREF
+				SE1->E1_NUM      := SA1->A1_COD
+				SE1->E1_SINDICA  := SA1->A1_SINDICA
+				SE1->E1_PARCELA  := _nPARC
+				SE1->E1_TIPO     := "DP"
+				SE1->E1_NATUREZ  := XNATUREZA
+				SE1->E1_CLIENTE  := SA1->A1_COD
+				SE1->E1_CODASSO  := SA1->A1_CODASSO
+				SE1->E1_CGC      := SA1->A1_CGC
+				SE1->E1_CATEG1   := SA1->A1_CATEG1
+				SE1->E1_ERSIN    := SA1->A1_ERSIN
+				SE1->E1_BASE     := SA1->A1_BASE
+				SE1->E1_LOJA     := SA1->A1_LOJA
+				SE1->E1_NOMCLI   := SA1->A1_NOME
+				SE1->E1_EMISSAO  := ctod("01"+ "/"+substr(dtos(_dVenc),5,2)+"/"+substr(dtos(_dVenc),3,2))
+				SE1->E1_MOVIMEN  := ctod("01"+ "/"+substr(dtos(_dVenc),5,2)+"/"+substr(dtos(_dVenc),3,2))
+				SE1->E1_EMIS1    := ctod("01"+ "/"+substr(dtos(_dVenc),5,2)+"/"+substr(dtos(_dVenc),3,2))
+				SE1->E1_VENCTO   := _dVenc
+				SE1->E1_VENCREA  := DataValida( _dVenc )
+				SE1->E1_VENCORI  := _dVenc
+				SE1->E1_HIST     := "Ref.Contr. de "+ substr(dtos( _dVenc ),5,2)+"/"+substr(dtos(_dVenc),3,2)
+				SE1->E1_VALOR    := val( substr(TMP->CAMPO,253,13) )/100
+				SE1->E1_SALDO    := 0
+				SE1->E1_VLCRUZ   := val( substr(TMP->CAMPO,253,13) )/100
+				SE1->E1_VALJUR   := 0
+				SE1->E1_MOEDA    := 1
+				//APOS BORDERO
+				SE1->E1_PORTADO := "237"
+				SE1->E1_AGEDEP	:= "0198"
+				SE1->E1_CONTA   := _cConta
+				SE1->E1_SITUACA := "1"
+				SE1->E1_OCORREN := "01"
+				SE1->E1_ORIGEM  := "RFINA09"
+				SE1->E1_STATUS  := "B"
+				SE1->E1_JUROS   := 0
+				SE1->E1_VALLIQ  := val( substr(TMP->CAMPO,253,13))/100
+				SE1->E1_BAIXA   := ctod(substr(TMP->CAMPO,110,2)+"/"+substr(TMP->CAMPO,112,2)+"/"+substr(TMP->CAMPO,114,2))
+				se1->e1_dtcred  := ctod(substr(TMP->CAMPO,295,2)+"/"+substr(TMP->CAMPO,297,2)+"/"+substr(TMP->CAMPO,299,2))
+				se1->e1_valcred  := val( substr(TMP->CAMPO,253,13) )/100
+				SE1->E1_OK      := CHR(69)+CHR(120)
+				SE1->E1_CONFED  := substr(TMP->CAMPO,70,12)
+				SE1->E1_ARQBCO  := MV_PAR01
+				if _cConta=="0169641"
+					_nTotal:= _nTotal + SE1->E1_VALLIQ     && Total de pagtos assist.
+				EndIf
+				if _cConta=="0162159"
+					_nTotal2:= _nTotal2 + SE1->E1_VALLIQ    && Total de termos
+				EndIf
+				MsUnlock()
+			else
+				_altconf:=.f.
+				if alltrim(SE1->E1_CONFED)==alltrim(substr(TMP->CAMPO,70,12)) .and. .not. eof()
+					_altconf:=.t.
+				EndIf
+				if _altconf
+					Reclock( "SE1",.F.)	&& Altera titulo se existe (Boleto Avulso)
+					SE1->E1_STATUS  := "B"
+					if se1->e1_valor == 0
+						SE1->E1_valor   := val( substr(TMP->CAMPO,253,13) )/100-SE1->E1_VALOR
+					endif
+					SE1->E1_JUROS   := val( substr(TMP->CAMPO,253,13) )/100-SE1->E1_VALOR
+					&& Coloca valor no titulo Confederativa
+					if _cCGC=="99"
+						//						SE1->E1_VALOR    := val( substr(TMP->CAMPO,253,13) )/100
+						SE1->E1_SALDO    := 0
+						//						SE1->E1_VLCRUZ   := val( substr(TMP->CAMPO,253,13) )/100
+					endif
+					SE1->E1_VALLIQ  := val( substr(TMP->CAMPO,253,13))/100
+					SE1->E1_BAIXA   := ctod(substr(TMP->CAMPO,110,2)+"/"+substr(TMP->CAMPO,112,2)+"/"+substr(TMP->CAMPO,114,2))
+					SE1->E1_OK      := CHR(69)+CHR (120)
+					SE1->E1_PORTADO := "237"
+					SE1->E1_AGEDEP  := "0198"
+					SE1->E1_CONTA   := _cConta
+					SE1->E1_SITUACA := "1"
+					SE1->E1_OCORREN := "01"
+					SE1->E1_ORIGEM  := "RFINA09"
+					SE1->E1_ARQBCO  := MV_PAR01
+					se1->e1_valcred  := val( substr(TMP->CAMPO,253,13) )/100
+					se1->e1_dtcred  := ctod(substr(TMP->CAMPO,295,2)+"/"+substr(TMP->CAMPO,297,2)+"/"+substr(TMP->CAMPO,299,2))
+					if _cConta=="0169641"
+						_nTotal:= _nTotal + SE1->E1_VALLIQ     && Total de pagtos assist.
+					EndIf
+					if _cConta=="0162159"
+						_nTotal2:= _nTotal2 + SE1->E1_VALLIQ    && Total de termos
+					EndIf
+					MsUnlock()
+					_lMovimenta:=.t.
+				else
+					_lMovimenta:=.f.
+				endif
+				dbselectArea("SE5")
+				if _lMovimenta
+					recLock("SE5",.T.)
+					SE5->E5_FILIAL  := xFilial()
+					SE5->E5_DATA    := ctod(substr(TMP->CAMPO,110,2)+"/"+substr(TMP->CAMPO,112,2)+"/"+substr(TMP->CAMPO,114,2))
+					SE5->E5_TIPO    := "DP"
+					SE5->E5_VALOR   := val( substr(TMP->CAMPO,253,13))/100
+					SE5->E5_NATUREZ := XNATUREZA
+					SE5->E5_BANCO   := "237"
+					SE5->E5_AGENCIA := "0198"
+					SE5->E5_CONTA   := _cConta
+					SE5->E5_RECPAG  := "R"
+					SE5->E5_BENEF   := SA1->A1_NREDUZ
+					SE5->E5_HISTOR  := "Valor recebido s/ Titulo"
+					SE5->E5_TIPODOC := "VL"
+					SE5->E5_VLMOED2 := val( substr(TMP->CAMPO,253,13))/100
+					SE5->E5_LA      := "N"
+					SE5->E5_CLIFOR  := SA1->A1_COD
+					SE5->E5_LOJA    := SA1->A1_LOJA
+					SE5->E5_DTDIGIT := dDATABASE
+					SE5->E5_MOTBX   := "NOR"
+					SE5->E5_SEQ     := "01"
+					SE5->E5_PREFIXO := _nPREF
+					SE5->E5_NUMERO  :=  SA1->A1_COD
+					SE5->E5_PARCELA := _nPARC
+					SE5->E5_DTDISPO := ctod(substr(TMP->CAMPO,295,2)+"/"+substr(TMP->CAMPO,297,2)+"/"+substr(TMP->CAMPO,299,2))
+					MsUnlock()
+				endif
+			endif
+			dbSelectArea("TMP")
+			dbskip()
+		endif
+	enddo
+endif
+dbselectArea("SI2")
+dbsetorder(3)
+dbseek( xFilial() + dtos(_dataproc) + "7555" )
+if _nTotal > 0 .and. eof()
+	recLock("SI2",.T.)
+	SI2->I2_FILIAL := "01"
+	SI2->I2_NUM    := "7555" + "001"
+	SI2->I2_LINHA  := "01"
+	SI2->I2_DATA   := _dataproc
+	SI2->I2_DC     := "X"
+	SI2->I2_MOEDAS := "SNNNN"
+	SI2->I2_VALOR  := _nTotal
+	SI2->I2_DTVENC := _dataproc
+	SI2->I2_ROTINA := "RFINA09"
+	SI2->I2_PERIODO:= _cPeriodo
+	SI2->I2_ORIGEM := "L.GER P/RFINA09"
+	SI2->I2_FILORIG:= "01"
+	SI2->I2_DEBITO := "1112030004"
+	SI2->I2_CREDITO:= "3111020001"
+	SI2->I2_HIST   := "RECEB. DE CONT. ASSISTENCIAL - " + STRZERO(MONTH(_dataproc),2) + "/" + STR(YEAR(_dataproc),4)
+	MsUnlock()
+endif
+dbselectArea("SI2")
+dbsetorder(3)
+dbseek( xFilial() + dtos(_dataproc) + "7560" )
+if _nTotal2 > 0 .and. eof()
+	recLock("SI2",.T.)
+	SI2->I2_FILIAL := "01"
+	SI2->I2_NUM    := "7560" + "001"
+	SI2->I2_LINHA  := "01"
+	SI2->I2_DATA   := _dataproc
+	SI2->I2_DC     := "X"
+	SI2->I2_MOEDAS := "SNNNN"
+	SI2->I2_VALOR  := _nTotal2
+	SI2->I2_DTVENC := _dataproc
+	SI2->I2_ROTINA := "RFINA09"
+	SI2->I2_PERIODO:= _cPeriodo
+	SI2->I2_ORIGEM := "L.GER P/RFINA09"
+	SI2->I2_FILORIG:= "01"
+	SI2->I2_DEBITO := "1112030002"
+	SI2->I2_CREDITO:= "3111010001"
+	SI2->I2_HIST   := "RECEB. Termos Acordo - " + STRZERO(MONTH(_dataproc),2) + "/" + STR(YEAR(_dataproc),4)
+	MsUnlock()
+endif
+dbSelectArea("TMP")
+dbCloseArea()
+If File(c_ArqTmp+".DBF")
+	Ferase(c_ArqTmp+".DBF")
+EndIf
+dbSelectArea("SA1")
+dbSetOrder(1)
+dbSelectArea("SE1")
+dbSetOrder(1)
+dbselectArea("SI2")
+dbsetorder(1)
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder) // Atencao (UPDXFUN).
+Return(nil)

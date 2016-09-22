@@ -1,0 +1,326 @@
+#Include "FIVEWIN.Ch"
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ FINR400a  ³ Autor ³ Paulo Boschetti       ³ Data ³ 15.06.92 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Relacao dos Cheque Emitidos                                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ FINR400(void)                                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³                                                            ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+user Function FinR400a()
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cDesc1 := "Este relatorio ira imprimir a rela‡„o de cheques emitidos,"
+cDesc2 := "em ordem Numerica/Emiss„o"
+cDesc3 :=""
+wnrel := "FINR400A"
+
+cString:="SEF"
+Tamanho:="G"
+titulo:= "Relação de Cheques emitidos."
+cabec1:= ""
+cabec2:= ""
+aReturn := { OemToAnsi("Zebrado"), 1,OemToAnsi("Administracao"), 2, 2, 1, "",1 }
+nomeprog:="FINR400"
+aLinha  := { }
+nLastKey := 0
+cPerg   :="FIN400"
+titulo := OemToAnsi("Relacao de Cheques")
+//If cPaisLoc == "BRA"
+//	cabec1 := OemToAnsi("Numero                   Valor Emissao  Beneficiario                              Historico                                               FINANCEIRO                   GERENCIA                 TESOURARIA   ")
+//Else
+	cabec1 := OemToAnsi("EMISSAO  Numero          Beneficiario                             Histórico                                                            Valor Vencto.          FINANCEIRO                   GERENCIA                 TESOURARIA   ")
+//                       99/99/99 999999999999999 xxxxxxxxxxccccccccccddddddddddffffffffff LLLLLLLLLLKKKKKKKKKKxxxxxxxxxxccccccccccddddddddddffffffffff  9,999,999.99 99/99/99   _________________________  _________________________  _________________________
+//                       0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+//                                 1         2         3         4         5         6         7         8         9         10        11        12        13        14        15        16        17        18        19        20        21
+//Endif                                                                                                  //               0123456789012345678901234567890123456789          _________________________   _________________________   _________________________
+//                       0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+//                                 1         2         3         4         5         6         7         8         9         10        11        12        13        14        15        16        17        18        19        20        21
+cabec2 := " "
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("FIN400",.F.)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                      ³
+//³ mv_par01            // Do Banco                           ³
+//³ mv_par02            // Ate o Banco                        ³
+//³ mv_par03            // Da Agencia                         ³
+//³ mv_par04            // Ate a Agencia                      ³
+//³ mv_par05            // Da Conta                           ³
+//³ mv_par06            // Ate a Conta                        ³
+//³ mv_par07            // Do Cheque                          ³
+//³ mv_par08            // Ate o Cheque                       ³
+//³ mv_par09            // Da Emissao                         ³
+//³ mv_par10            // Ate a Emissao                      ³
+//³ mv_par11            // Qual moeda                         ³
+//³ mv_par12            // Outras moedas                      ³
+//³ mv_par13            // Carteira                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:="FINR400"            //Nome Default do relatorio em Disco
+aOrd :={OemToAnsi("Por Cheque"),OemToAnsi("Por Emissao") }  //###
+wnrel:=SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,aOrd,,Tamanho)
+
+If nLastKey = 27
+	Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey = 27
+	Return
+Endif
+
+RptStatus({|lEnd| Fa400Imp(@lEnd,wnRel,cString)},titulo)
+Return
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ FA400Imp ³ Autor ³ Paulo Boschetti       ³ Data ³ 15.06.92 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Relacao dos Cheque Emitidos                                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ FA400Imp(lEnd,wnRel,cString)                               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ lEnd        - A‡Æo do Codelock                             ³±±
+±±³          ³ wnRel       - T¡tulo do relat¢rio                          ³±±
+±±³Parametros³ cString     - Mensagem			                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+Static Function FA400Imp(lEnd,wnRel,cString)
+
+CbCont:= 0
+CbTxt := ""
+tamanho:="G"
+limite := 220
+nOrdem := 1
+nTotch:=nTotVal:=nTotchg:=nTotValg:=nFirst:=0
+lContinua := .T.
+cCond1:= cCond2:= cCarAnt := ""
+nValorEF := 0
+cFilialA6 := xFilial("SA6")
+cCarteira := Iif (Mv_Par13 = 1,"R","P")
+nDecs   := MsDecimais(mv_par11)
+nTipo:=IIF(aReturn[4]==1,15,18)
+cbtxt    := SPACE(10)
+cbcont   := 0
+li       := 80
+m_pag    := 1
+nOrdem := aReturn[8]
+SA6->(DbSetorder(1)) // Para pegar moeda do banco
+dbSelectArea("SEF")
+IF nOrdem = 1
+	dbSetOrder(1)
+	dbSeek(cFilial+mv_par01+mv_par03+mv_par05+mv_par07,.T.)
+	cCond1 := "EF_BANCO+EF_AGENCIA+EF_CONTA+EF_NUM <= mv_par02+mv_par04+mv_par06+mv_par08"
+	cCond2 := "EF_BANCO+EF_AGENCIA+EF_CONTA"
+Else
+	dbSetOrder(2) // Atencao (UPDXFUN).
+	dbSeek(cFilial+mv_par01+mv_par03+mv_par05+Dtos(mv_par09),.T.)
+	cCond1 := "EF_BANCO+EF_AGENCIA+EF_CONTA+DTOS(EF_DATA) <= mv_par02+mv_par04+mv_par06+DTOS(mv_par10)"
+	cCond2 := "EF_BANCO+EF_AGENCIA+EF_CONTA"
+EndIF
+SetRegua(RecCount())
+While &cCond1 .And. !Eof() .And. lContinua .and. EF_FILIAL == cFilial
+	IF lEnd
+		@Prow()+1,001 PSAY OemToAnsi("Cancelado pelo Operador")
+		Exit
+	End
+	IncRegua()
+	IF EF_IMPRESS $ "AC"		//Integrante de outro Cheque ou cancelado
+		dbSkip()
+		Loop
+	End
+	If Empty( EF_NUM ) .Or. ( cPaisLoc<>"BRA" .And. Subs( EF_NUM,1,1)="*")
+		dbSkip()
+		Loop
+	End
+	If !Empty(EF_CART) .AND. ((Mv_Par13 <> 3 ) .AND. (EF_CART <> cCarteira))
+		DbSkip()
+		Loop
+	EndIf
+	nTotVal := nTotCh := nFirst := 0
+	cCarAnt := &cCond2
+	While &cCond2 == cCarAnt .And. !Eof() .and. cFilial == EF_FILIAL
+		If lEnd
+			@Prow()+1,001 PSAY OemToAnsi("Cancelado pelo operador")
+			lContinua := .F.
+			Exit
+		End
+
+		IncRegua()
+
+		If Empty( EF_NUM ) .Or. ( cPaisLoc<>"BRA" .And. Subs( EF_NUM,1,1)="*")
+			dbSkip( )
+			Loop
+		End
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Validacao da carteira.³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If !Empty(EF_CART) .And. ((Mv_Par13 <> 3 ) .AND. (EF_CART <> cCarteira))
+			DbSkip()
+			Loop
+		EndIf
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Verifica se esta dentro dos parametros                       ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If  EF_BANCO   < mv_par01 .OR. EF_BANCO   > mv_par02 .or. ;
+				EF_AGENCIA < mv_par03 .OR. EF_AGENCIA > mv_par04 .or. ;
+				EF_CONTA   < mv_par05 .OR. EF_CONTA   > mv_par06 .or. ;
+				EF_NUM     < mv_par07 .OR. EF_NUM     > mv_par08 .or. ;
+				EF_DATA    < mv_par09 .OR. EF_DATA    > mv_par10
+			dbSkip( )
+			Loop
+		End
+		IF !EMPTY(SEF->EF_PREFIXO)
+			DBSELECTAREA("SE2")
+			DBSETORDER(1)
+			DBSEEk(XFILIaL()+SEF->EF_PREFIXO+SEF->EF_TITULO+SEF->EF_PARCELA)
+		ENDIF
+		DBSELECTAREA("SEF")
+		IF EF_IMPRESS $ "AC"	//Integrante de outro Cheque ou cancelado
+			dbSkip( )
+			Loop
+		End
+
+		// Desconsidera cheques com moeda diferente se escolhido nao imprimir
+		SA6->(dbSeek(cFilialA6+SEF->EF_BANCO+SEF->EF_AGENCIA+SEF->EF_CONTA))
+		If mv_par12 == 2 .AND. SA6->A6_MOEDA != mv_par11
+		   dbSkip()
+		   Loop
+		EndIf
+
+		IF li > 58
+			cabec(titulo,cabec1,cabec2,nomeprog,tamanho,nTipo)
+			nFirst:=0
+		End
+
+		If nFirst = 0
+			dbSelectArea( "SA6" )
+			dbSeek(cFilialA6+SEF->EF_BANCO+SEF->EF_AGENCIA+SEF->EF_CONTA)
+			@li, 0 PSAY OemToAnsi("Banco : ") +A6_COD+" - "+AllTrim(A6_NREDUZ)+OemToAnsi(" -  Agencia : ")+A6_AGENCIA+" Conta : "+SA6->A6_NUMCON  //"###
+			li += 2
+			nFirst++
+		End
+		dbSelectArea( "SEF" )
+		
+	cabec1 := OemToAnsi("EMISSAO  Numero          Beneficiario                             Histórico                                                            Valor Vencto.          FINANCEIRO                   GERENCIA                 TESOURARIA   ")
+//                       99/99/99 999999999999999 xxxxxxxxxxccccccccccddddddddddffffffffff LLLLLLLLLLKKKKKKKKKKxxxxxxxxxxccccccccccddddddddddffffffffff  9,999,999.99 99/99/99   _________________________  _________________________  _________________________
+//                       0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+//                                 1         2         3         4         5         6         7         8         9         10        11        12        13        14        15        16        17        18        19        20        21
+
+			@li ,   0 PSAY SEF->EF_DATA
+			@li ,   9 PSAY SEF->EF_NUM
+		    nValorEF := xMoeda(SEF->EF_VALOR, SA6->A6_MOEDA, mv_par11,SEF->EF_DATA,nDecs+1)
+			@li ,  25 PSAY SEF->EF_BENEF
+			@li ,  66 PSAY SUBS(SEF->EF_HIST,1,60)
+			@li , 128 PSAY nValorEF           Picture "@e 9,999,999.99"
+			@li , 141 PSAY SE2->E2_VENCrea
+			@ LI,152  PSAY "_________________________"
+			@ LI,179  PSAY "_________________________"
+			@ LI,206  PSAY "_________________________"
+			nTotVal += nValorEF
+
+		nTotCh++
+		dbSkip()
+		li+=2
+	End
+	IF nTotVal > 0
+		SubTot400(nTotVal,limite)
+	EndIF
+	nTotChg  += nTotCh
+	nTotValg += nTotVal
+EndDO
+
+IF nTotValg > 0
+	TotGer400(nTotChg,nTotValg)
+EndIF
+
+IF li != 80
+	roda(cbcont,cbtxt,"M")
+EndIF
+
+Set Device TO Screen
+dbSelectArea("SEF")
+dbSetOrder(1)
+Set Filter To
+
+If aReturn[5] = 1
+	Set Printer To
+	Commit
+	ourspool(wnrel)
+Endif
+MS_FLUSH()
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³SubTot400 ³ Autor ³ Paulo Boschetti       ³ Data ³ 01.06.92 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³Impressao do SubTotal do Banco                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ SubTot400(ExpN1)                                           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ ExpN1  - Valor Total                                       ³±±
+±±³          ³ ExpN2  - Tamanho da linha                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+STATIC Function SubTot400(nTotVal,limite)
+li++
+@li, 0 PSAY OemToAnsi("Sub-Total ----> ")
+@li,16 PSAY nTotVal            Picture TM(nTotVaL,14,nDecs)
+li++
+@li, 0 PSAY Replicate("-",limite)
+li++
+Return .T.
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ TotGer400³ Autor ³ Paulo Boschetti       ³ Data ³ 01.06.92 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressao do Total Do Relatorio                            ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ TotGer400(ExpN1,ExpN2)                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ Total de cheques,Valor Total                               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+STATIC Function TotGer400(nTotChg,nTotValg)
+li++
+@li  ,  0 PSAY OemToAnsi("Total Geral--> ")
+@li  , 16 PSAY nTotValg              Picture tm(nTotValg,14,nDecs)
+li++
+@li  ,  0 PSAY OemToAnsi("Total Cheques-> ")+Alltrim(str(nTotChg))  //
+li++
+Return .T.

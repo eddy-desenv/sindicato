@@ -1,0 +1,100 @@
+#include "rwmake.ch"
+User Function IMPMATRIZ()
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,_CARQCONTRIB,_CARQASSOCIA")
+SetPrvt("_NINCLUIDOS,_NALTERADOS,_NINCONSIST,_CARQUIVO,_NCOD,ANOC")
+SetPrvt("_CTEXTO,W,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ impmatriz³ Autor ³ Luis Mattos Duarte Jr.³ Data ³ 18/01/05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Importacao do Matrizes                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cTitulo  := "Importacao de Cortesias"
+n_Opc := 0
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+@ 023,014 SAY "Este programa fara a importacao do cadastro de cortesias"
+@ 033,014 SAY ""
+@ 086,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+@ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+Return
+*************************
+Static Function Iniciar()
+Close(oDlg1)
+Processa( {|| Importar() })
+Return
+*************************
+Static Function Importar()
+_cArqmatriz := "MATRIZES.dbf"
+If !File(AllTrim(_cArqMATRIZ))
+	Help(" ",1,"ARRVAZ")
+	Return
+endif
+_nIncluidos := 0
+_nAlterados := 0
+_nInconsist := 0
+XCODIGO := 1
+_cArquivo := alltrim(_cArqMATRIZ)
+Use (_cArquivo) ALIAS "TMP" NEW
+inde on NOME to MATRIZES
+dbGotop()
+ProcRegua(RecCount(),22,05)
+Do While !Eof()
+	IncProc(strzero(Xcodigo,6))
+	if empty(tmp->nome)
+		dbskip()
+	    loop
+	 endif
+	dbSelectArea("SZ2")
+	dbSetOrder(1)         //Pesquisa por CGC
+	IF SUBS(TMP->TELEX,1,2)=="ZZ"
+		IF DBSeek(xFilial("SZ2")+SUBS(TMP->TELEX,3,6) )
+			RecLock("SZ2",.f.)
+			SZ2->Z2_FILIAL  := ""
+			SZ2->Z2_COD     := SUBS(TMP->TELEX,3,6)
+		ELSE
+			RecLock("SZ2",.t.)
+			SZ2->Z2_FILIAL  := ""
+			SZ2->Z2_COD     := SUBS(TMP->TELEX,3,6)
+		endif
+	ELSE
+		DBSELECTAREA("TMP")
+		RECLOCK("TMP",.F.)
+		tmp->telex := "ZZ"+strzero(Xcodigo,6)
+		msunlock()
+		DBSELECTAREA("sz2")
+		RecLock("SZ2",.t.)
+		SZ2->Z2_FILIAL  := ""
+		SZ2->Z2_COD     := Strzero(Xcodigo,6)
+		XCODIGO ++
+	endif
+	sz2->Z2_NOME    := TMP->NOME
+	SZ2->Z2_END     := TMP->endereco
+	SZ2->Z2_BAIRRO  := tmp->bairro
+	SZ2->Z2_CEP     := tmp->cep+tmp->cep_compl
+	SZ2->Z2_MUN	    := tmp->CIDADE
+	SZ2->Z2_EST     := TMP->ESTADO
+	SZ2->Z2_TEL     := TMP->TELEFONE
+	SZ2->Z2_FAX     := TMP->FAX
+	SZ2->Z2_EMPRESA := TMP->EMPRESA
+	SZ2->Z2_CGC     := IF(val(SUBS(TMP->CGC,1,14))>0,SUBS(TMP->CGC,1,14),"")
+	SZ2->Z2_FUNCAO  := TMP->FUNCAO
+	SZ2->Z2_DESTINO := TMP->AOS_CUIDAD
+	SZ2->Z2_MATRIZ  := IF(TMP->MATRIZ>0,STRZERO(TMP->MATRIZ,3),"")
+	SZ2->Z2_MATRIZ2	:= IF(TMP->MATRIZ2>0,STRZERO(TMP->MATRIZ2,3),"")
+	MsUnLock()
+	dbSelectArea("TMP")
+	dbSkip()
+Enddo

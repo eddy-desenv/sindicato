@@ -1,0 +1,317 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+#IFNDEF WINDOWS
+   #DEFINE PSAY SAY
+#ENDIF
+
+User Function RASSOC2()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_CALIAS,CBCONT,CBTXT,WNREL,CDESC1,CDESC2")
+SetPrvt("CDESC3,CSTRING,TIPO,LIMITE,TAMANHO,TITULO")
+SetPrvt("CABEC1,CABEC2,ARETURN,NOMEPROG,NLASTKEY,CPERG")
+SetPrvt("M_PAG,LI,AESTR,CARQ,CARQIND,_CCLIENTE")
+SetPrvt("_CCODIGO,_CERSIN,_CNOME,_CCIDADE,_CCHAVE,NTOTAL")
+SetPrvt("NQTDE,")
+
+#IFNDEF WINDOWS
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 22/12/04 ==>    #DEFINE PSAY SAY
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ RASSOC2  ³ Autor ³ Jeremias Luna         ³ Data ³ 28.10.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Impressao de pgtos associativos quitados                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 :="Este programa ir  imprimir a relacao de pagamentos"
+cDesc2 :="mensais efetuados (RASSOC2.PRX)"
+cDesc3 :=""
+cString := "SE5"
+tipo := 18
+limite := 80
+tamanho := "P"
+	    
+titulo := "TITULOS A RECEBER JA QUITADOS"
+cabec1 := "CODIGO NOME                                          PARCELA      VALOR PAGTO"
+        // 123456 123456789012345678901234567890123456789012345  99/99  999.999,99 99/99/99
+        // 0	  7						 54	61	   72
+        //           10        20        30        40        50	       60	 70  
+cabec2 := " "
+aReturn  := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog :="RASSOC2"
+nLastKey := 0
+cPerg := "ASSOC1"
+M_PAG := 1
+li := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+pergunte(cPerg,.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01                    // Do vencto                     ³
+//³ mv_par02                    // Ate o vencto                  ³
+//³ mv_par03                    // Do ERSIN                      ³
+//³ mv_par04                    // Ate o ERSIN                   ³
+//³ mv_par05                    // Da natureza                   ³
+//³ mv_par06                    // Ate a natureza                ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+wnrel := "RASSOC2"
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastKey == 27
+   return
+endif
+
+SetDefault(aReturn,cString)
+
+if nLastKey == 27
+   return
+endif
+
+#IFDEF WINDOWS
+    RptStatus({|| IMPRIME() },titulo)  // Chamada do Relatorio// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     RptStatus({|| Execute(IMPRIME) },titulo)  // Chamada do Relatorio
+    return
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     function IMPRIME
+Static function IMPRIME()
+#ENDIF
+
+aEstr := {}
+
+AADD(aEstr,{ "ERSIN"   ,"C" , 02 , 0 })
+AADD(aEstr,{ "CODIGO"  ,"C" , 06 , 0 })
+AADD(aEstr,{ "NOME"    ,"C" , 45 , 0 })
+AADD(aEstr,{ "VALOR"   ,"N" , 17 , 2 })
+AADD(aEstr,{ "PARCELA" ,"C" , 05 , 0 })
+AADD(aEstr,{ "PGTO"    ,"D" , 08 , 0 })
+AADD(aEstr,{ "CIDADE"  ,"C" , 15 , 0 })
+
+cArq := CriaTrab(aEstr,.t.)
+
+dbusearea(.t.,,cArq,"IMP",.T.)
+dbselectarea("IMP")
+
+cArqIND := criatrab("",.f.)
+IndRegua("IMP",cArq,"ERSIN+CIDADE+NOME+DTOS(PGTO)",,,"Selecionando Registros...")
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Inicia a selecao dos titulos em aberto, somento dos          ³
+//³ associados                                                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+dbselectarea('sa1')
+dbsetorder(8)
+dbseek( xFilial() + "000001" , .t. )
+
+SetRegua(RecCount())
+
+while !eof()
+    IncRegua()
+
+    *-----------------------------------------------*
+    * Seleciona somente o ersin que esta dentro dos parametros
+    *-----------------------------------------------*
+    if a1_ersin >= mv_par03 .and. a1_ersin <= mv_par04
+    else
+       dbselectarea('sa1')
+       dbsetorder(8)
+       dbskip()
+       loop
+    endif
+
+    _cCliente:= a1_cod+a1_loja
+    _cCodigo := a1_codasso
+    _cErsin  := a1_ersin
+    _cNome   := a1_nome
+    _cCidade := a1_mun
+
+   //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+   //³ Localiza o 1.Titulo a ser impresso                           ³
+   //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+   dbselectarea('se5')
+   dbsetorder(11)
+   dbgotop()
+   dbseek(xFilial('SE5')+_cCliente+dtos(mv_par01),.t.)
+
+   while eof() == .f. .and.;
+         (e5_clifor+e5_loja) == _cCliente .and.;
+         e5_data >= mv_par01 .and.;
+         e5_data <= mv_par02
+
+      if SE5->E5_NATUREZ >= mv_par05 .and. SE5->E5_NATUREZ <= mv_par06
+      else
+         dbselectarea('se5')
+         dbsetorder(11)
+         dbskip()
+         loop
+      endif
+
+      if empty(SE5->E5_NUMERO) .or. SE5->E5_SITUACA == "C"
+         dbselectarea('se5')
+         dbsetorder(11)
+         dbskip()
+         loop
+      endif
+      
+      if SE5->E5_RECPAG == "P"      // "P" - titulo a pagar
+         dbselectarea('se5')
+         dbsetorder(11)
+         dbskip()
+         loop
+      endif
+      
+      if SE5->E5_RECPAG == "R"
+         if SE5->E5_TIPO == "RA " .and. SE5->E5_MOTBX == "CMP"
+            dbselectarea('se5')
+            dbsetorder(11)
+            dbskip()
+            loop
+         endif
+      endif
+
+      _cChave := se5->e5_prefixo+se5->e5_numero+se5->e5_parcela+se5->e5_tipo
+
+      dbselectarea('se1')
+      dbsetorder(1)
+      dbseek(xFilial('SE1')+_cChave)
+      if found() == .t.
+         dbselectarea('imp')
+         reclock('imp',.t.)
+
+         IMP->ERSIN   := _cErsin
+	 IMP->CIDADE  := _cCidade
+         IMP->CODIGO  := _cCodigo
+         IMP->NOME    := _cNome
+         IMP->VALOR   := SE1->E1_VALLIQ
+         IMP->PARCELA := strzero(month(SE1->E1_VENCTO),2)+'/'+;
+                         substr(strzero(year(SE1->E1_VENCTO),5),4,2)
+         IMP->PGTO    := SE1->E1_BAIXA
+      endif
+
+      dbselectarea('se5')
+      dbsetorder(11)
+      dbskip()
+   enddo
+
+   dbselectarea('sa1')
+   dbsetorder(8)
+   dbskip()
+enddo
+
+dbselectarea('imp')
+dbgotop()
+
+li := 80
+
+while !eof()
+  nTotal := 0
+  nQtde := 0
+  _cErsin := imp->ersin
+  _cCidade:= imp->cidade
+
+  IF li > 58
+     cabec(titulo,cabec1,cabec2,nomeprog,tamanho,18)
+//     @prow()+1,000 PSAY "ERSIN: "+_cERSIN + " - Cidade: " + _cCIDADE
+  EndIF
+
+  @prow()+1,000 PSAY "ERSIN: "+_cERSIN + " - Cidade: " + _cCIDADE
+
+  li:=prow()+1
+
+  while !eof() .and. _cErsin == imp->ersin .and. _cCidade == imp->cidade
+     if li >= 60
+	cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+	@prow()+1,000 PSAY "ERSIN: " + _cErsin + "  " + _cCidade
+	li := prow() + 1
+     endif
+
+     @li,000 PSAY IMP->CODIGO
+     @li,007 PSAY IMP->NOME
+     @li,054 PSAY IMP->PARCELA
+     @li,061 PSAY IMP->VALOR	picture '@e 999,999.99'
+     @li,072 PSAY IMP->PGTO
+
+     li := li + 1
+     nTotal := nTotal + IMP->VALOR
+     nQtde := nQtde + 1
+
+     dbskip()
+  enddo
+
+//  li := li+1
+
+  @li,000 PSAY replicate("-",limite)
+
+  li := li+1
+
+  @li,010 PSAY 'TOTAL'
+
+  if nQtde == 0
+  elseif nQtde == 1
+     @li,020 PSAY alltrim(transform(nQtde,'@eb 9,999'))+' TITULO'
+  elseif nQtde >= 2
+     @li,020 PSAY alltrim(transform(nQtde,'@eb 9,999'))+' TITULOS'
+  endif
+
+  @li,059 PSAY nTotal picture '@e 9,999,999.99'
+
+  li := li+1
+
+  @li,000 PSAY replicate("-",limite)
+enddo
+
+if li <> 80
+   roda(cbcont,cbtxt,TAMANHO)
+else
+   eject
+endif
+
+set device to screen
+
+if aReturn[5] == 1
+   Set Printer To
+   dbCommit()
+   ourspool(wnrel)                                  
+endif
+
+MS_FLUSH()
+
+dbselectarea('imp')
+dbclosearea()
+
+if File(cArq+".DBF")
+   Ferase(cArq+".DBF")
+   Ferase(cArq+ordbagext())
+endif
+
+dbselectarea(_cAlias)
+return
+

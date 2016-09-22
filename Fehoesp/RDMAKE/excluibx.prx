@@ -1,0 +1,104 @@
+#include "rwmake.ch"
+#include "topconn.ch"
+User Function EXCLUIBX()
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ Excluibx ³ Autor ³ Luis Mattos Duarte Jr.³ Data ³ 13/04/05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Exclusao de titulos baixados                               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß\ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+PRIVATE oDlg
+
+@ 096,042 TO 375,505 DIALOG oDlg TITLE "Exclusao de Baixas e/ou Titulos pelo Arquivo Bancario"
+@ 008,010 TO 100,222
+@ 023,014 SAY "Este programa EXCLUI as Baixas e/ou Titulos gerados pelo Recepcao do Arquivo Selecionado."
+@ 086,014 SAY "CONFIRME PARA INICIAR A ATUALIZACAO DOS DADOS."
+@ 110,168 BMPBUTTON TYPE 1 ACTION Iniciar()
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg)
+ACTIVATE DIALOG oDlg CENTERED
+RETURN
+
+**************************
+Static Function Iniciar()
+Close(oDlg)
+Processa( {|| ATUALIZA() })
+Return
+**************************
+Static Function ATUALIZA()
+
+LOCAL nNumTitExcl 		:= 0
+LOCAL nNumBaiExcl 		:= 0
+LOCAL cQuery				:= ""
+LOCAL cQryTitExclWhere	:= ""
+LOCAL cQryBaiExclWhere 	:= ""
+LOCAL aArea					:= GetArea()
+
+IF !PERGUNTE("EXCLBX",.T.)
+	RETURN()
+ENDIF	
+
+IF EMPTY(MV_PAR01)
+	MsgAlert("Favor Informar o Nome do Arquivo !!")
+	RETURN
+ENDIF
+
+cQryTitExclWhere	:= " D_E_L_E_T_='' AND E1_ARQBCO='" + MV_PAR01 + "'AND " + ;
+							" SUBSTRING(E1_PREFIXO,3,1) NOT IN ( 'A','T')  AND E1_NUMBOR = ' ' AND " + ;
+							" E1_NATUREZ <> '001' AND E1_NATUREZ <> '1000' " 
+
+cQryBaiExclWhere 	:= " D_E_L_E_T_='' AND E1_ARQBCO='"+MV_PAR01+"' "
+
+
+/*BEGINDOC
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Calculo da Quantidade de Titulos a Serem Excluidos³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+ENDDOC*/
+
+cQuery := "SELECT COUNT(*) AS NUMTIT FROM SE1010 SE1 WHERE " + cQryTitExclWhere
+TCQUERY cQuery NEW ALIAS "TRB"
+nNumTitExcl := TRB->NUMTIT
+TRB->( DbCloseArea() )
+
+/*BEGINDOC
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Calculo da Quantidade de Titulos a Serem Baixados ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+ENDDOC*/
+
+cQuery := "SELECT COUNT(*) AS NUMTIT FROM SE1010 SE1 WHERE " + cQryBaiExclWhere
+TCQUERY cQuery NEW ALIAS "TRB"
+nNumBaiExcl := TRB->NUMTIT - nNumTitExcl // Descontadas as Baixas dos Titulos Excluidos
+TRB->( DbCloseArea() )
+
+IF MsgYesNo("Confirma a Exclusão de : " + CHR(13 ) + CHR( 10 ) + CHR(13 ) + CHR( 10 ) + ;
+				STRZERO ( nNumTitExcl, 3 ) + " Titulo(s)" + CHR(13 ) + CHR( 10 ) + ;
+				STRZERO ( nNumBaiExcl, 3 ) + " Baixa(s) " )
+	
+   cQuery := "UPDATE SE1010 SET D_E_L_E_T_='*' WHERE " + cQryTitExclWhere
+	TCSQLEXEC(cQuery)
+
+	cQuery := "UPDATE SE1010 SET E1_STATUS = 'A', E1_BAIXA='', E1_DTCRED='', " + ;
+				 "E1_VALCRED=0, E1_VALLIQ=0 ,E1_JUROS=0, E1_ARQBCO='', E1_SALDO=E1_VALOR "+;
+				 "WHERE " + cQryBaiExclWhere	
+	TCSQLEXEC(cQuery)
+
+	MsgAlert("Exclusão de : " + CHR(13 ) + CHR( 10 ) + CHR(13 ) + CHR( 10 ) + ;
+				STRZERO ( nNumTitExcl, 3 ) + " Titulo(s)" + CHR(13 ) + CHR( 10 ) + ;
+				STRZERO ( nNumBaiExcl, 3 ) + " Baixa(s) " + CHR(13 ) + CHR( 10 ) + CHR(13 ) + CHR( 10 ) + ;
+				" Finalizada com Sucesso !!")
+ELSE
+	MsgAlert( "NENHUMA Baixa ou Exclusão de Titulo foi efetuada !!" )
+endif
+
+RestArea( aArea )
+
+RETURN

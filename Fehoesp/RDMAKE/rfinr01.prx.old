@@ -1,0 +1,363 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+#IFNDEF WINDOWS
+    #DEFINE PSAY SAY
+#ENDIF
+
+User Function RFINR01()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CDESC1,CDESC2,CDESC3,WNREL,CSTRING,ARETURN")
+SetPrvt("NOMEPROG,ALINHA,NLASTKEY,CPERG,TAMANHO,TITULO")
+SetPrvt("CABEC1,CABEC2,LIMITE,LCONTINUA,CBTXT,CBCONT")
+SetPrvt("LI,M_PAG,NSALDODINH,NSALDOREQ,NSOMA,NREEMBOLSO")
+SetPrvt("NREQUISITA,NSAIDAS,NPGTOS,_CTITULO,_CMENSAGEM,")
+
+#IFNDEF WINDOWS
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 22/12/04 ==>     #DEFINE PSAY SAY
+#ENDIF
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³ RFINR01  ³ Autor ³ Jeremias Luna         ³ Data ³ 30.09.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Impressao do livro caixa                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ SINDHOSP                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Vari veis ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+cDesc1 := "Impressao do relatorio analito do caixa."
+cDesc2 := " "
+cDesc3 := " "
+wNrel := "C_"+strzero(day(dDataBase),2)+;
+              strzero(month(dDataBase),2)+;
+              substr(strzero(year(dDataBase),5),4,2)
+
+cString := "SZA"
+aReturn  := { "Zebrado", 1,"Administracao", 1, 2, 1, "",1 }
+nomeprog := "C_"+strzero(day(dDataBase),2)+;
+                 strzero(month(dDataBase),2)+;
+                 substr(strzero(year(dDataBase),5),4,2)
+aLinha   := {}
+nLastKey := 0
+cPerg := "FINR01"
+tamanho := "M"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+pergunte(cPerg,.f.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Definicao dos cabe‡alhos ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+titulo := "Caixa do Dia - "+dtoc(dDataBase)
+cabec1 := "HISTORICO                                   SALDO INICIAL    ENTRADAS          SAIDA"
+cabec2 := " "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros ³
+//³ mv_par01     // Data do Fechamento   ³
+//³ mv_par02     // Data do Movimento    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.f.,,,Tamanho)
+
+if nLastKey == 27
+   return
+endif
+
+SetDefault(aReturn,cString)
+
+if nLastKey == 27
+   return
+endif
+
+#IFDEF WINDOWS
+    RptStatus({|| ImpCaixa() },titulo)// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     RptStatus({|| Execute(ImpCaixa) },titulo)
+    return
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     Function ImpCaixa
+Static Function ImpCaixa()
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³ ImpCaixa ³ Autor ³ Jeremias Luna         ³ Data ³ 30.09.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Impressao propriamente dita do caixa                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ SinHosp                                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+*------------------------------------------------------------------------*
+* definicao das variaveis
+*------------------------------------------------------------------------*
+
+limite := 130
+lContinua := .t.
+cbtxt := " "
+cbcont := 0
+li := 80
+m_pag := 1
+
+dbselectarea('sza')
+dbsetorder(1)
+dbgotop()
+dbseek(xFilial("SZA")+dtos(mv_par01))
+if found() == .t.
+   nSaldoDinh := za_saldoDi
+   nSaldoReq := za_saldoRe
+ else
+    nSaldoDinh := 0
+    nSaldoReq := 0
+endif
+
+cabec(titulo,cabec1,cabec2,nomeprog,tamanho,GetMv("MV_COMP"))
+
+li := prow() + 1
+
+@li,000 PSAY 'SALDO FINAL DO DIA '+dtoc(mv_par01)
+@li,045 PSAY nSaldoDinh picture '@e 999,999.99'
+
+li := li +1
+
+@li,000 PSAY 'SALDO FINAL DAS REQS. DO DIA '+dtoc(mv_par01)
+@li,045 PSAY nSaldoReq picture '@e 999,999.99'
+
+li := li + 2
+
+dbselectarea('se5')
+//setorder(11)
+dbsetorder(1)
+dbgotop()
+dbseek(xFilial("SE5")+dtos(mv_par02),.t.)
+
+nSoma := 0
+nReembolso := 0
+nRequisita := 0
+nSaidas := 0
+nPgtos := 0
+
+while eof() == .f.
+   if li >= 60
+      cabec(titulo,cabec1,cabec2,nomeprog,tamanho,GetMv("MV_COMP"))
+      li := prow() + 1
+   endif
+
+   *------------------------------------------------------------*
+   * Soma as receitas, p. ex. vendas de tabelas
+   *------------------------------------------------------------*
+   if e5_banco == 'CX ' .and. e5_RecPag == 'R' .and.;
+      e5_tipodoc == '  '.and. e5_tipo == '   '  .and.;
+      e5_data == mv_par02 .and. e5_situaca #'C'
+
+      nSoma := nSoma + e5_valor
+
+      @li,000 PSAY e5_histor
+      @li,060 PSAY e5_valor   picture '@e 999,999.99'
+ 
+      li := li + 1
+   endif
+
+   *------------------------------------------------------------*
+   * Somas as devolucoes das requisicoes
+   *------------------------------------------------------------*
+   if e5_tipo == 'VL '    .and. e5_naturez == 'REQUISICAO' .and.;
+      e5_RecPag == 'P'    .and. e5_MotBx == 'DEV'          .and.;
+      e5_data == mv_par02
+
+      nSoma := nSoma + e5_valor
+      _cTitulo := e5_filial+e5_prefixo+e5_numero+e5_parcela+e5_tipo
+
+      dbselectarea('se2')
+      dbsetorder(1)
+      dbseek(alltrim(_cTitulo))
+      if found() == .t.
+         _cMensagem := 'DEVOL. '+alltrim(e2_hist)
+      else
+         _cMensagem := 'DEVOLUCAO DO TITULO '+;
+                       se5->e5_tipo+' '+se5->e5_prefixo+' '+;
+                       se5->e5_numero+' '+se5->e5_parcela
+      endif
+
+      dbselectarea('se5')
+      dbsetorder(1)
+
+
+      @li,000 PSAY _cMensagem
+      @li,060 PSAY e5_valor   picture '@e 999,999.99'
+ 
+      li := li + 1
+   endif
+
+   *------------------------------------------------------------*
+   * Soma os valores dos reembolsos
+   *------------------------------------------------------------*
+   if e5_banco == 'CX ' .and. e5_RecPag == 'P' .and.;
+      e5_tipo == '   '  .and. e5_data == mv_par02 .and. e5_situaca #'C'
+
+      nSaidas := nSaidas + e5_valor
+      nReembolso := nReembolso + e5_valor
+
+      @li,000 PSAY e5_histor
+      @li,075 PSAY e5_valor   picture '@e 999,999.99'
+ 
+      li := li + 1
+   endif
+
+   *------------------------------------------------------------*
+   * Soma os valores dos pgtos de titulos realizados no caixa
+   *------------------------------------------------------------*
+   if e5_banco == 'CX '   .and. e5_RecPag == 'P'    .and.;
+      e5_motbx == 'NOR'   .and. e5_tipo #space(03) .and.;
+      e5_data == mv_par02 .and. e5_situaca #'C'
+
+      nSaidas := nSaidas + e5_valor
+      nReembolso := nReembolso + e5_valor
+
+      @li,000 PSAY e5_histor
+      @li,075 PSAY e5_valor   picture '@e 999,999.99'
+ 
+      li := li + 1
+   endif
+
+   *------------------------------------------------------------*
+   * Selecionaos valores dos titulos baixados, para a composicao do
+   * saldo final do caixa, conforme solicitacao do Sr. Wanderley (06.10.98)
+   *------------------------------------------------------------*
+   if e5_tipo == 'VL '    .and. e5_MotBx == 'NOR'          .and.;
+      e5_situaca == ' '   .and. e5_banco == 'CX '          .and.;
+      e5_RecPag == 'P'    .and. e5_TipoDoc == 'VL'         .and.;
+      e5_data == mv_par02 .and. e5_naturez == 'REQUISICAO'
+
+      nSaidas := nSaidas + e5_valor
+      nPgtos := nPgtos + e5_valor
+
+      @li,000 PSAY 'BX REQ. - '+alltrim(e5_histor)
+      @li,075 PSAY e5_valor   picture '@e 999,999.99'
+ 
+      li := li + 1
+   endif
+
+   dbselectarea('se5')
+   dbsetorder(1)
+   dbskip()
+enddo
+
+dbselectarea('se2')
+dbsetorder(12)
+dbgotop()
+dbseek(xFilial("SE2")+dtos(mv_par02),.t.)
+
+while eof() == .f.
+   if li >= 60
+      cabec(titulo,cabec1,cabec2,nomeprog,tamanho,GetMv("MV_COMP"))
+      li := prow() + 1
+   endif
+
+   *------------------------------------------------------------*
+   * Soma os valores das requisicoes
+   *------------------------------------------------------------*
+   if e2_tipo == 'VL ' .and. e2_portado == 'CX ' .and.;
+      e2_emissao == mv_par02
+
+      nSaidas := nSaidas + e2_valor
+      nRequisita := nRequisita + e2_valor
+
+      @li,000 PSAY e2_hist
+      @li,075 PSAY e2_valor   picture '@e 999,999.99'
+ 
+      li := li + 1
+   endif
+
+   dbselectarea('se2')
+   dbsetorder(12)
+   dbskip()
+enddo
+
+li := li + 1
+
+@li,00 PSAY replicate('-',limite)
+
+li := li + 1
+
+@li,060 PSAY nSoma    picture '@e 999,999.99'
+@li,075 PSAY nSaidas  picture '@e 999,999.99'
+
+li := li + 1
+
+@li,00 PSAY replicate('-',limite)
+
+li := li + 1
+
+@li,000 PSAY 'TOTAL DAS ENTRADAS...: '
+@li,023 PSAY (nSaldoDinh+nSoma) picture '@e 9,999,999.99'
+
+li := li + 1
+
+@li,000 PSAY 'TOTAL DAS SAIDAS.....: '
+@li,023 PSAY (nPgtos+nReembolso) picture '@e 9,999,999.99'
+
+li := li + 1
+
+@li,000 PSAY 'TOTAL DE REQUISICOES.: '
+@li,023 PSAY nRequisita picture '@e 9,999,999.99'
+
+li := li + 2
+
+@li,000 PSAY 'TOTAL EM REAIS.......: '
+@li,023 PSAY (nSaldoDinh+nSoma-nRequisita-nReembolso) picture '@e 9,999,999.99'
+
+li := li + 1
+
+@li,00 PSAY replicate('-',limite)
+
+roda(cbcont,cbtxt,"M")
+
+set device to screen
+
+dbselectarea("sza")
+dbsetorder(1)
+
+If aReturn[5] == 1
+   set printer to
+   dbcommitall()
+   ourspool(wnrel)
+endif
+
+MS_FLUSH()
+*---------------------------------------------------------------*
+
+/*
+	 1	   2	     3	       4	 5	   6	     7	       8
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+
+SALDO INICIAL                               230.000,00
+ENTRADA                                                    230.000,00  
+SAIDA                                                                     230.000,00
+TOTAL
+*/
+

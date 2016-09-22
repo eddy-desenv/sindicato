@@ -1,0 +1,417 @@
+#include "rwmake.ch"
+#include "topconn.ch"
+User Function AtuAtend()
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ EXPatend ³ Autor ³ Luis Mattos Duarte Jr.³ Data ³ 24/03/05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Atualizacao do Atend Antigo                                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß\ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo  := "Atualizacao do Atend"
+n_Opc := 0
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+@ 023,014 SAY "Este programa fara a exportacao dos dados para o Atend"
+@ 086,014 SAY "CONFIRME PARA INICIAR A EXPORTACAO DE DADOS         "
+@ 110,168 BMPBUTTON TYPE 1 ACTION Iniciar()
+//@ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+Return
+**************************
+Static Function Iniciar()
+Close(oDlg1)
+Processa( {|| Exportar() })
+Return
+**************************
+Static Function EXportar()
+_nIncluidos := 0
+_nAlterados := 0
+_nInconsist := 0
+********* CONTRIBUINTES
+_cArqContrib := "\atend\contrib.dbf"
+If !File(AllTrim(_cArqContrib))
+	Alert("Arquivo Contrib nao Encontrado!!")
+	Return
+endif
+dbUseArea( .T. ,,"\atend\contrib.dbf","ctrb" ,.F.)
+If NetErr()
+	Alert("Arquivo Contrib em Uso!!")
+	return
+EndIf
+if file("\atend\CONTRIB1.NTX")
+	ferase("\atend\CONTRIB1.NTX")
+	ferase("\atend\CONTRIB2.NTX")
+	ferase("\atend\CONTRIB3.NTX")
+	ferase("\atend\CONTRIB5.NTX")
+	ferase("\atend\ASSOC1.NTX")
+	ferase("\atend\ASSOC2.NTX")
+	ferase("\atend\ASSOC3.NTX")
+	ferase("\atend\ASSOC4.NTX")
+	ferase("\atend\ASSOC5.NTX")
+	
+	ferase("\atend\TERMO1.NTX")
+	ferase("\atend\TERMO2.NTX")
+	ferase("\atend\CA1.NTX")
+	ferase("\atend\CA2.NTX")
+	ferase("\atend\CC1.NTX")
+	ferase("\atend\CC2.NTX")
+	ferase("\atend\SIND1.NTX")
+	ferase("\atend\SIND2.NTX")
+endif
+if file("\atend\CONTRIB.IDX")
+	ferase("\atend\CONTRIB.IDX")
+endif
+dbselectarea("ctrb")
+IndRegua("CTRB","\atend\CONTRIB","PCC_CGC",,,"Indexando Contrib...")
+********* Associados
+_cArqAssocia := "\atend\assoc.dbf"
+If !File(AllTrim(_cArqassocia))
+	Alert("Arquivo de Associados nao Encontrado!!")
+	Return
+endif
+dbUseArea( .T. ,,"\atend\assoc.dbf","asso" ,.F.)
+If NetErr()
+	Alert("Arquivo de Associados em Uso!!")
+	return
+endif
+if file("\atend\assoc.IDX")
+	ferase("\atend\assoc.IDX")
+endif
+dbselectarea("asso")
+IndRegua("asso","\atend\assoc","CODIGO",,,"Indexando Associados...")
+********* Termos
+_cArqtermos := "\atend\termos.dbf"
+If !File(AllTrim(_cArqtermos))
+	Alert("Arquivo de Termos nao Encontrado!!")
+	Return
+endif
+dbUseArea( .T. ,,"\atend\termos.dbf","term" ,.F.)
+If NetErr()
+	Alert("Arquivo de Termos em Uso!!")
+	return
+endif
+if file("\atend\termos.IDX")
+	ferase("\atend\termos.IDX")
+endif
+dbselectarea("term")
+IndRegua("term","\atend\termos","PCC_CGC+PCC_EXE+TERMO+PCC_PAR",,,"Indexando Termos...")
+********* Assistencial
+_cArqassist := "\atend\ca.dbf"
+If !File(AllTrim(_cArqassist))
+	Alert("Arquivo de Contr.Assistencial nao Encontrado!!")
+	Return
+endif
+dbUseArea( .T. ,,"\atend\ca.dbf","ca" ,.F.)
+If NetErr()
+	Alert("Arquivo de Contr.Assistencial em Uso!!")
+	return
+endif
+if file("\atend\ca.IDX")
+	ferase("\atend\ca.IDX")
+endif
+dbselectarea("ca")
+IndRegua("ca","\atend\ca","CODIGO+PARCELA",,,"Indexando Contr.Assistencial...")
+********* Confederativa
+_cArqconfed := "\atend\cc.dbf"
+If !File(AllTrim(_cArqconfed))
+	Alert("Arquivo de Contr.Confederativa nao Encontrado!!")
+	Return
+endif
+dbUseArea( .T. ,,"\atend\cc.dbf","cc" ,.f.)
+If NetErr()
+	Alert("Arquivo de Contr.Confederativa em Uso!!")
+	return
+endif
+if file("\atend\cc.IDX")
+	ferase("\atend\cc.IDX")
+endif
+dbselectarea("cc")
+IndRegua("cc","\atend\cc","PCC_CGC+PCC_EXE+PCC_PAR",,,"Indexando Contr.Confederativa...")
+********* Sindical
+_cArqsindi := "\atend\sindical.dbf"
+If !File(AllTrim(_cArqsindi))
+	Alert("Arquivo de Contr.Sindical nao Encontrado!!")
+	Return
+endif
+dbUseArea( .T. ,,"\atend\sindical.dbf","sind" ,.F.)
+If NetErr()
+	Alert("Arquivo de Contr.Sindical em Uso!!")
+	return
+endif
+if file("\atend\sindical.IDX")
+	ferase("\atend\sindical.IDX")
+endif
+dbselectarea("cc")
+IndRegua("sind","\atend\sindical","PCC_CGC+PCC_EXE",,,"Indexando Contr.Sindical...")
+********* Contribuintes e Associado
+cquery := "Select * from SA1010 SA1 WHERE D_E_L_E_T_='' AND A1_MSEXP='' ORDER BY A1_NOME "
+TCQUERY cQuery NEW ALIAS "TRB"
+PROCREGUA(RECCOUNT())
+DBSELECTAREA("TRB")
+DBGOTOP()
+DO WHILE !EOF()
+	INCPROC("Contribuinte: "+TRB->A1_NOME)
+	DBSELECTAREA("CTRB")
+	DBSEEK(trb->a1_cgc)
+	if !found()
+		reclock("ctrb",.t.)
+		ctrb->pcc_cgc := trb->a1_cgc
+		msunlock()
+	endif
+	reclock("ctrb",.F.)
+	CTRB->N_CARTAO  := TRB->A1_CARTAO
+	CTRB->D_CARTAO  := SUBS(TRB->A1_CARTAO,6,1)
+	CTRB->CODIGO    := TRB->A1_CODASSO
+	CTRB->SITUACAO  := TRB->A1_SITUAC
+	CTRB->NOME      := TRB->A1_NOME
+	CTRB->RAZAO_SOC := TRB->A1_NOME
+	CTRB->ENDERECO  := TRB->A1_END
+	CTRB->CIDADE    := TRB->A1_MUN
+	CTRB->BAIRRO    := TRB->A1_BAIRRO
+	CTRB->CEP       := TRB->A1_CEP
+	CTRB->CEP_CONT  := SUBS(TRB->A1_CEP,6,3)
+	CTRB->UF        := TRB->A1_EST
+	if subs(trb->a1_tel,1,1) == "("
+		ctrb->DDD     := subs(trb->a1_tel,2,3)
+		CTRB->telefone:= alltrim(subs(trb->a1_tel,6,10))
+	else
+		CTRB->telefone:= trb->a1_tel
+	ENDIF
+	if subs(trb->a1_FAX,1,1) == "("
+		CTRB->FAX     := alltrim(subs(trb->a1_FAX,6,10))
+	else
+		CTRB->FAX     := TRB->A1_FAX
+	ENDIF
+	CTRB->CONTATO     := TRB->A1_SCONTAT
+	CTRB->CAPITAL     := TRB->A1_CAPITAL
+	CTRB->DATAINICIO  := SUBS(TRB->A1_DTINIC,7,2)+SUBS(TRB->A1_DTINIC,5,2)+SUBS(TRB->A1_DTINIC,3,2)
+	CTRB->DATACAD     := SUBS(TRB->A1_DTCADAS,7,2)+SUBS(TRB->A1_DTCADAS,5,2)+SUBS(TRB->A1_DTCADAS,3,2)
+	CTRB->CATEGORIA   := TRB->A1_CATEG1
+	//CTRB->CATEGORIA2  := TRB->A1_CATEG2
+	CTRB->ERSIN       := TRB->A1_ERSIN
+	IF TRB->A1_LEITOS>9999
+		CTRB->LEITOS  := 9999
+	ELSE
+		CTRB->LEITOS  := TRB->A1_LEITOS
+	ENDIF
+	ctrb->filantro    := trb->a1_filant
+	MSUNLOCK()
+	IF !EMPTY(TRB->A1_CODASSO)
+		DBSELECTAREA("ASSO")
+		DBSEEK(TRB->A1_CODASSO)
+		IF !FOUND()
+			reclock("ASSO",.t.)
+			asso->codigo     := trb->A1_codASSO
+			asso->pcc_cgc    := trb->a1_cgc
+			msunlock()
+		endif
+		RECLOCK("ASSO",.F.)
+		asso->nome       := ctrb->nome
+		asso->endereco   := ctrb->endereco
+		asso->cep        := ctrb->cep
+		asso->cepcomplem := CTRB->CEP_CONT
+		ASSO->BAIRRO     := ctrb->bairro
+		asso->cidade     := ctrb->cidade
+		asso->estado     := ctrb->UF
+		asso->telefone   := ctrb->telefone
+		asso->fax        := ctrb->fax
+		asso->contato    := ctrb->contato
+		asso->inscricao  := trb->a1_inscr
+		asso->alvara     := trb->a1_alvara
+		asso->situacao   := ctrb->situacao
+		asso->datainicio := SUBS(TRB->A1_DTINass,7,2)+SUBS(TRB->A1_DTinass,5,2)+SUBS(TRB->A1_DTINass,3,2)
+		asso->datafiM    := SUBS(TRB->A1_DTFIMas,7,2)+SUBS(TRB->A1_DTFIMAS,5,2)+SUBS(TRB->A1_DTFIMAS,3,2)
+		asso->categoria  := TRB->A1_CATLEIT
+		asso->atividade  := TRB->A1_ATIVIDA
+		asso->leitos     := STRZERO(TRB->A1_LEITOS,5)
+		asso->ersin      := TRB->A1_ERSIN
+		ASSO->filantro    := trb->a1_filant
+		msunlock()
+	endif
+	DBSELECTAREA("SA1")
+	DBGOTO(TRB->R_E_C_N_O_)
+	RECLOCK("SA1",.F.)
+	SA1->A1_MSEXP := DTOS(DDATABASE)
+	msunlock()
+	dbselectarea("trb")
+	dbskip()
+enddo
+dbselectarea("trb")
+dbCLOSEAREA("TRB")
+********* Termos
+cquery := "SELECT * FROM SE1010  WHERE  SUBSTRING(E1_PREFIXO,3,1)='T'  AND D_E_L_E_T_='' AND E1_MSEXP='' and E1_CLIENTE<>'999999' order by E1_NOMCLI"
+TCQUERY cQuery NEW ALIAS "TRB"
+PROCREGUA(RECCOUNT())
+DBSELECTAREA("TRB")
+DBGOTOP()
+DO WHILE !EOF()
+	INCPROC("Termos: "+TRB->e1_NOMCLI)
+	DBSELECTAREA("term")
+	DBSEEK(trb->e1_cgc+subs(trb->e1_prefixo,1,2)+trb->e1_num+trb->e1_parcela)
+	if !found()
+		reclock("term",.t.)
+		term->PCC_CGC  := trb->e1_cgc
+		term->PCC_EXE  := subs(trb->e1_prefixo1,2)
+		term->TERMO    := trb->e1_num
+		term->PCC_PAR  := trb->e1_parcela
+		if alltrim(trb->e1_naturez) $ "001/1000"
+			term->natureza := "ASSOC"
+		ELSE
+			term->natureza := "CONFED"
+		ENDIF
+		msunlock()
+	ENDIF
+	reclock("term",.f.)
+	term->PCC_TOT     := TRB->E1_VALLIQ
+	TERM->PCC_VAL     := TRB->E1_VALOR
+	TERM->PCC_MUL     := TRB->E1_MULTA
+	TERM->PCC_JUR     := TRB->E1_MULTA
+	TERM->PCC_DPG     := STOD(TRB->E1_BAIXA)
+	TERM->PCC_VEN     := STOD(TRB->E1_VENCTO)
+	MSUNLOCK()
+	DBSELECTAREA("Se1")
+	DBGOTO(TRB->R_E_C_N_O_)
+	RECLOCK("Se1",.F.)
+	SE1->E1_MSEXP := DTOS(DDATABASE)
+	msunlock()
+	DBSELECTAREA("TRB")
+	DBSKIP()
+ENDDO
+dbselectarea("trb")
+dbCLOSEAREA("TRB")
+********* Assistencial
+cquery := "SELECT * FROM SE1010 WHERE SUBSTRING(E1_PREFIXO,3,1) in (' ','E','A') AND E1_NATUREZ IN ('001','1000','0327') AND D_E_L_E_T_='' AND E1_MSEXP='' and E1_CLIENTE<>'999999' order by E1_NOMCLI"
+TCQUERY cQuery NEW ALIAS "TRB"
+PROCREGUA(RECCOUNT())
+DBSELECTAREA("TRB")
+DBGOTOP()
+DO WHILE !EOF()
+	INCPROC("Assistencial: "+TRB->e1_NOMCLI)
+	DBSELECTAREA("SA1")
+	DBSETORDER(3)
+	DBSEEK(XFILIAL()+TRB->E1_CGC)
+	DBSELECTAREA("ca")
+	DBSEEK(sa1->A1_CODASSO+subs(trb->e1_num,1,2)+subs(trb->e1_prefixo,1,2))
+	if !found()
+		reclock("ca",.t.)
+		ca->codigo     := sa1->A1_codasso
+		ca->parcela    := subs(trb->e1_num,1,2)+subs(trb->e1_prefixo,1,2)
+		msunlock()
+	ENDIF
+	reclock("CA",.f.)
+	ca->vlr_mensal  := TRB->E1_VALOR
+	ca->VLR_COBRAD  := TRB->E1_VALLIQ
+	IF TRB->E1_VALLIQ>TRB->E1_VALOR
+		ca->VLR_JUROS   := TRB->E1_VALLIQ-TRB->E1_VALOR
+	ENDIF
+	ca->DATA_PAGTO  := STOD(TRB->E1_BAIXA)
+	ca->DATA_VECT   := STOD(TRB->E1_VENCTO)
+	MSUNLOCK()
+	DBSELECTAREA("Se1")
+	DBGOTO(TRB->R_E_C_N_O_)
+	RECLOCK("Se1",.F.)
+	SE1->E1_MSEXP := DTOS(DDATABASE)
+	msunlock()
+	DBSELECTAREA("TRB")
+	DBSKIP()
+ENDDO
+dbselectarea("trb")
+dbCLOSEAREA("TRB")
+********* Confederativa
+cquery := "SELECT * FROM SE1010 WHERE SUBSTRING(E1_PREFIXO,3,1) in (' ','E','A') AND E1_NATUREZ IN ('002','0301') AND D_E_L_E_T_='' AND E1_MSEXP='' and E1_CLIENTE<>'999999' order by E1_NOMCLI"
+TCQUERY cQuery NEW ALIAS "TRB"
+PROCREGUA(RECCOUNT())
+DBSELECTAREA("TRB")
+DBGOTOP()
+DO WHILE !EOF()
+	INCPROC("Confederativa: "+TRB->e1_NOMCLI)
+	DBSELECTAREA("cc")
+	DBSEEK(trb->e1_cgc+subs(trb->e1_prefixo,1,2)+trb->e1_parcela)
+	if !found()
+		reclock("cc",.t.)
+		cc->PCC_CGC := trb->e1_cgc
+		cc->pcc_exe := subs(trb->e1_PREFIXO,1,2)
+		cC->pcc_par := trb->e1_parcela
+		msunlock()
+	ENDIF
+	reclock("cc",.f.)
+	cC->pcc_val     := TRB->E1_VALOR
+	cC->pcc_tot     := TRB->E1_VALLIQ
+	cC->pcc_dpg     := STOD(TRB->E1_BAIXA)
+	cC->pcc_ven     := STOD(TRB->E1_VENCTO)
+	cC->pcc_nat     := trb->e1_naturez
+	MSUNLOCK()
+	DBSELECTAREA("Se1")
+	DBGOTO(TRB->R_E_C_N_O_)
+	RECLOCK("Se1",.F.)
+	SE1->E1_MSEXP := DTOS(DDATABASE)
+	msunlock()
+	DBSELECTAREA("TRB")
+	DBSKIP()
+ENDDO
+dbselectarea("trb")
+dbCLOSEAREA("TRB")
+********* Sindical
+cquery := "SELECT * FROM SE1010 WHERE SUBSTRING(E1_PREFIXO,3,1)='S' AND E1_NATUREZ ='003' AND D_E_L_E_T_='' AND E1_MSEXP='' and E1_CLIENTE<>'999999' order by E1_NOMCLI"
+TCQUERY cQuery NEW ALIAS "TRB"
+PROCREGUA(RECCOUNT())
+DBSELECTAREA("TRB")
+DBGOTOP()
+DO WHILE !EOF()
+	INCPROC("Sindical: "+TRB->e1_NOMCLI)
+	DBSELECTAREA("SIND")
+	DBSEEK(trb->e1_cgc+subs(trb->e1_prefixo,1,2))
+	if !found()
+		reclock("SIND",.t.)
+		SIND->PCC_CGC := trb->e1_cgc
+		SIND->pcc_exe := subs(trb->e1_PREFIXO,1,2)
+		msunlock()
+	ENDIF
+	reclock("SIND",.f.)
+	SIND->pcc_con     := TRB->E1_VALOR
+	SIND->pcc_tot     := TRB->E1_VALLIQ
+	SIND->pcc_dpg     := STOD(TRB->E1_BAIXA)
+	SIND->pcc_ven     := STOD(TRB->E1_VENCTO)
+	MSUNLOCK()
+	DBSELECTAREA("Se1")
+	DBGOTO(TRB->R_E_C_N_O_)
+	RECLOCK("Se1",.F.)
+	SE1->E1_MSEXP := DTOS(DDATABASE)
+	msunlock()
+	DBSELECTAREA("TRB")
+	DBSKIP()
+ENDDO
+dbselectarea("trb")
+dbCLOSEAREA("TRB")
+dbselectarea("ctrb")
+dbCLOSEAREA("cTRB")
+dbselectarea("asso")
+dbCLOSEAREA("asso")
+dbselectarea("term")
+dbCLOSEAREA("Term")
+dbselectarea("ca")
+dbCLOSEAREA("ca")
+dbselecTarea("cc")
+dbCLOSEAREA("cc")
+dbselectarea("SIND")
+dbCLOSEAREA("SIND")
+ferase("\atend\CONTRIB.IDX")
+ferase("\atend\assoc.IDX")
+ferase("\atend\termos.IDX")
+ferase("\atend\ca.IDX")
+ferase("\atend\cc.IDX")
+ferase("\atend\sindical.IDX")
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder) // Atencao (UPDXFUN).
+alert("Importacao Finalizada !!!")
+Return

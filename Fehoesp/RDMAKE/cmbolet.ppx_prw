@@ -1,0 +1,1058 @@
+#line 1 "F:\AP10\INCLUDE\rwmake.ch"
+#line 1 "F:\AP10\INCLUDE\stdwin.ch"
+#line 14 "rwmake.ch"
+#line 2 "v:\ap10\rdmake\cmbolet.prw"
+
+
+
+
+Function U_CMBOLET(WPAR1,WPAR2)
+
+
+
+
+
+
+
+
+SetPrvt("TITULO,CDESC,WNREL,AORD,ARETURN,CSTRING,_BlocoBar")
+SetPrvt("CPERG,NTAMANHO,NLASTKEY,NLIN,LEND,AROTOP")
+SetPrvt("LIMPRT,LIMITE,CBCONT,NQUANTITEM,CDESCRI,NLIMITE")
+SetPrvt("NQUANT,NOMEPROG,NTIPO,CQTD,CBTXT,ESC")
+SetPrvt("NULL,cPRINTER,HEIGHT,SMALL_BAR,WIDE_BAR,DPL")
+SetPrvt("NB,WB,NS,WS,_TPBAR,CHAR25,cPictBanc")
+SetPrvt("START,_FIM,CHARS,CHAR,_CFIXO1,_CFIXO2")
+SetPrvt("_CFIXO3,_cFixo4,_MSGIMP,_RESP,MV_PAR15,XCOMPLEM")
+SetPrvt("_REGVCTO,_VCTBUSCA,_TPOBUSCA,_CHVBUSCA,_VALBOL")
+SetPrvt("_BARCOD,NSOMAGER,NI,CCALCDV")
+SetPrvt("_CBLOCO,NSOMA1,NSOMA2,NSOMA3,_FIXVAR,_NRES")
+SetPrvt("CSOMA1,CSOMA2,CSOMA3,NSOMANN,_VARFIX")
+SetPrvt("_CODE,_CBAR,_NX,_NNRO,_CBARX,_NY")
+SetPrvt("I,LETTER,_JRS,_DacBco,_NomBco,_NomBc2")
+SetPrvt("_MESAGE,_SALIAS,AREGS,J,_cEspDoc,_cCartDoc")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DbSelectArea("SA6")
+DbSetOrder(1)
+
+DbSelectArea("SA1")
+DbSetOrder(1)
+
+
+Titulo  := OemToAnsi("Boletos Banc†rios")
+cDesc   := OemToAnsi("Este programa ira imprimir Boletos Banc†rios")
+
+wnrel    := "CMBOLET"
+aOrd     := {}
+aReturn  := { "Zebrado", 1,"Administracao", 2, 2, 2, "",2 }
+cString  := "SE1"
+cPerg    := "CMBOL"
+nTamanho := "G"
+nLastKey := 0
+nLin     := 0
+lEnd	 := .F. 
+aRotOP	 := {}
+lImpRt	 := .F. 
+limite	 := 80
+ValidPerg()
+Pergunte(cPerg, .f. )
+nLastKey:=0
+wnrel:=SetPrint(cString,wnrel,cPerg,@Titulo,cDesc,"","", .F. ,"", .F. ,"", .F. )
+nLastKey:=IIf(LastKey()==27,27,nLastKey)
+If nLastKey == 27
+   Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If Pcount() > 0
+	MV_PAR01 := MV_PAR02 := WPAR2
+	MV_PAR03 := MV_PAR04 := WPAR1
+	MV_PAR05 := DDATABASE-740
+	MV_PAR06 := DDATABASE+740
+	MV_PAR07 := DDATABASE-740
+	MV_PAR08 := DDATABASE+740
+	MV_PAR09 := "      "
+	MV_PAR10 := "  "
+	MV_PAR11 := "ZZZZZZ"
+	MV_PAR12 := "ZZ"
+	MV_PAR13 := 0
+Else
+	MV_PAR13 := MV_PAR13 - 1
+Endif
+
+
+
+
+
+
+RptStatus( {|| Imprime() }, Titulo )
+Return
+
+
+
+
+Static Function Imprime()
+
+CbCont	   := ""
+nQuantItem := 0
+cDescri    := ""
+nlimite    := 150
+nQuant	   := 1
+nomeprog   := "OPSIS"
+nTipo	   := 18
+cQtd	   := ""
+
+cbtxt	 := SPACE(10)
+cbcont	 := 0
+
+
+
+esc := CHR(27)
+null := ""
+cPRINTER   := "L"
+height    := 3.0
+
+small_bar := 3.5
+wide_bar := ROUND(small_bar * 2.25,0)
+dpl := 50
+
+
+nb := esc+"*c"+TRANSFORM(small_bar,"99")+"a"+Alltrim(STR(height*dpl))+"b0P"+esc+"*p+"+TRANSFORM(small_bar,"99")+"X"
+
+wb := esc+"*c"+TRANSFORM(wide_bar,"99")+"a"+Alltrim(STR(height*dpl))+"b0P"+esc+"*p+"+TRANSFORM(wide_bar,"99")+"X"
+
+ns := esc+"*p+"+TRANSFORM(small_bar,"99")+"X"
+
+ws := esc+"*p+"+TRANSFORM(wide_bar,"99")+"X"
+
+
+_TpBar := "25"
+If _TpBar == "25"
+
+
+   char25 := {}
+   AADD(char25,"10001")
+   AADD(char25,"01001")
+   AADD(char25,"11000")
+   AADD(char25,"00101")
+   AADD(char25,"10100")
+   AADD(char25,"01100")
+   AADD(char25,"00011")
+   AADD(char25,"10010")
+   AADD(char25,"01010")
+   AADD(char25,"00110")
+EndIf
+If _TpBar == "39"
+
+
+
+
+   start := esc+"*p-50Y"
+   _Fim := esc+"*p+50Y"
+   chars := "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ-. *$/+%"
+   char := {}
+   AADD(char,wb+ns+nb+ws+nb+ns+nb+ns+wb)
+   AADD(char,nb+ns+wb+ws+nb+ns+nb+ns+wb)
+   AADD(char,wb+ns+wb+ws+nb+ns+nb+ns+nb)
+   AADD(char,nb+ns+nb+ws+wb+ns+nb+ns+wb)
+   AADD(char,wb+ns+nb+ws+wb+ns+nb+ns+nb)
+   AADD(char,nb+ns+wb+ws+wb+ns+nb+ns+nb)
+   AADD(char,nb+ns+nb+ws+nb+ns+wb+ns+wb)
+   AADD(char,wb+ns+nb+ws+nb+ns+wb+ns+nb)
+   AADD(char,nb+ns+wb+ws+nb+ns+wb+ns+nb)
+   AADD(char,nb+ns+nb+ws+wb+ns+wb+ns+nb)
+   AADD(char,wb+ns+nb+ns+nb+ws+nb+ns+wb)
+   AADD(char,nb+ns+wb+ns+nb+ws+nb+ns+wb)
+   AADD(char,wb+ns+wb+ns+nb+ws+nb+ns+nb)
+   AADD(char,nb+ns+nb+ns+wb+ws+nb+ns+wb)
+   AADD(char,wb+ns+nb+ns+wb+ws+nb+ns+nb)
+   AADD(char,nb+ns+wb+ns+wb+ws+nb+ns+nb)
+   AADD(char,nb+ns+nb+ns+nb+ws+wb+ns+wb)
+   AADD(char,wb+ns+nb+ns+nb+ws+wb+ns+nb)
+   AADD(char,nb+ns+wb+ns+nb+ws+wb+ns+nb)
+   AADD(char,nb+ns+nb+ns+wb+ws+wb+ns+nb)
+   AADD(char,wb+ns+nb+ns+nb+ns+nb+ws+wb)
+   AADD(char,nb+ns+wb+ns+nb+ns+nb+ws+wb)
+   AADD(char,wb+ns+wb+ns+nb+ns+nb+ws+nb)
+   AADD(char,nb+ns+nb+ns+wb+ns+nb+ws+wb)
+   AADD(char,wb+ns+nb+ns+wb+ns+nb+ws+nb)
+   AADD(char,nb+ns+wb+ns+wb+ns+nb+ws+nb)
+   AADD(char,nb+ns+nb+ns+nb+ns+wb+ws+wb)
+   AADD(char,wb+ns+nb+ns+nb+ns+wb+ws+nb)
+   AADD(char,nb+ns+wb+ns+nb+ns+wb+ws+nb)
+   AADD(char,nb+ns+nb+ns+wb+ns+wb+ws+nb)
+   AADD(char,wb+ws+nb+ns+nb+ns+nb+ns+wb)
+   AADD(char,nb+ws+wb+ns+nb+ns+nb+ns+wb)
+   AADD(char,wb+ws+wb+ns+nb+ns+nb+ns+nb)
+   AADD(char,nb+ws+nb+ns+wb+ns+nb+ns+wb)
+   AADD(char,wb+ws+nb+ns+wb+ns+nb+ns+nb)
+   AADD(char,nb+ws+wb+ns+wb+ns+nb+ns+nb)
+   AADD(char,nb+ws+nb+ns+nb+ns+wb+ns+wb)
+   AADD(char,wb+ws+nb+ns+nb+ns+wb+ns+nb)
+   AADD(char,nb+ws+wb+ns+nb+ns+wb+ns+nb)
+   AADD(char,nb+ws+nb+ns+wb+ns+wb+ns+nb)
+   AADD(char,nb+ws+nb+ws+nb+ws+nb+ns+nb)
+   AADD(char,nb+ws+nb+ws+nb+ns+nb+ws+nb)
+   AADD(char,nb+ws+nb+ns+nb+ws+nb+ws+nb)
+   AADD(char,nb+ns+nb+ws+nb+ws+nb+ws+nb)
+EndIf
+
+_cFixo1   := "4329876543298765432987654329876543298765432"
+_cFixo2   := "21212121212121212121212121212"
+_cFixo3   := "3298765432"
+_cFixo4   := "765432765432765432765432765432765432765432765432"
+
+
+
+DbSelectArea("SE1")
+DbSetOrder(1)
+DbSeek(xFilial("SE1")+MV_PAR01+MV_PAR03, .T. )
+_MsgImp := "Impressora nao Pronta"+chr(13)+"Continua Tentando ?"
+_Resp := 1
+SetRegua(LastRec())
+
+
+while SE1->E1_FILIAL==xFilial("SE1") .And. SE1->E1_PREFIXO<=MV_PAR02 .And. SE1->E1_NUM<=MV_PAR04 .And. !Eof()
+
+   IncRegua()
+
+
+
+
+   If SE1->E1_EMISSAO < MV_PAR05 .Or.  SE1->E1_EMISSAO > MV_PAR06 .Or.  SE1->E1_VENCTO  < MV_PAR07 .Or.  SE1->E1_VENCTO  > MV_PAR08 .Or.  SE1->E1_CLIENTE < MV_PAR09 .Or.  SE1->E1_CLIENTE > MV_PAR11 .Or.  SE1->E1_LOJA    < MV_PAR10 .Or.  SE1->E1_LOJA    > MV_PAR12 .Or.  Val(SE1->E1_IMPRESS) # MV_PAR13 .Or.  SE1->E1_TIPODOC <> "BO" .Or.  SE1->E1_PORTADOR == "777"
+      DbSkip()
+      Loop
+   EndIf
+
+   If Empty(SE1->E1_SALDO)
+      If SE1->E1_IMPRESS == " "
+         RecLock("SE1", .F. )
+         SE1->E1_IMPRESS := "1"
+         MsUnLock()
+      EndIf
+      DbSkip()
+      Loop
+   EndIf
+   DbSelectArea("SA6")
+   If !Empty(SE1->E1_PORTADO)
+      DbSeek(xFilial("SA6")+SE1->E1_PORTADO+SE1->E1_AGEDEP+SE1->E1_CONTA, .F. )
+   Else
+      DbSeek(xFilial("SA6")+TRIM(SE1->E1_BCO), .F. )
+   EndIf
+   DbSelectArea("SEE")
+   Dbsetorder(1)
+
+   DbSeek(xFilial("SEE")+SA6->A6_COD+SA6->A6_AGENCIA+SA6->A6_NUMCON, .F. )
+
+   xCOMPLEM := Space(20)
+   _DacBco := ""
+   _NomBco := ""
+   _NomBc2 := ""
+   cPictBanc:=""
+   _cEspDoc :=""
+   _cCartDoc:=""
+   _nossonum:=""
+   _dc      :=""
+   If SA6->A6_COD == "033"
+      _DacBco  := "033-7"
+      _NomBco  := "BANESPA"
+      cPictBanc:= "@R 999 9999999 9"
+      _cEspDoc := "DM-CI"
+      _cCartDoc:= "COB"
+      _nossonum:= SEE->EE_FAXATU
+      _dc       := U_CmMod10(_Nossonum)
+   ElseIf SA6->A6_COD == "275"
+      _DacBco := "275-5"
+      _NomBco := "BANCO REAL"
+      cPictBanc:="@R 9999999"
+      _cEspDoc := "NB"
+      _cCartDoc:= "20"
+      _nossonum:= SEE->EE_FAXATU
+      _dc       := ""
+   ElseIf SA6->A6_COD == "399"
+      _DacBco := "399-9"
+      _NomBco := "HSBC"
+      _NomBc2 := "BANK BRASIL"
+      cPictBanc:="@R 99 999 999 99 9"
+      _cEspDoc := "PD"
+      _cCartDoc:= "CSB"
+      _nossonum:= SEE->EE_FAXATU
+      _dc       := U_DCHSBC(_Nossonum)
+   ElseIf SA6->A6_COD == "479"
+      _DacBco := "479-9"
+      _NomBco := "BOSTON"
+      _NomBc2 := "BANK BOSTON"
+      cPictBanc:="@R 99999999-9"
+      _cEspDoc := "DM"
+      _cCartDoc:= "RAP"
+      _nossonum:= Alltrim(SEE->EE_FAXATU)
+      If (Val(SEE->EE_FAXFIM) - Val(SEE->EE_FAXATU)) <= 50 .And.  (Val(SEE->EE_FAXFIM) - Val(SEE->EE_FAXATU)) > 0
+         Alert ("Solicitar nova faixa de n˙meros banc·rios ao Banco Boston")
+      ElseIf Val(SEE->EE_FAXFIM) - Val(SEE->EE_FAXATU) <= 0
+         Alert ("N„o existe faixa de n˙meros banc·rios disponÌveis, favor solicitar ao Banco Boston")
+         Return
+      Endif
+      _dc       := U_DCBOSTON(_Nossonum)
+   ElseIf SA6->A6_COD == "001"
+      _DacBco := "001-9"
+      _NomBco := "BANCO BRASIL"
+      _NomBc2 := "BANCO DO BRASIL"
+      cPictBanc:="@R 99999999999-9"
+      cPictBanc2:="@R 99999999999"
+      _cEspDoc := "DM"
+      _cCartDoc:= "017"
+      _nossonum:= SEE->EE_FAXATU
+      _dc       := U_DCBRASIL(_Nossonum)
+
+      Dbselectarea("SEE")
+      RecLock("SEE", .F. )
+      SEE->EE_FAXATU := Str(Val(_NossoNum)+1,11)
+      MsUnLock()
+   EndIf
+
+   If SA6->A6_COD <> "001"
+      Dbselectarea("SEE")
+      RecLock("SEE", .F. )
+      SEE->EE_FAXATU := Str(Val(_NossoNum)+1,10)
+      MsUnLock()
+    Endif
+
+	If !Empty(SE1->E1_NUMBCO)
+		If IW_MsgBox("Boleto ja impresso com Numero "+SE1->E1_NUMBCO+" Regrava ?","Escolha","YESNO")
+		   Dbselectarea("SE1")
+		   RecLock("SE1", .F. )
+		   SE1->E1_NUMBCO := AllTRIM(_NossoNum) + _dc
+		   MsUnLock()
+		Endif
+	Else
+	   Dbselectarea("SE1")
+	   RecLock("SE1", .F. )
+	   SE1->E1_NUMBCO := AllTRIM(_NossoNum) + _dc
+	   MsUnLock()
+   Endif
+
+
+   _ValBol := SE1->E1_VALOR
+
+   _BarCod := SA6->A6_COD
+   _BarCod := _BarCod + "9"
+   If SA6->A6_COD == "275"
+	   _BarCod := _BarCod + "0000"
+	   _BarCod := _BarCod + StrZero((_ValBol*100),10)
+   Elseif SA6->A6_COD == "033"
+	   _BarCod := _BarCod + StrZero(SE1->E1_VENCTO-CTOD("07/10/1997"),4)
+	   _BarCod := _BarCod + StrZero((_ValBol*100),10)
+   Elseif SA6->A6_COD == "479"
+	   _BarCod := _BarCod + StrZero(SE1->E1_VENCTO-CTOD("07/10/1997"),4)
+       _BarCod := _BarCod + StrZero((_ValBol*100),10)
+   Else
+	   _BarCod := _BarCod + StrZero(SE1->E1_VENCTO-CTOD("07/10/1997"),4)
+	   _BarCod := _BarCod + StrZero((_ValBol*100),10)
+   Endif
+
+   If SA6->A6_COD == "033"
+      _BlocoBar := StrZero(Val(SA6->A6_AGENCIA),3)
+      _BlocoBar := _BlocoBar + StrZero(Val(Left(AllTrim(SEE->EE_CODEMP ),8)),8)
+      _BlocoBar := _BlocoBar + StrZero(Val(Subs(AllTrim(SE1->E1_NUMBCO ),4,7)),7)
+      _BlocoBar := _BlocoBar + "00"
+      _BlocoBar := _BlocoBar + SA6->A6_COD
+
+	  nSoma1  := 0
+	  _FixVar := Right(_cFixo2,Len(_BlocoBar))
+	  For nI := 1 to Len(_BlocoBar)
+	      _nRes := Val(Substr(_BlocoBar,nI,1))*Val(Substr(_FixVar,nI,1))
+	      If _nRes > 9
+	         _nRes := _nRes-9
+	      Endif
+	      nSoma1 := nSoma1 + _nRes
+	  Next
+	  _BlocoBar := _BlocoBar + Right(StrZero(10-(nSoma1%10),2),1)
+
+      while .t. 
+          nSomaGer := 0
+	      _FixVar := Right(_cFixo4,Len(_BlocoBar))
+	      For nI := Len(_BlocoBar) to 1 Step -1
+	          nSomaGer := nSomaGer + (Val(Substr(_BlocoBar,nI,1))*Val(Substr(_FixVar,nI,1)))
+	      Next
+
+	      nSomaGer := (nSomaGer%11)
+
+	      If nSomaGer == 1
+	         If Right(_BlocoBar,1) == "9"
+	            _BlocoBar := Left(_BlocoBar,23) + "0"
+	         Else
+                _BlocoBar := Left(_BlocoBar,23) + Str(Val(Right(_BlocoBar,1))+1,1)
+             EndIf
+             Loop
+          EndIf
+          If nSomaGer # 0
+             nSomaGer := 11-nSomaGer
+	      Endif
+	      Exit
+      EndDo
+	  _BlocoBar := _BlocoBar + StrZero(nSomaGer,1)
+	  _BarCod := _BarCod + _BlocoBar
+   ElseIf SA6->A6_COD == "275"
+
+
+
+      _BaseCal := StrZero(Val(Left(AllTrim(SE1->E1_NUMBCO ),7)),7)+ StrZero(Val(Left(AllTrim(SA6->A6_AGENCIA),4)),4)+ StrZero(Val(Left(AllTrim(SA6->A6_NUMCON ),7)),7)
+      _ResMul := 0
+      _cFixoNow   := Right(_cFixo2,Len(_BaseCal))
+      For _nCont := Len(_BaseCal) to 1 Step -1
+          _nMult := (Val(Substr(_BaseCal,_nCont,1))*Val(Substr(_cFixoNow,_nCont,1)))
+          If _nMult > 9
+             _nMult -= 9
+          EndIf
+          _ResMul += _nMult
+      Next
+      _ResMul := (_ResMul%10)
+      If _ResMul == 0
+         _ResMul := "0"
+      Else
+         _ResMul := Str(10-_ResMul,1)
+      EndIf
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim(SA6->A6_AGENCIA),4)),4)
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim(SA6->A6_NUMCON ),7)),7)
+      _BarCod := _BarCod + _ResMul
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim(SE1->E1_NUMBCO ),13)),13)
+   ElseIf SA6->A6_COD == "399"
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim(SE1->E1_NUMBCO ),11)),11)
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim(SA6->A6_AGENCIA),4)),4)
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim(SA6->A6_NUMCON ),7)),7)
+      _BarCod := _BarCod + "00"
+      _BarCod := _BarCod + "1"
+   ElseIf SA6->A6_COD == "479"
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim("1725119"),9)),9)
+      _BarCod := _BarCod + "000000"
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim(SE1->E1_NUMBCO ),9)),9)
+      _BarCod := _BarCod + "8"
+   ElseIf SA6->A6_COD == "001" .And.  SA6->A6_NUMCON == "105007    "
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim(SE1->E1_NUMBCO ),11)),11)
+      _BarCod := _BarCod + "2414"
+      _BarCod := _BarCod + "00010500"
+      _BarCod := _BarCod + "17"
+   ElseIf SA6->A6_COD == "001" .And.  SA6->A6_NUMCON == "105015    "
+      _BarCod := _BarCod + StrZero(Val(Left(AllTrim(SE1->E1_NUMBCO ),11)),11)
+      _BarCod := _BarCod + "2414"
+      _BarCod := _BarCod + "00010501"
+      _BarCod := _BarCod + "17"
+   EndIf
+
+
+
+
+   nSomaGer := 0
+   For nI := 1 to 43
+
+       nSomaGer := nSomaGer + (Val(Substr(_BarCod,nI,1))*Val(Substr(_cFixo1,nI,1)))
+   Next
+   If SA6->A6_COD <> "479"
+      If (11-(nSomaGer%11)) > 9
+         cCalcDv := "1"
+      Else
+         cCalcDv := Str(11-(nSomaGer%11),1)
+      Endif
+   Else
+      If (11-(nSomaGer%11)) > 9 .Or.  (11-(nSomaGer%11)) == 0 .Or.  (11-(nSomaGer%11)) == 1
+         cCalcDv := "1"
+      Else
+         cCalcDv := Str(11-(nSomaGer%11),1)
+      Endif
+   Endif
+
+   _BarCod := Left(_BarCod ,4) + cCalcDv + Right(_BarCod,39)
+
+
+
+
+
+   _cBloco := Left(_BarCod,4) + Substr(_BarCod,20,5) + Substr(_BarCod,25,10) + Substr(_BarCod,35,10)
+
+   nSoma1 := 0
+   nSoma2 := 0
+   nSoma3 := 0
+
+
+   _FixVar := Right(_cFixo2,9)
+   For nI := 1 to 9
+
+       _nRes := Val(Substr(_cBloco,nI,1))*Val(Substr(_cFixo2,nI,1))
+       If _nRes > 9
+          _nRes := 1 + (_nRes-10)
+       Endif
+       nSoma1 := nSoma1 + _nRes
+   Next
+
+
+   _FixVar := Right(_cFixo2,10)
+   For nI := 10 to 19
+
+       _nRes := Val(Substr(_cBloco,nI,1))*Val(Substr(_cFixo2,nI,1))
+       If _nRes > 9
+          _nRes := 1 + (_nRes-10)
+       Endif
+       nSoma2 := nSoma2 + _nRes
+   Next
+
+
+   _FixVar := Right(_cFixo2,10)
+   For nI := 20 to 29
+
+       _nRes := Val(Substr(_cBloco,nI,1))*Val(Substr(_cFixo2,nI,1))
+       If _nRes > 9
+          _nRes := 1 + (_nRes-10)
+       Endif
+       nSoma3 := nSoma3 + _nRes
+   Next
+   cSoma1 := Right(StrZero(10-(nSoma1%10),2),1)
+   cSoma2 := Right(StrZero(10-(nSoma2%10),2),1)
+   cSoma3 := Right(StrZero(10-(nSoma3%10),2),1)
+
+
+
+
+
+   If SA6->A6_COD <> "275"
+
+
+
+	   _cBloco := Left(_BarCod,4) + Substr(_BarCod,20,5) + cSoma1 + Substr(_BarCod,25,10) + cSoma2+ Substr(_BarCod,35,10)+ cSoma3 + cCalcDv + Substr(_BarCod,6,4) + StrZero((_ValBol*100),10)
+	Else
+
+
+	   _cBloco := Left(_BarCod,4) + Substr(_BarCod,20,5) + cSoma1 + Substr(_BarCod,25,10) + cSoma2+ Substr(_BarCod,35,10)+ cSoma3 + cCalcDv + Alltrim(Str((_ValBol*100),10))
+
+	Endif
+
+
+   _code := ""
+
+   If _TpBar == "25"
+
+
+
+
+      _cBar := _BarCod
+      For _nX := 1 to 43 Step 2
+         _nNro := VAl(Substr(_cBar,_nx,1))
+         If _nNro == 0
+            _nNro := 10
+         EndIf
+         _cBarx := char25[_nNro]
+         _nNro := VAl(Substr(_cBar,_nx+1,1))
+         If _nNro == 0
+            _nNro := 10
+         EndIf
+         _cBarx := _cBarx + char25[_nNro]
+
+         For _nY := 1 to 5
+             If Substr(_cBarx,_nY,1) == "0"
+
+                _code := _code + nb
+             Else
+
+                _code := _code + wb
+             EndIf
+             If Substr(_cBarx,_nY+5,1) == "0"
+
+                _code := _code + ns
+             Else
+
+                _code := _code + ws
+             EndIf
+         Next
+      Next
+      _code := nb+ns+nb+ns+_code+wb+ns+nb
+
+
+
+   ElseIf _TpBar == "39"
+      _code := ""
+      _BarCod := "*"+_BarCod+"*"
+      FOR I := 1 TO LEN(M->_BarCod)
+          letter := SUBSTR(M->_BarCod,I,1)
+          _code := _code + IF(AT(letter,chars)=0,letter,char[at(letter,chars)]) + ns
+      NEXT
+
+
+   EndIf
+
+   DbSelectArea("SA1")
+   DbSeek(xFilial("SA1")+SE1->E1_CLIENTE+SE1->E1_LOJA, .F. )
+
+
+
+
+
+
+
+
+   __SetCentury("ON" )
+   PrintOut(00,000,"E",)
+
+
+
+   PrintOut(00,003,"(12U(s1p20v1s3b4168T"+_NomBco,)
+
+
+
+
+   PrintOut(00,005,"(12U(s1p18v1s3b4168T"+"                         |  "+_DacBco+"   |",)
+   PrintOut(00,000,"(12U(s1p10v1s3b4168T"+"                                                                                                                                       RECIBO DO SACADO",)
+   PrintOut(01,000,"(s0p20h6v0s0b3T"+Chr(38)+"l12D",)
+   PrintOut(01,000,"",)
+   PrintOut(01,004,"⁄ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¬ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒø ",)
+   PrintOut(02,003,"≥ Cedente:            "+SM0->M0_NOMECOM,)
+   PrintOut(02,068,"≥  Sacado ",)
+   PrintOut(02,082,SUBSTR(SA1->A1_NOME,1,67),)
+   PrintOut(02,148," ≥",)
+   If SA6->A6_COD == "033"
+      PrintOut(03,003,"≥ Ag./Conta Corrente: "+Transform(Right(AllTrim(SA6->A6_AGENCIA),3)+AllTrim(SEE->EE_CODEMP),"@R 999-99 99999 9"),)
+   ElseIf SA6->A6_COD == "479"
+      PrintOut(03,003,"≥ Ag./Conta Corrente: 0690732/1725119",)
+   ElseIf SA6->A6_COD == "001" .And.  SA6->A6_NUMCON == "105007    "
+      PrintOut(03,003,"≥ Ag./Conta Corrente: 2414-7/10500-7",)
+   ElseIf SA6->A6_COD == "001" .And.  SA6->A6_NUMCON == "105015    "
+      PrintOut(03,003,"≥ Ag./Conta Corrente: 2414-7/10501-5",)
+   Else
+      PrintOut(03,003,"≥ Ag./Conta Corrente: "+Alltrim(SA6->A6_AGENCIA)+"/"+AllTrim(SA6->A6_NUMCON),)
+   EndIf
+   PrintOut(03,068,"≥                                                                                ≥",)
+   PrintOut(04,003,"≥ Data do Documento:",)
+   PrintOut(04,025,SE1->E1_EMISSAO,)
+   If !Empty(SA1->A1_ENDCOB)
+      wTAM := SPACE(81)
+      wTAM := "≥  Endereáo : " + Alltrim(SA1->A1_ENDCOB)  + " " + Alltrim(SA1->A1_NUMENDC)
+      TAM  := 0
+      TAM  := 81 - LEN(wTAM)
+      PrintOut(04,068,"≥  Endereáo : "+Alltrim(SA1->A1_ENDCOB)+" "+Alltrim(SA1->A1_NUMENDC)+SPACE(TAM),)
+   Else
+      wTAM := SPACE(81)
+      wTAM := "≥  Endereáo : " + Alltrim(SA1->A1_END) + " " + Alltrim(SA1->A1_NUMEND)
+      TAM  := 0
+      TAM  := 81 - LEN(wTAM)
+      PrintOut(04,068,"≥  Endereáo : "+Alltrim(SA1->A1_END)+" "+Alltrim(SA1->A1_NUMEND)+SPACE(TAM),)
+   EndIf
+   PrintOut(04,148," ≥",)
+   If SA6->A6_COD == "001" .And.  _dc == "X"
+      PrintOut(05,003,"≥ Nosso Numero:       "+Transform(SE1->E1_NUMBCO,cPictBanc2),)
+      PrintOut(05,036,"-X",)
+   Else
+      PrintOut(05,003,"≥ Nosso Numero:       "+Transform(SE1->E1_NUMBCO,cPictBanc),)
+   Endif
+   If !Empty(SA1->A1_ENDCOB)
+      wTAM := SPACE(81)
+      wTAM := "≥             " + SA1->A1_BAIRROC
+      TAM  := 0
+      TAM  := 81 - LEN(wTAM)
+      PrintOut(05,068,"≥             "+SA1->A1_BAIRROC+SPACE(TAM),)
+   Else
+      wTAM := SPACE(81)
+      wTAM := "≥             " + SA1->A1_BAIRRO
+      TAM  := 0
+      TAM  := 81 - LEN(wTAM)
+      PrintOut(05,068,"≥             "+SA1->A1_BAIRRO+SPACE(TAM),)
+   EndIf
+   PrintOut(05,148," ≥",)
+   PrintOut(06,003,"≥ N.do Documento:     "+SE1->E1_NUM+If(!Empty(SE1->E1_PARCELA),"-"+SE1->E1_PARCELA,""),)
+   If !Empty(SA1->A1_ENDCOB)
+      wTAM := SPACE(81)
+      wTAM := "≥  CEP :      "+ Transform(SA1->A1_CEPC,"@R 99999-999")
+      TAM  := 0
+      TAM  := 81 - LEN(wTAM)
+      PrintOut(06,068,"≥  CEP :      "+Transform(SA1->A1_CEPC,"@R 99999-999")+SPACE(TAM),)
+   Else
+      wTAM := SPACE(81)
+      wTAM := "≥  CEP :      "+ Transform(SA1->A1_CEP,"@R 99999-999")
+      TAM  := 0
+      TAM  := 81 - LEN(wTAM)
+      PrintOut(06,068,"≥  CEP :      "+Transform(SA1->A1_CEP,"@R 99999-999")+SPACE(TAM),)
+   EndIf
+   PrintOut(06,148," ≥",)
+      wTAM := SPACE(65)
+      wTAM := "≥ EspÇcie Doc.:       "+ _cEspDoc
+      TAM  := 0
+      TAM  := 65 - LEN(wTAM)
+   PrintOut(07,003,"≥ EspÇcie Doc.:       "+_cEspDoc+SPACE(TAM),)
+   PrintOut(07,068,"≥                                                                                ≥",)
+      wTAM := SPACE(65)
+      wTAM := "≥ Carteira :          "+ _cCartDoc
+      TAM  := 0
+      TAM  := 65 - LEN(wTAM)
+   PrintOut(08,003,"≥ Carteira :          "+_cCartDoc+SPACE(TAM),)
+   If !Empty(SA1->A1_ENDCOB)
+      wTAM := SPACE(81)
+      wTAM := "≥  Cidade :   "+AllTrim(SA1->A1_MUNC)+ " - "+SA1->A1_ESTC
+      TAM  := 0
+      TAM  := 81 - LEN(wTAM)
+      PrintOut(08,068,"≥  Cidade :   "+AllTrim(SA1->A1_MUNC)+" - "+SA1->A1_ESTC+SPACE(TAM),)
+   Else
+      wTAM := SPACE(81)
+      wTAM := "≥  Cidade :   "+AllTrim(SA1->A1_MUN)+ " - "+SA1->A1_EST
+      TAM  := 0
+      TAM  := 81 - LEN(wTAM)
+      PrintOut(08,068,"≥  Cidade :   "+AllTrim(SA1->A1_MUN)+" - "+SA1->A1_EST+SPACE(TAM),)
+   EndIf
+   PrintOut(08,148," ≥",)
+   PrintOut(09,003,"≥ Aceite :            N                                          ≥                                                                                ≥",)
+   PrintOut(10,003,"≥ EspÇcie :           R$                                         ≥                                                                                ≥",)
+   PrintOut(11,003,"√ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ≈ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¥ ",)
+   _Jrs := Round((_ValBol*(MV_PAR17/30)) / 100,2)
+   If SA6->A6_COD == "033"
+         wTAM := SPACE(65)
+         wTAM := "≥ Vencido, cobrar juros de R$ "+Transform(_Jrs,"@E 9,999.99") + " ao dia"
+         TAM  := 0
+         TAM  := 65 - LEN(wTAM)
+       PrintOut(12,003,"≥ Vencido, cobrar juros de R$ "+Transform(_Jrs,"@E 9,999.99")+" ao dia"+SPACE(TAM),)
+       PrintOut(12,068,"≥                                                                                ≥",)
+         wTAM := SPACE(65)
+         wTAM := "≥ " + MV_PAR16
+         TAM  := 0
+         TAM  := 65 - LEN(wTAM)
+       PrintOut(13,003,"≥ "+MV_PAR16+SPACE(TAM),)
+       PrintOut(13,068,"≥                                                                                ≥",)
+         wTAM := SPACE(65)
+         wTAM := "≥ Pagar preferencialmente no Banespa"
+         TAM  := 0
+         TAM  := 65 - LEN(wTAM)
+       PrintOut(14,003,"≥ Pagar preferencialmente no Banespa"+SPACE(TAM),)
+       PrintOut(14,068,"≥                                                                                ≥",)
+   Else
+         wTAM := SPACE(65)
+         wTAM := "≥ " + MV_PAR14
+         TAM  := 0
+         TAM  := 65 - LEN(wTAM)
+	   PrintOut(12,003,"≥ "+MV_PAR14+SPACE(TAM),)
+       PrintOut(12,068,"≥                                                                                ≥",)
+         wTAM := SPACE(65)
+         wTAM := "≥ " + MV_PAR15
+         TAM  := 0
+         TAM  := 65 - LEN(wTAM)
+	   PrintOut(13,003,"≥ "+MV_PAR15+SPACE(TAM),)
+       PrintOut(13,068,"≥                                                                                ≥",)
+         wTAM := SPACE(65)
+         wTAM := "≥ " + MV_PAR16
+         TAM  := 0
+         TAM  := 65 - LEN(wTAM)
+	   PrintOut(14,003,"≥ "+MV_PAR16+SPACE(TAM),)
+       PrintOut(14,068,"≥                                                                                ≥",)
+   Endif
+   PrintOut(15,003,"≥                                                                ≥                                                                                ≥",)
+   PrintOut(16,003,"≥                                                                ≥                                                                                ≥",)
+   PrintOut(17,003,"√ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ≈ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¥ ",)
+   PrintOut(18,003,"≥ Vencimento :",)
+   PrintOut(18,018,SE1->E1_VENCTO,)
+   PrintOut(18,034,"Valor do Documento :",)
+   PrintOut(18,055,_ValBol,"@E 999,999.99")
+   PrintOut(18,068,"≥   AUTENTICAÄ«O MEC∂NICA                                                        ≥",)
+   PrintOut(19,003,"≥                                                                ≥                                                                                ≥",)
+   PrintOut(20,003,"≥                                                                ≥                                                                                ≥",)
+   PrintOut(21,003,"¿ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¡ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒŸ",)
+   PrintOut(23,003," .....................................................................................................................Recortar Aqui...............",)
+   PrintOut(27,003,"(12U(s1p20v1s3b4168T"+" "+_NomBco,)
+   PrintOut(27,005,"(12U(s1p18v1s3b4168T"+"                         |  "+_DacBco+"   |",)
+   PrintOut(27,000,"(12U(s1p10v1s3b4113T",)
+   PrintOut(27,108,_cBloco,"@R 99999.99999 99999.999999 99999.999999 9 99999999999999")
+   PrintOut(27,000,"(s0p20h6v0s0b3T"+Chr(38)+"l12D",)
+   PrintOut(28,005,"ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¬ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   PrintOut(29,005,"Local de Pagamento                                                                                             ≥ Vencimento                    ",)
+   If SA6->A6_COD == "399"
+      PrintOut(30,005,"                   Pagar preferencialmente em agància HSBC Bank Brasil                                         ≥",)
+   Else
+      PrintOut(30,005,"                   Pagavel em qualquer banco atÇ o vencimento                                                  ≥",)
+   Endif
+   PrintOut(30,130,SE1->E1_VENCTO,)
+   PrintOut(31,005,"ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ≈ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   PrintOut(32,005,"Cedente                                                                                                        ≥ Agància/C¢digo Cedente        ",)
+   PrintOut(33,009,SM0->M0_NOMECOM+"           "+Transform(SM0->M0_CGC,"@R 99.999.999/9999-99"),)
+   If SA6->A6_COD == "033"
+      PrintOut(33,116,"≥     "+Transform(Right(AllTrim(SA6->A6_AGENCIA),3)+AllTrim(SEE->EE_CODEMP),"@R 999-99 99999 0"),)
+   ElseIf SA6->A6_COD == "479"
+      PrintOut(33,116,"≥ 0690732/1725119",)
+   ElseIf SA6->A6_COD == "001" .And.  SA6->A6_NUMCON == "105007    "
+      PrintOut(33,116,"≥     2414-7/10500-7",)
+   ElseIf SA6->A6_COD == "001" .And.  SA6->A6_NUMCON == "105015    "
+      PrintOut(33,116,"≥     2414-7/10501-5",)
+   Else
+      PrintOut(33,116,"≥     "+AllTrim(SA6->A6_AGENCIA)+"/"+AllTrim(SEE->EE_CODEMP),)
+   EndIf
+   PrintOut(34,005,"ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¬ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¬ƒƒƒƒƒƒƒƒƒƒƒ¬ƒƒƒƒƒƒƒƒƒƒƒƒ¬ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ≈ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   PrintOut(35,005,"Data do Documento  ≥N¯ do Documento            ≥EspÇcie Doc≥Aceite      ≥Data de Processamento                 ≥ Nosso N£mero                  ",)
+   PrintOut(36,009,SE1->E1_EMISSAO,)
+   PrintOut(36,024,"≥ "+SE1->E1_NUM+If(!Empty(SE1->E1_PARCELA),"-"+SE1->E1_PARCELA,""),)
+   PrintOut(36,052,"≥   "+_cEspDoc,)
+   PrintOut(36,064,"≥   N        ≥",)
+   PrintOut(36,083,SE1->E1_EMISSAO,)
+   If SA6->A6_COD == "001" .And.  _dc == "X"
+      PrintOut(36,116,"≥         "+Transform(AllTrim(SE1->E1_NUMBCO),cPictBanc2),)
+      PrintOut(36,137,"-X",)
+   Else
+      PrintOut(36,116,"≥         "+Transform(AllTrim(SE1->E1_NUMBCO),cPictBanc),)
+   Endif
+   PrintOut(37,005,"ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ≈ƒƒƒƒƒƒƒƒƒ¬ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ≈ƒƒƒƒƒƒƒƒƒƒƒ¡ƒƒƒƒƒƒƒƒƒƒƒƒ≈ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ≈ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   PrintOut(38,005,"Uso do Banco       ≥Carteira ≥EspÇcie          ≥Quantidade              ≥Valor                                 ≥ ("+CHR(61)+") Valor do Documento      ",)
+   If SA6->A6_COD == "033"
+      PrintOut(39,005," GAL. CARNEIRO",)
+   EndIf
+   PrintOut(39,024,"≥  "+_cCartDoc,)
+   PrintOut(39,034,"≥  R$             ≥                        ≥                                      ≥",)
+   PrintOut(39,125,_ValBol,"@E 9,999,999.99")
+   PrintOut(40,005,"ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¡ƒƒƒƒƒƒƒƒƒ¡ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¡ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¡ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ≈ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   If SA6->A6_COD == "033"
+      PrintOut(41,005,"Instruá‰es:                                                                                                    ≥ ("+CHR(61)+") Desconto                  ",)
+   Else
+      PrintOut(41,005,"Texto de responsabilidade do cedente :                                                                         ≥ ("+CHR(61)+") Desconto                  ",)
+   EndIf
+   PrintOut(42,116,"≥         ",)
+   PrintOut(42,126,_ValBol-SE1->E1_SALDO,"@E 9,999,999.99")
+   PrintOut(43,116,"√ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   _Jrs := Round((_ValBol*(MV_PAR17/30)) / 100,2)
+   If SA6->A6_COD == "033"
+      PrintOut(44,005,"Vencido, cobrar juros de R$ "+Transform(_Jrs,"@E 9,999.99")+" ao dia",)
+      PrintOut(44,116,"≥ ("+CHR(61)+") Outras Deduá‰es/Abatimento",)
+      PrintOut(45,005,"Titulo sujeito a protesto apos 3 dias do vencimento",)
+      PrintOut(45,116,"≥                               ",)
+      PrintOut(46,005,"Pagar preferencialmente no Banespa",)
+   Else
+      PrintOut(44,005,AllTrim(MV_PAR14)+" "+AllTrim(MV_PAR15),)
+      PrintOut(44,116,"≥ ("+CHR(61)+") Outras Deduá‰es/Abatimento",)
+      PrintOut(45,005,AllTrim(MV_PAR16),)
+      PrintOut(45,116,"≥                               ",)
+      PrintOut(46,005,"Vencido, cobrar juros de R$ "+Transform(_Jrs,"@E 9,999.99")+" ao dia",)
+   EndIf
+   PrintOut(46,116,"√ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   If SA6->A6_COD == "479"
+      PrintOut(47,005,"APOS O VENCIMENTO PAGAR SOMENTE NO BANK BOSTON OU BILBAO VISCAYA",)
+   Endif
+   PrintOut(47,116,"≥ (+) Mora/Multa/Juros          ",)
+   PrintOut(48,116,"≥                               ",)
+   PrintOut(49,116,"√ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   PrintOut(50,116,"≥ (+) Outros AcrÇscimos         ",)
+   PrintOut(51,116,"≥                               ",)
+   PrintOut(52,116,"√ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   PrintOut(53,116,"≥ ("+CHR(61)+") Valor Cobrado             ",)
+   PrintOut(54,116,"≥                               ",)
+   PrintOut(55,005,"ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ¡ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   PrintOut(56,005,"Sacado:   "+SA1->A1_NOME,)
+   PrintOut(56,082,"CPF/CNPJ: "+Transform(Trim(SA1->A1_CGC),If(" "$SA1->A1_CGC,"@R 999.999.999-99","@R 99.999.999/9999-99")),)
+
+   xCOMPLEM := ALLTRIM(xCOMPLEM)
+   If !Empty(xCOMPLEM)
+      xCOMPLEM := xCOMPLEM+" - "
+   EndIf
+
+   If !Empty(SA1->A1_ENDCOB)
+      PrintOut(57,015,Trim(SA1->A1_ENDCOB)+" "+SA1->A1_NUMENDC+" - "+xCOMPLEM+AllTrim(SA1->A1_BAIRROC)+" - "+AllTrim(SA1->A1_MUNC)+" - "+AllTrim(SA1->A1_ESTC)+" - "+Transform(SA1->A1_CEPC,"@R 99999-999"),)
+   Else
+      PrintOut(57,015,Trim(SA1->A1_END)+" "+SA1->A1_NUMEND+xCOMPLEM+" - "+AllTrim(SA1->A1_BAIRRO)+" - "+AllTrim(SA1->A1_MUN)+" - "+AllTrim(SA1->A1_EST)+" - "+Transform(SA1->A1_CEP,"@R 99999-999"),)
+   EndIf
+
+   PrintOut(59,005,"Sacador/Avalista",)
+   PrintOut(60,005,"ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ",)
+   PrintOut(_PROW(),05,_code,)
+   PrintOut(61,5,"(12U(s1p9v1s3b4168T",)
+
+
+
+   PrintOut(61,145,"Ficha de Compensaá∆o",)
+   PrintOut(_PROW(),0,"(12U(s1p5v1s3b4168T",)
+   PrintOut(_PROW(),335,"AUTENTICAÄ«O MEC∂NICA",)
+
+   DbSelectArea("SE1")
+   If SE1->E1_IMPRESS == " "
+      RecLock("SE1", .F. )
+      SE1->E1_IMPRESS := "1"
+      MsUnLock()
+   EndIf
+   DbSelectArea("SE1")
+   DbSkip()
+EndDo
+PrintOut(65,000,"E",)
+__SetCentury("OFF" )
+
+SetPgEject( .F. )
+If aReturn[5] == 1
+   Set( 24, "" )
+   dbCommitall()
+   OurSpool(wnrel)
+Endif
+
+MS_FLUSH()
+
+Return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Static Function ValidPerg()
+
+_sAlias := Alias()
+dbSelectArea("SX1")
+dbSetOrder(1)
+cPerg := PADR(cPerg,6)
+aRegs:={}
+
+
+aAdd(aRegs,{cPerg,"01","Do Prefixo             ","mv_ch1","C",03,0,0,"G","","mv_par01","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"02","Ate o Prefixo          ","mv_ch2","C",03,0,0,"G","","mv_par02","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"03","Do Numero              ","mv_ch3","C",06,0,0,"G","","mv_par03","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"04","Ate o Numero           ","mv_ch4","C",06,0,0,"G","","mv_par04","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"05","Da Emissao             ","mv_ch5","D",08,0,0,"G","","mv_par05","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"06","Ate a Emissao          ","mv_ch6","D",08,0,0,"G","","mv_par06","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"07","Do Vencimento          ","mv_ch7","D",08,0,0,"G","","mv_par07","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"08","Ate o Vencimento       ","mv_ch8","D",08,0,0,"G","","mv_par08","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"09","Do Cliente             ","mv_ch9","C",06,0,0,"G","","mv_par09","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"10","Da Loja                ","mv_cha","C",02,0,0,"G","","mv_par10","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"11","Ate o Cliente          ","mv_chb","C",06,0,0,"G","","mv_par11","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"12","Ate a Loja             ","mv_chc","C",02,0,0,"G","","mv_par12","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"13","Quanto a Impressao     ","mv_chd","N",01,0,0,"C","","mv_par13","1ra.Impress∆o    ","","","Reimpress∆o","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"14","Mensagem 1             ","mv_che","C",30,0,0,"G","","mv_par14","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"15","Mensagem 2             ","mv_chf","C",30,0,0,"G","","mv_par15","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"16","Mensagem 3             ","mv_chg","C",30,0,0,"G","","mv_par16","","","","","","","","","","","","","","",""})
+aAdd(aRegs,{cPerg,"17","% Juros ao mes         ","mv_chh","N",05,2,0,"G","","mv_par17","","","","","","","","","","","","","","",""})
+
+For i:=1 to Len(aRegs)
+    If !dbSeek(cPerg+aRegs[i,2])
+       RecLock("SX1", .T. )
+       For j:=1 to FCount()
+       FieldPut(j,aRegs[i,j])
+       Next
+       MsUnlock()
+    Endif
+Next
+
+dbSelectArea(_sAlias)
+
+Return
+
+
+
+Function U_DCHSBC(_cNum)
+
+
+cFatores := "5432765432"
+cNumBanc := _cNum
+
+nValor   := 0
+nSoma    := 0
+
+For i := 1 To 10
+
+    nValor := Val(Substr(cNumBanc, i, 1)) * Val(Substr(cFatores, i, 1))
+
+    nSoma  := nSoma + nValor
+
+Next
+
+wxxx := Mod(nSoma,11)
+cDigNsNum := 11 - wxxx
+
+If wxxx == 0 .Or.  wxxx == 1
+	cDigNsNum := 0
+Endif
+
+cDigNsNum := Strzero(cDigNsNum, 1)
+
+Return (cDigNsNum)
+
+
+Function U_DCBOSTON(_cNum)
+
+
+cFatores := "98765432"
+cNumBanc := _cNum
+
+nValor   := 0
+nSoma    := 0
+
+For i := 1 To 8
+
+    nValor := Val(Substr(cNumBanc, i, 1)) * Val(Substr(cFatores, i, 1))
+
+    nSoma  := nSoma + nValor
+
+Next
+
+nSoma := nSoma * 10
+wxxx  := Mod(nSoma,11)
+cDigNsNum := wxxx
+
+If wxxx == 10
+	cDigNsNum := 0
+Endif
+
+cDigNsNum := Strzero(cDigNsNum, 1)
+
+Return (cDigNsNum)
+
+
+Function U_DCBRASIL(_cNum)
+
+
+cFatores := "78923456789"
+cNumBanc := _cNum
+
+nValor   := 0
+nSoma    := 0
+
+For i := 1 To 11
+
+    nValor := Val(Substr(cNumBanc, i, 1)) * Val(Substr(cFatores, i, 1))
+
+    nSoma  := nSoma + nValor
+
+Next
+
+wxxx  := Mod(nSoma,11)
+cDigNsNum := wxxx
+
+If wxxx == 10
+	cDigNsNum := "X"
+	Return (cDigNsNum)
+Endif
+
+cDigNsNum := Strzero(cDigNsNum, 1)
+
+Return (cDigNsNum)

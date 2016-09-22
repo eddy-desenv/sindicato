@@ -1,0 +1,391 @@
+#include "rwmake.ch"
+#include "topconn.ch"
+User Function ETIQCTHP()
+SetPrvt("_CALIAS,CBCONT,CBTXT,WNREL,CDESC1,CDESC2")
+SetPrvt("CDESC3,CSTRING,TAMANHO,TIPO,LIMITE,TITULO")
+SetPrvt("CABEC1,CABEC2,ARETURN,NOMEPROG,NLASTKEY,CPERG")
+SetPrvt("M_PAG,LI,_AESTR,C_ARQIMP,CARQIND,CINDSA1")
+SetPrvt("XNOME1,XNOME2,XNOME3,XNOME4,XEND1,XEND2")
+SetPrvt("XEND3,XEND4,XBAIRRO1,XBAIRRO2,XBAIRRO3,XBAIRRO4")
+SetPrvt("XCEP1,XCEP2,XCEP3,XCEP4,XCIDADE1,XCIDADE2")
+SetPrvt("XCIDADE3,XCIDADE4,XESTADO1,XESTADO2,XESTADO3,XESTADO4")
+SetPrvt("NVEZ,LIMPRIME,VEZ,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ Etiqcort ³ Autor ³ Luiz M. Duarte Junior ³ Data ³ 19.01.05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Impressao de etiquetas das cortesias                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+LCONTINUA := .F.
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 := "Este programa ira imprimir as etiquetas de cortesias"
+cDesc2 := ""
+cDesc3 := ""
+cString := "SZ2"
+tamanho := "G"
+tipo := 15
+limite := 220
+titulo := "Etiquetas de Cortesias"
+cabec1 := ""
+cabec2 := ""
+nomeprog := "ETIQCORT"
+nLastkey := 0
+cPerg := "RETIQ2"
+m_pag := 1
+li := 0
+pergunte(cPerg,.T.) 
+nMargem :=20																							//Alterado o tamanho da margem de 0 para 20 - 26/08/2011  - Márcio Godói
+LI := 0
+oFont36N	:= TFont():New("Courier New",36,36,,.T.,,,,.T.,.F.)
+oFont32 	:= TFont():New("Courier New",36,36,,.f.,,,,.T.,.F.)
+oFont18N	:= TFont():New("Courier New",18,18,,.T.,,,,.T.,.F.)
+oFont18 	:= TFont():New("Courier New",18,18,,.F.,,,,.T.,.F.)
+oFont16N	:= TFont():New("Courier New",16,16,,.T.,,,,.T.,.F.)
+oFont16 	:= TFont():New("Courier New",16,16,,.F.,,,,.T.,.F.)
+oFont14N	:= TFont():New("Courier New",14,14,,.T.,,,,.T.,.F.)
+oFont14 	:= TFont():New("Courier New",14,14,,.F.,,,,.T.,.F.)
+oFont12N	:= TFont():New("Courier New",12,12,,.T.,,,,.T.,.F.)
+oFont12		:= TFont():New("Courier New",12,12,,.T.,,,,.T.,.F.)
+oFont10		:= TFont():New("Courier New",10,10,,.F.,,,,.T.,.F.)
+oFont10N	:= TFont():New("Courier New",10,10,,.T.,,,,.T.,.F.)
+oFont08		:= TFont():New("Courier New",06,06,,.F.,,,,.T.,.F.)   //Alterado o fonte de 08 para 07 - 26/08/2011 - Márcio Godói
+oFont08N	:= TFont():New("Courier New",06,06,,.T.,,,,.T.,.F.)   //Alterado o fonte de 08 para 07 - 26/08/2011 - Márcio Godói
+IF MV_PAR05 == 1
+	XFONTE := TFont():New("Courier New",10,10,,.F.,,,,.T.,.F.)
+ELSE
+	XFONTE := TFont():New("Courier New",07,07,,.F.,,,,.T.,.F.)
+ENDIF
+lPreview:=.T.
+oPrint := TMSPrinter():New(" Etiquetas de cortesia ")
+if lPreview
+   oPrint:setup()
+endif   
+
+
+RptStatus({|| IMPEtiq() },titulo) // Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     RptStatus({|| Execute(impETIQ) },titulo)
+
+RETURN
+
+
+return
+*************************
+Static Function ImpETIQ() 
+lin:= 125    
+
+oPrint:SetPortrait()
+oPrint:StartPage()
+
+
+CQUERY := " SELECT * FROM "+RETSQLNAME("SZ2")+" SZ2 "
+CQUERY += " WHERE D_E_L_E_T_='' AND Z2_CEP BETWEEN '"+MV_PAR02+"' AND '"+MV_PAR03+"' "
+if !empty(mv_par01)
+CQUERY += " AND  Z2_MATRIZ IN "+FORMATIN(alltrim(MV_PAR01),"/")
+ENDIF
+CQUERY += " ORDER BY Z2_CEP "
+TCQUERY cQuery NEW ALIAS "TRB"
+dbselectarea("trb")
+SetRegua(RecCount())
+Xnome1 := Xnome2 := Xnome3 := Xnome4 := ""
+XEND1 := XEND2 := XEND3:= XEND4 :=""
+XBAIRRO1 := XBAIRRO2 := XBAIRRO3 := XBAIRRO4 := ""
+Xcep1 := Xcep2 := Xcep3 := Xcep4 := ""
+Xcidade1 := Xcidade2 := Xcidade3 := Xcidade4 := ""
+Xestado1 := Xestado2 := Xestado3 := Xestado4 := ""
+Xfuncao1 := Xfuncao2 := Xfuncao3 := Xfuncao4 := ""
+Xdestino1:= Xdestino2:= Xdestino3:= Xdestino4:= ""
+Nvez := 1
+limprime := .t.
+NUMETIQ := 0
+ETIQIMP := 0
+DO WHILE !eof()
+	INCREGUA()
+	if Nvez == 1
+		Xnome1    := UPPER(trb->Z2_Nome)
+		Xend1     := UPPER(trb->z2_end         )
+		Xbairro1  := UPPER(trb->z2_bairro     )
+		Xcep1     := trb->z2_cep
+		Xcidade1  := UPPER(trb->z2_mun       )
+		Xestado1  := UPPER(trb->z2_est      )
+		xfuncao1  := UPPER(trb->z2_funcao  )
+		xdestino1 := UPPER(trb->z2_destino)
+		Nvez := NVEZ +1
+		limprime := .t.
+	elseif Nvez == 2
+		Xnome2    := UPPER(trb->Z2_Nome)
+		Xend2     := UPPER(trb->z2_end         )                        
+		Xbairro2  := UPPER(trb->z2_bairro     )
+		Xcep2     := trb->z2_cep
+		Xcidade2  := UPPER(trb->z2_mun       )
+		Xestado2  := UPPER(trb->z2_est      )
+		xfuncao2  := UPPER(trb->z2_funcao  )
+		xdestino2 := UPPER(trb->z2_destino)
+		Nvez := NVEZ +1
+		IF MV_PAR05 == 1
+			limprime := .t. 	
+		endif
+	elseif Nvez == 3 .AND. MV_PAR05 == 2
+		Xnome3    := UPPER(trb->Z2_Nome)
+		Xend3     := UPPER(trb->z2_end         )
+		Xbairro3  := UPPER(trb->z2_bairro     )
+		Xcep3     := trb->z2_cep
+		Xcidade3  := UPPER(trb->z2_mun       )
+		Xestado3  := UPPER(trb->z2_est      )
+		xfuncao3  := UPPER(trb->z2_funcao  )
+		xdestino3 := UPPER(trb->z2_destino)
+		Nvez := NVEZ +1
+		limprime := .t.
+	endif
+	if limprime .AND. ((Nvez == 4 .and. MV_PAR05 = 2 ) .OR. (Nvez == 3 .and. MV_PAR05 = 1 ))
+	   	ETIQIMP++
+		IF !EMPTY(Xnome1)
+			NUMETIQ ++
+		ENDIF
+		IF !EMPTY(Xnome2)
+			NUMETIQ ++
+		ENDIF
+		IF !EMPTY(Xnome3)
+			NUMETIQ ++
+		ENDIF       
+		oPrint:Say(lin,nMargem,XNOME1,xfonte)
+		if mv_PAR05 ==1
+			oPrint:Say(lin,1250+nMargem,XNOME2,xfonte)
+		else
+			oPrint:Say(lin,0850+nMargem,XNOME2,xfonte)
+			oPrint:Say(lin,1650+nMargem,XNOME3,xfonte)
+		ENDIF
+		LIN+=50
+		OPrint:Say(lin,nMargem,SUBS(xFUNCAO1,1,50),xfonte)
+		if mv_PAR05 ==1                                       
+		oPrint:Say(lin,1250+nMargem,SUBS(xFUNCAO2,1,50),xfonte)
+		else
+		oPrint:Say(lin,850+nMargem,SUBS(xFUNCAO2,1,50),xfonte)
+		oPrint:Say(lin,1650+nMargem,SUBS(xFUNCAO3,1,50),xfonte)
+		endif
+		LIN+=50
+		OPrint:Say(lin,nMargem,SUBS(xDESTINO1,1,50),xfonte)
+		if mv_PAR05 ==1
+		oPrint:Say(lin,1250+nMargem,SUBS(xDESTINO2,1,50),xfonte)
+		else
+		oPrint:Say(lin,850+nMargem,SUBS(xDESTINO2,1,50),xfonte)
+		oPrint:Say(lin,1650+nMargem,SUBS(xDESTINO3,1,50),xfonte)
+		endif
+		LIN+=50
+		OPrint:Say(lin,nMargem,SUBS(xEND1,1,50),xfonte)
+		if mv_PAR05 ==1
+		oPrint:Say(lin,1250+nMargem,SUBS(xEND2,1,50),xfonte)
+		else
+		oPrint:Say(lin,850+nMargem,SUBS(xEND2,1,50),xfonte)
+		oPrint:Say(lin,1650+nMargem,SUBS(xEND3,1,50),xfonte)
+		ENDIF
+		lin+=50
+		OPrint:Say(lin,nMargem,SUBS(Xcep1,1,5)+"-"+SUBS(Xcep1,6,3),xfonte)
+		OPrint:Say(lin,220+nMargem,alltrim(Xcidade1)+"/"+xestado1,xfonte) 
+		if mv_PAR05 ==1
+		oPrint:Say(lin,1250+nMargem,SUBS(Xcep2,1,5)+"-"+SUBS(Xcep2,6,3),xfonte)                         
+		OPrint:Say(lin,1500+nMargem,alltrim(Xcidade2)+"/"+xestado2,xfonte)
+		ELSE
+		oPrint:Say(lin,850+nMargem,SUBS(Xcep2,1,5)+"-"+SUBS(Xcep2,6,3),xfonte)                         
+		OPrint:Say(lin,1050+nMargem,alltrim(Xcidade2)+"/"+xestado2,xfonte)
+		oPrint:Say(lin,1650+nMargem,SUBS(Xcep3,1,5)+"-"+SUBS(Xcep3,6,3),xfonte)                              
+		OPrint:Say(lin,1850+nMargem,alltrim(Xcidade3)+"/"+xestado3,xfonte)
+		ENDIF
+		LIN +=100
+		Nvez := 1
+		Xnome1 := Xnome2 := Xnome3 := Xnome4 := ""
+		XEND1 := XEND2 := XEND3:= XEND4 :=""
+		XBAIRRO1 := XBAIRRO2 := XBAIRRO3 := XBAIRRO4 := ""
+		Xcep1 := Xcep2 := Xcep3 := Xcep4 := ""
+		Xcidade1 := Xcidade2 := Xcidade3 := Xcidade4 := ""
+		Xestado1 := Xestado2 := Xestado3 := Xestado4 := ""
+		Xfuncao1 := Xfuncao2 := Xfuncao3 := Xfuncao4 := ""
+		Xdestino1:= Xdestino2:= Xdestino3:= Xdestino4:= ""
+		limprime := .F.  
+		IF ETIQIMP == 10
+			oPrint:EndPage()
+			oPrint:STARTPage()
+         ETIQIMP := 0
+         LIN := 125
+		endif                
+	endif
+	dbselectAREA("TRB")
+	DBSKIP()
+ENDDO
+if  limprime
+	IF !EMPTY(Xnome1)
+		NUMETIQ ++
+	ENDIF
+	IF !EMPTY(Xnome2)
+		NUMETIQ ++
+	ENDIF
+	IF !EMPTY(Xnome3)
+		NUMETIQ ++
+	ENDIF
+		oPrint:Say(lin,nMargem,XNOME1,xfonte)
+		if mv_PAR05 ==1
+			oPrint:Say(lin,1250+nMargem,XNOME2,xfonte)
+		else
+			oPrint:Say(lin,0850+nMargem,XNOME2,xfonte)
+			oPrint:Say(lin,1650+nMargem,XNOME3,xfonte)
+		ENDIF
+		LIN+=50
+		OPrint:Say(lin,nMargem,SUBS(xFUNCAO1,1,50),xfonte)
+		if mv_PAR05 ==1                                       
+		oPrint:Say(lin,1250+nMargem,SUBS(xFUNCAO2,1,50),xfonte)
+		else
+		oPrint:Say(lin,850+nMargem,SUBS(xFUNCAO2,1,50),xfonte)
+		oPrint:Say(lin,1650+nMargem,SUBS(xFUNCAO3,1,50),xfonte)
+		endif
+		LIN+=50
+		OPrint:Say(lin,nMargem,SUBS(xDESTINO1,1,50),xfonte)
+		if mv_PAR05 ==1
+		oPrint:Say(lin,1250+nMargem,SUBS(xDESTINO2,1,50),xfonte)
+		else
+		oPrint:Say(lin,850+nMargem,SUBS(xDESTINO2,1,50),xfonte)
+		oPrint:Say(lin,1650+nMargem,SUBS(xDESTINO3,1,50),xfonte)
+		endif
+		LIN+=50
+		OPrint:Say(lin,nMargem,SUBS(xEND1,1,50),xfonte)
+		if mv_PAR05 ==1
+		oPrint:Say(lin,1250+nMargem,SUBS(xEND2,1,50),xfonte)
+		else
+		oPrint:Say(lin,850+nMargem,SUBS(xEND2,1,50),xfonte)
+		oPrint:Say(lin,1650+nMargem,SUBS(xEND3,1,50),xfonte)
+		ENDIF
+		lin+=50
+		OPrint:Say(lin,nMargem,SUBS(Xcep1,1,5)+"-"+SUBS(Xcep1,6,3),xfonte)
+		OPrint:Say(lin,220+nMargem,alltrim(Xcidade1)+"/"+xestado1,xfonte) 
+		if mv_PAR05 ==1
+		oPrint:Say(lin,1250+nMargem,SUBS(Xcep2,1,5)+"-"+SUBS(Xcep2,6,3),xfonte)                         
+		OPrint:Say(lin,15006+nMargem,alltrim(Xcidade2)+"/"+xestado2,xfonte)
+		ELSE
+		oPrint:Say(lin,850+nMargem,SUBS(Xcep2,1,5)+"-"+SUBS(Xcep2,6,3),xfonte)                         
+		OPrint:Say(lin,1050+nMargem,alltrim(Xcidade2)+"/"+xestado2,xfonte)
+		oPrint:Say(lin,1650+nMargem,SUBS(Xcep3,1,5)+"-"+SUBS(Xcep3,6,3),xfonte)                              
+		OPrint:Say(lin,1850+nMargem,alltrim(Xcidade3)+"/"+xestado3,xfonte)
+		ENDIF
+		LIN+=100
+	li:= LI +2
+	vez := 1
+	limprime := .F.
+endif
+OPrint:Say(lin,nMargem,"Numero de etiquetas ",xfonte)
+LIN +=50
+oPrint:Say(lin,nMargem,"Impressas: "+strzero(numetiq,6),xfonte)
+ALERT("Etiquetas: "+strzero(numetiq,6))
+dbselectarea("TRB")
+CARQ := "\procad\"+ALLTRIM(SUBS(CUSUARIO,7,15))
+COPY TO &carq
+dbclosearea()
+DBSELECTAREA("SA1")
+RETINDEX("SA1")
+
+oPrint:EndPage()
+
+If lPreview
+   oPrint:Preview()
+Else
+   oPrint:Print()
+Endif
+
+Return Nil      
+dbselectarea(_cAlias)
+Return
+*************************
+Static Function VerImp()
+Li:= 0                // Contador de Linhas
+nLinIni:=0
+If aReturn[5]<>1
+	nOpc       := 1
+	SetPrc(0,0)
+	@ li,000 PSAY chr(15)
+	dbCommitAll()
+	While .T.
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2    
+				@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+		IF MsgYesNo("Fomulario esta posicionado ? ")
+			nOpc := 1
+		ElseIF MsgYesNo("Tenta Novamente ? ")
+			nOpc := 2
+		Else
+			nOpc := 3
+		Endif
+		Do Case
+			Case nOpc==1
+				lContinua:=.T.
+				Exit
+			Case nOpc==2
+				Loop
+			Case nOpc==3
+				lContinua:=.F.
+				Return
+		EndCase
+	End
+Endif

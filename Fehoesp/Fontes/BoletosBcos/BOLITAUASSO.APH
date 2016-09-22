@@ -1,0 +1,458 @@
+<script LANGUAGE="JavaScript" TYPE="text/javascript">
+function start(){
+	CreateStaticMenu("botoes_flutuantes", 5, 10);
+//	parent.topFrame.location.reload() ;
+}
+
+function PrintPage() {
+	var painel = document.getElementById('botoes_flutuantes');
+	painel.style.visibility = 'hidden';
+	window.print();
+	painel.style.visibility = '';
+}
+</script>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title> Guia de Recolhimento da Contribui&ccedil;&atilde;o Confederativa</title>
+<link href="guia.css" rel="stylesheet" type="text/css">
+<SCRIPT LANGUAGE="JavaScript" SRC="xBrowser.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="xLayer.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="staticMenu.js"></SCRIPT>
+<script language="JavaScript" type="text/JavaScript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<style type="text/css">
+<!--
+.style14 {font-size: 10px}
+-->
+</style>
+</head>
+
+<body onload="start()" bgcolor="#ffffff" topmargin="0">
+
+<div align="center">
+  <div id="botoes_flutuantes" align="left" style="left: 5; top: 5; width: 36px; height: 55px; position: absolute; z-index:1">
+    <table cellspacing=3 cellpadding=0>
+      <tr>
+        <td align="center"><a href="javascript:PrintPage();"> <img src="Boletos/images/bt_imprimir.gif" alt="Imprimir" border="0" width="30" height="30"> </a> </td>
+      </tr>
+      <tr>
+        <td align="center"><a href="<%=HttpPost->RaizURL%>"> <img src="Boletos/images/bt_voltar2.gif" alt="Voltar" border="0"> </a> </td>
+      </tr>
+    </table>
+  </div>
+  <table width="630" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="30" align="right" valign="top"><p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>      </td>
+      <td width="569" align="left" valign="top"><table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="left" valign="top"><div align="left">
+            <table width="600" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="onlybotton">
+                    <tr align="left" valign="top">
+                      <td width="170" valign="bottom"><img src="boletos/images/itau.jpg" width="20" height="20"><strong> BANCO ITAU S/A</strong></td>
+                      <td width="51"  valign="bottom">
+                          <img src=images/2.gif width=1 height=20 border=0>
+                          <span class="titulo"><%= HttpPost->Banco %></span>
+                          <img src=images/2.gif width=1 height=20 border=0>
+                      </td>
+                      <td width="193" valign="bottom">&nbsp; RECIBO DO SACADO </td>
+		      		  <td width="210" align="right" valign="bottom"><img src="Boletos/images/<%=HttpPost->LogoTipo%>" width="120" height="70"></td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="442" class="bottonleftright"><span class="txttitcaixa">Local de Pagamento</span><br>
+                          <span class="txtcaixa">Pag&aacute;vel em qualquer Banco at&eacute; o vencimento</span></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">Vencimento</span><br>
+                        <span class="txtcaixa"><%=HttpPost->DataPagto%></span>
+                      </td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="442" class="bottonleftright"><span class="txttitcaixa">Cedente</span><br>
+                          <span class="txtcaixa"><STRONG><%=HttpPost->SDNome%></STRONG></span></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">Ag&ecirc;ncia/C&oacute;digo Cedente </span><br>
+                        <span class="txtcaixa"><%= HttpPost->Agencia + " / " + HttpPost->CodCed %></span>
+                      </td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="110" class="bottonleft"><span class="txttitcaixa">Data do Documento</span><br>
+                          <span class="txtcaixa"><%= Alltrim(Str(Day(Date()))) + "/" + Alltrim(Str(Month(Date()))) + "/" + Alltrim(Str(Year(Date()))) %></span></td>
+                      <td width="115" class="bottonleft"><span class="txttitcaixa">N&uacute;mero do Documento</span><br>
+                          <span class="txtcaixa"><%= HttpPost->NumDoc %></span></td>
+                      <td width="74" class="bottonleft"><span class="txttitcaixa">Esp. Doc.</span><br>
+			            <span class="txtcaixa">NB</span></td>
+                      <td width="36" class="bottonleft"><span class="txttitcaixa">Aceite</span><br>
+			              <span class="txtcaixa">A</span></td>
+                      <td width="104" class="bottonleftright"><span class="txttitcaixa">Data Processamento</span><br>
+                          <span class="txtcaixa"><%= Alltrim(Str(Day(Date()))) + "/" + Alltrim(Str(Month(Date()))) + "/" + Alltrim(Str(Year(Date()))) %></span></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="151" class="bottonleftright"><span class="txttitcaixa">Cart./Nosso N&uacute;mero</span><br>
+                        <span class="txtcaixa"><%= HttpPost->Carteira + "/" + Right(HttpPost->NossoNumero,8) + "-" + HttpPost->ValorDig %></span>
+                      </td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="69" height="39" class="bottonleft"><span class="txttitcaixa">Uso Banco</span></td>
+                      <td width="40" class="bottonleft"><span class="txttitcaixa">Cip</span><br></td>
+                      <td width="74" class="bottonleft"><span class="txttitcaixa">Carteira</span><br>
+                          <span class="txtcaixa"><%= HttpPost->Carteira %></span></td>
+                      <td width="56" class="bottonleft"><span class="txtcaixa">Esp&eacute;cie</span><br>
+                          <span class="txtcaixa">R$</span></td>
+                      <td width="94" class="bottonleft"><span class="txttitcaixa">Quantidade</span><br></td>
+                      <td width="106" class="bottonleftright"><span class="txttitcaixa">Valor</span><br>
+                          <span class="txtcaixa">&nbsp; </span></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="151" class="bottonleftright"><span class="txttitcaixa">(=) Valor do Documento </span><br>
+                        <span class="txtcaixa">******<%=HttpPost->ValorDocumento%></span>
+                      </td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="428" class="bleft"><span class="txttitcaixa">Instru&ccedil;&otilde;es de Responsabilidade do Cedente</span><br><br>
+                        <span class="txtcaixa"><%=HttpPost->MsgBoleto%></span><br></td>
+                      <td width="13" rowspan="5" valign="bottom" class="bright"><div align="center"><br>
+                      </div></td>
+                      <td width="10" rowspan="5">&nbsp;</td>
+                      <td width="150" class="bottonleftright">
+                         <span class="txttitcaixa">(-) Desconto/Abatimento</span><br>
+                         <span class="txtcaixa">&nbsp; </span>
+                      </td>
+                    </tr>
+                    <tr align="left" valign="top">
+                      <td width="426" class="bleft">&nbsp;</td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(-) Outras Dedu&ccedil;&otilde;es</span><br>
+                          <span class="txtcaixa">&nbsp; </span>
+                      </td>
+                    </tr>
+                    <tr align="left" valign="top">
+                      <td width="426" class="bleft"><span class="txtcaixa"><%= HttpPost->Mensagem1 %></span><br>
+                                                    <span class="txtcaixa"><%= HttpPost->Mensagem2 %></span><br>
+                                                    <span class="txtcaixa"><%= HttpPost->Mensagem3 %></span></td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Mora/Multa </span><br>
+                          <% If  (Val(HttpPost->ValorMoraMulta) > 0) %>
+                          	 <span class="txtcaixa">*****<%=HttpPost->ValorMoraMulta%></span>
+                          <% Else %> 
+                             <span class="txtcaixa">&nbsp; </span>
+                      	  <% EndIf %>
+                      </td>
+                    </tr>
+                    <tr align="left" valign="top">
+                      <td width="426" class="bleft  style14"><span class="txtcaixa"><%= HttpPost->Mensagem4 %></span><br>
+                                                             <span class="txtcaixa"><%= HttpPost->Mensagem5 %></span></td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Outros Acr&eacute;scimos </span><br>
+                             <span class="txtcaixa">&nbsp; </span>
+		      </td>
+                    </tr>
+                    <tr align="left" valign="top">
+                      <td width="426" class="bleft"><span class="txtcaixa"><%= HttpPost->Mensagem6 %></span><br>
+                                                    <span class="txtcaixa"><%= HttpPost->Mensagem7 %></span></td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">(=) Valor Cobrado </span><br>
+                          <% If  (Val(HttpPost->ValorCobrado) > 0) %>
+                             <span class="txtcaixa">*****<%= HttpPost->ValorCobrado %></span>
+                          <% Else %> 
+                             <span class="txtcaixa">&nbsp; </span>
+                          <% End If %>
+		      </td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td class="titrnr"><div align="left"><span class="txtcaixa">&nbsp;</span></div></td>
+                          </tr>
+                      </table></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="leftright"><span class="txttitcaixa">&nbsp;</span><br>
+                          <span class="txtcaixa">&nbsp; </span>
+                      </td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top">
+                  <table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="440" class="bottonleftright"><div align="left">&nbsp;</div></td>
+                      <td width="10">&nbsp;</td>
+                      <td width="150" class="bottonleftright"><span class="txttitcaixa">&nbsp;</span><br>
+                          <span class="txtcaixa">&nbsp; </span>
+                      </td>
+		    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="leftright">
+                    <tr>
+                      <td><p><span class="txttitcaixa">Sacado</span><br>
+                           <span class="txtcaixa"><%= AllTrim(HttpPost->Razao) + "      " + HttpPost->CNPJ %><br>
+                           <%= HttpPost->XEndereco %> <br>
+                           <%= HttpPost->Cep %> </span></p>
+                      </p></td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="bottonleftright">
+                    <tr>
+                      <td class="txtcaixa">Sacador/Avalista:</td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+                    <tr align="left" valign="top">
+                      <td width="268" class="titrnr">&nbsp;</td>
+                      <td width="332" align="right" class="titrnr">Autentica&ccedil;&atilde;o Mec&acirc;nica / Ficha de Compensa&ccedil;&atilde;o</td>
+                    </tr>
+                </table></td>
+              </tr>
+              <tr>
+                <td height="30" align="left" valign="top"><p>&nbsp;</p></td>
+              </tr>
+              <tr>
+                <td align="left" valign="top"><img src="Boletos/images/cortar.gif" width="600" height="21"></td>
+              </tr>
+            </table>
+          </div></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top">&nbsp;</td>
+        </tr>
+      </table></td>
+    <td height="2"></tr>
+  </table>
+  <table width="630" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td width="30">&nbsp;</td>
+      <td><table width="600" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="onlybotton">
+              <tr align="left" valign="top">
+                <td width="204"><img src="boletos/images/itau.jpg" width="20" height="20"><strong> BANCO ITAU S/A</strong></td>
+                <td width="40" valign="bottom" class="columnborder"><span class="titulo"><%= HttpPost->Banco %></span><br></td>
+                <td width="356" valign="bottom" class="titrnr"><%= HttpPost->LinhaDigitavel %></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="bottonleftright"><span class="txttitcaixa">Local de Pagamento</span><br>
+                    <span class="txtcaixa">Pag&aacute;vel em qualquer Banco at&eacute; o vencimento</span></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">Vencimento</span><br>
+                  <span class="txtcaixa"><%=HttpPost->DataPagto%></span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="bottonleftright"><span class="txttitcaixa">Cedente</span><br>
+                          <span class="txtcaixa"><STRONG><%=HttpPost->SDNome%></STRONG></span></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">Ag&ecirc;ncia/C&oacute;digo Cedente </span><br>
+                    <span class="txtcaixa"><%= HttpPost->Agencia + " / " + HttpPost->CodCed %></span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="110" class="bottonleft"><span class="txttitcaixa">Data do Documento</span><br>
+                    <span class="txtcaixa"><%= Alltrim(Str(Day(Date()))) + "/" + Alltrim(Str(Month(Date()))) + "/" + Alltrim(Str(Year(Date()))) %></span></td>
+                <td width="115" class="bottonleft"><span class="txttitcaixa">N&uacute;mero do Documento</span><br>
+                    <span class="txtcaixa"><%= HttpPost->NumDoc %></span></td>
+                <td width="74" class="bottonleft"><span class="txttitcaixa">Esp. Doc.</span><br>
+                    <span class="txtcaixa">NB</span></td>
+                <td width="36" class="bottonleft"><span class="txttitcaixa">Aceite</span><br>
+                  <span class="txtcaixa">A</span></td>
+                <td width="100" class="bottonleftright"><span class="txttitcaixa">Data Processamento</span><br>
+                    <span class="txtcaixa"><%= Alltrim(Str(Day(Date()))) + "/" + Alltrim(Str(Month(Date()))) + "/" + Alltrim(Str(Year(Date()))) %></span></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">Cart./Nosso N&uacute;mero</span><br>
+                  <span class="txtcaixa"><%= HttpPost->Carteira + "/" + Right(HttpPost->NossoNumero,8) + "-" + HttpPost->ValorDig %></span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="75" class="bottonleft"><span class="txttitcaixa">Uso Banco</span><br><br></td>
+                <td width="36" class="bottonleft"><span class="txttitcaixa">Cip</span><br></td>
+                <td width="62" class="bottonleft"><span class="txttitcaixa">Carteira</span><br>
+                    <span class="txtcaixa"><%= HttpPost->Carteira %></span>
+                </td>
+                <td width="61" class="bottonleft"><span class="txtcaixa">Esp&eacute;cie</span><br>
+                    <span class="txtcaixa">R$</span>
+                </td>
+                <td width="84" class="bottonleft"><span class="txttitcaixa">Quantidade</span><br></td>
+                <td width="122" class="bottonleftright"><span class="txttitcaixa">Valor</span><br>
+                    <span class="txtcaixa">&nbsp; </span>
+                </td>
+                <td width="10">&nbsp;</td>
+                <td width="152" class="bottonleftright"><span class="txttitcaixa">(=) Valor do Documento </span><br>
+                  <span class="txtcaixa">******<%=HttpPost->ValorDocumento%></span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="321" class="bleft"><span class="txttitcaixa">Instru&ccedil;&otilde;es de Responsabilidade do Cedente</span><br><br>
+                        <span class="txtcaixa"><%=HttpPost->MsgBoleto%></span><br></td>
+                <td width="119" valign="bottom" class="bright"><div align="center"><br></div></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(-) Desconto/Abatimento </span><br>
+                    <span class="txtcaixa">&nbsp; </span>
+                </td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td class="titrnr"><div align="left"><span class="txtcaixa"><span class="txtcaixa"><br><%= HttpPost->Mensagem1 %></span></span><br>
+                      </div></td>
+                    </tr>
+                </table></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(-) Outras Dedu&ccedil;&otilde;es</span><br>
+                    <span class="txtcaixa">&nbsp; </span>
+                </td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td><div align="left"><span class="txtcaixa"><%= HttpPost->Mensagem2 %></span><br> 
+                                            <span class="txtcaixa"><%= HttpPost->Mensagem3 %></span><br>
+                                            <span class="txtcaixa"><%= HttpPost->Mensagem4 %></span></div>
+                      </td>
+                    </tr>
+                </table></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Mora/Multa </span><br>
+                          <% If  (Val(HttpPost->ValorMoraMulta) > 0) %>
+                          	 <span class="txtcaixa">*****<%=HttpPost->ValorMoraMulta%></span>
+                          <% Else %> 
+                             <span class="txtcaixa">&nbsp; </span>
+                      	  <% EndIf %>
+                </td>       	  
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="leftright"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td>
+			  <div align="left"><span class="style14"><span class="txtcaixa"><%= HttpPost->Mensagem5 %></span><br>
+                                                      <span class="txtcaixa"><%= HttpPost->Mensagem6 %></span></div>
+                      </td>
+                    </tr>
+                </table></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(+) Outros Acr&eacute;scimos </span><br>
+                    <span class="txtcaixa">&nbsp; </span></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top">
+             <table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="440" class="bottonleftright"><div align="left"><span class="txtcaixa"><%= HttpPost->Mensagem7 %> &nbsp;</span></div></td>
+                <td width="10">&nbsp;</td>
+                <td width="150" class="bottonleftright"><span class="txttitcaixa">(=) Valor Cobrado </span><br>
+                          <% If  (Val(HttpPost->ValorCobrado) <> 0) %>
+                             <span class="txtcaixa">*****<%= HttpPost->ValorCobrado %></span>
+                          <% Else %> 
+                             <span class="txtcaixa">&nbsp; </span>
+                          <% End If %>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="leftright">
+              <tr>
+                <td><p><span class="txttitcaixa">Sacado</span><br>
+                           <span class="txtcaixa"><%= AllTrim(HttpPost->Razao) + "      " + HttpPost->CNPJ %><br>
+                           <%= HttpPost->XEndereco %> <br>
+                           <%= HttpPost->Cep %> </span></p>
+                </p></td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0" class="bottonleftright">
+              <tr>
+                <td class="txtcaixa">Sacador/Avalista:</td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="right" valign="top"><table width="600" border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr align="left" valign="top">
+                <td width="268" class="titrnr">&nbsp;</td>
+                <td width="332" align="right" class="titrnr">Autentica&ccedil;&atilde;o Mec&acirc;nica / Ficha de Compensa&ccedil;&atilde;o </td>
+              </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td height="30" align="left" valign="top"><p><%=fWBarCode1(HttpPost->CodBar)%></p>            </td>
+        </tr>
+        <tr>
+          <td align="left" valign="top"><img src="Boletos/images/cortar.gif" width="600" height="21"></td>
+        </tr>
+      </table></td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

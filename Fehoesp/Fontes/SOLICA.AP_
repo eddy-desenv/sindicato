@@ -1,0 +1,176 @@
+#include "SIGAWIN.CH"
+#define CRLF CHR(13)+CHR(10)
+
+HTML Function solicalmail(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+__Response += '<font face="Tahoma" style="font-size: 11px"><span class="style14">' + cValToChar(HTTPSESSION->CGC) + '</span></font></p>' + CRLF
+__Response += PlainH_2()
+__Response += '<font face="Tahoma" style="font-size: 11px"><span class="style14">' + cValToChar(HTTPSESSION->AUXRAZAO) + '</span></font></p>' + CRLF
+__Response += PlainH_3()
+__Response += '<font face="Tahoma" style="font-size: 11px"><span class="style14">' + cValToChar(HTTPPOST->SOLICNOME) + '</span></font></p>' + CRLF
+__Response += PlainH_4()
+__Response += '<font face="Tahoma" style="font-size: 11px"><span class="style14">' + cValToChar(HTTPPOST->SOLICCARGO) + '</span></font></p>' + CRLF
+__Response += PlainH_5()
+__Response += '<font face="Tahoma" style="font-size: 11px"><span class="style14">' + cValToChar(HTTPPOST->SOLICTEL) + '</span></font></p>' + CRLF
+__Response += PlainH_6()
+__Response += '<font face="Tahoma" style="font-size: 11px"><span class="style14">' + cValToChar(HTTPPOST->SOLICMUN) + '</span></font></p>' + CRLF
+__Response += PlainH_7()
+__Response += '<font face="Tahoma" style="font-size: 11px"><span class="style14">' + cValToChar(HTTPPOST->SOLICEMAIL) + '</span></font></p>' + CRLF
+__Response += PlainH_8()
+__Response += '<font face="Tahoma" style="font-size: 11px"><span class="style14">' + cValToChar(HTTPPOST->SOLICTEXTO) + '</span></font></p>' + CRLF
+__Response += PlainH_9()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + CRLF
+__Response += '<html xmlns="http://www.w3.org/1999/xhtml" >' + CRLF
+__Response += '<head> ' + CRLF
+__Response += '	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">' + CRLF
+__Response += '    <title>SindHosp</title>' + CRLF
+__Response += '' + CRLF
+__Response += '	<!-- CSS -->' + CRLF
+__Response += '	<link rel="stylesheet" href="css/structure.css" type="text/css" />' + CRLF
+__Response += '	<link rel="stylesheet" href="css/form.css" type="text/css" />' + CRLF
+__Response += '	' + CRLF
+__Response += '</head>' + CRLF
+__Response += '<body>' + CRLF
+__Response += '    <table id="table2" border="0" cellpadding="10" cellspacing="0" width="90%">' + CRLF
+__Response += '        <tr>' + CRLF
+__Response += '            <td valign="top" width="395">' + CRLF
+__Response += '                <p>' + CRLF
+__Response += '                </p>' + CRLF
+__Response += '	                <form class="style13" method="post">' + CRLF
+__Response += '	                    <table border="0" width="366">' + CRLF
+__Response += '	                        <tr>' + CRLF
+__Response += '	                            <td align="right" width="139">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+__Response += '	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> CNPJ:</span></font></p>' + CRLF
+__Response += '	                            </td>' + CRLF
+__Response += '	                            <td width="217">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+Return(__Response)
+
+Static Function PlainH_2()
+Local __Response := ""
+
+__Response += '	                        </tr>' + CRLF
+__Response += '	                        <tr>' + CRLF
+__Response += '	                            <td align="right" width="139">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+__Response += '	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> RAZAO:</span></font></p>' + CRLF
+__Response += '	                            </td>' + CRLF
+__Response += '	                            <td width="217">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+Return(__Response)
+
+Static Function PlainH_3()
+Local __Response := ""
+
+__Response += '	                        </tr>' + CRLF
+__Response += '	                        <tr>' + CRLF
+__Response += '	                            <td align="right" width="139">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+__Response += '	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> Nome:</span></font></p>' + CRLF
+__Response += '	                            </td>' + CRLF
+__Response += '	                            <td width="217">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+Return(__Response)
+
+Static Function PlainH_4()
+Local __Response := ""
+
+__Response += '	                        </tr>' + CRLF
+__Response += '	                        <tr>' + CRLF
+__Response += '	                            <td align="right">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+__Response += '	                                    <span class="style14"><font face="Tahoma" style="font-size: 11px"> Cargo: </font>' + CRLF
+__Response += '	                                    </span><span class="style15"></span>' + CRLF
+__Response += '	                                </p>' + CRLF
+__Response += '	                            </td>' + CRLF
+__Response += '	                            <td>' + CRLF
+__Response += '	                                 <p style="margin-right: 10px">' + CRLF
+Return(__Response)
+
+Static Function PlainH_5()
+Local __Response := ""
+
+__Response += '	                            </td>' + CRLF
+__Response += '	                        </tr>' + CRLF
+__Response += '	                        <tr>' + CRLF
+__Response += '	                            <td align="right">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+__Response += '	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> Telefone: </span></font></p>' + CRLF
+__Response += '	                            </td>' + CRLF
+__Response += '	                            <td>' + CRLF
+__Response += '	                                 <p style="margin-right: 10px">' + CRLF
+Return(__Response)
+
+Static Function PlainH_6()
+Local __Response := ""
+
+__Response += '	                            </td>' + CRLF
+__Response += '	                        </tr>' + CRLF
+__Response += '	                        <tr>' + CRLF
+__Response += '	                            <td align="right">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+__Response += '	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> Municipio:</span></font></p>' + CRLF
+__Response += '	                            </td>' + CRLF
+__Response += '	                            <td>' + CRLF
+__Response += '	                                 <p style="margin-right: 10px">' + CRLF
+Return(__Response)
+
+Static Function PlainH_7()
+Local __Response := ""
+
+__Response += '	                            </td>' + CRLF
+__Response += '	                        </tr>' + CRLF
+__Response += '	                        <tr>' + CRLF
+__Response += '	                            <td align="right">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+__Response += '	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> E-Mail:</span></font></p>' + CRLF
+__Response += '	                            </td>' + CRLF
+__Response += '	                            <td>' + CRLF
+__Response += '	                                 <p style="margin-right: 10px">' + CRLF
+Return(__Response)
+
+Static Function PlainH_8()
+Local __Response := ""
+
+__Response += '	                            </td>' + CRLF
+__Response += '	                        </tr>' + CRLF
+__Response += '	                        <tr>' + CRLF
+__Response += '	                            <td align="right">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+__Response += '	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> Mensagem:</span></font></p>' + CRLF
+__Response += '                                </td>' + CRLF
+__Response += '                                <td>' + CRLF
+__Response += '                                     <p style="margin-right: 10px">' + CRLF
+Return(__Response)
+
+Static Function PlainH_9()
+Local __Response := ""
+
+__Response += '                                </td>' + CRLF
+__Response += '	                        </tr>' + CRLF
+__Response += '	                        <tr>' + CRLF
+__Response += '	                            <td align="right">' + CRLF
+__Response += '	                                <p style="margin-right: 10px">' + CRLF
+__Response += '	                                    <font face="Tahoma" style="font-size: 11px"><span class="style14"> Aceito alterar os dados de minha empresa e me responsabilizo pelas informações aqui declaradas.</span></font></p>' + CRLF
+__Response += '                                </td>' + CRLF
+__Response += '                                <td>' + CRLF
+__Response += '                                </td>' + CRLF
+__Response += '	                        </tr>' + CRLF
+__Response += '	                    </table>' + CRLF
+__Response += '	                </form>   ' + CRLF
+__Response += '            </td>' + CRLF
+__Response += '        </tr>' + CRLF
+__Response += '    </table>' + CRLF
+__Response += '' + CRLF
+__Response += '</body>' + CRLF
+__Response += '</html>' + CRLF
+Return(__Response)

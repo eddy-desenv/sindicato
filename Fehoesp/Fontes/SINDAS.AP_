@@ -1,0 +1,242 @@
+#include "SIGAWIN.CH"
+#define CRLF CHR(13)+CHR(10)
+
+HTML Function sindassoc(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+__Response += PlainH_2()
+__Response += PlainH_3()
+if HTTPPOST->MENSAGEM == NIL .OR. empty(HTTPPOST->MENSAGEM)
+__Response += PlainH_4()
+__Response += PlainH_5()
+__Response += PlainH_6()
+ELSE
+__Response += PlainH_7()
+__Response += '' + cValToChar(HTTPPOST->MENSAGEM) + '' + CRLF
+__Response += PlainH_8()
+ENDIF
+__Response += PlainH_9()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + CRLF
+__Response += '<html xmlns="http://www.w3.org/1999/xhtml" >' + CRLF
+__Response += '<head> ' + CRLF
+__Response += '	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">' + CRLF
+__Response += '    <title>SindHosp</title>  ' + CRLF
+__Response += '' + CRLF
+__Response += '	<script src="js/popcal_config.js"></script>' + CRLF
+__Response += '	<script src="js/popcal_lang.js"></script>' + CRLF
+__Response += '	<script src="js/popcal.js"></script>' + CRLF
+__Response += '	<script src="funcoes.js"></script>' + CRLF
+__Response += '	' + CRLF
+__Response += '	<!-- CSS -->' + CRLF
+__Response += '	<link rel="stylesheet" href="css/structure.css" type="text/css" />' + CRLF
+__Response += '	<link rel="stylesheet" href="css/form.css" type="text/css" />' + CRLF
+__Response += '	' + CRLF
+__Response += '	<!-- JavaScript -->' + CRLF
+__Response += '	<script type="text/javascript" src="scripts/wufoo.js"></script>' + CRLF
+__Response += '	             ' + CRLF
+__Response += '' + CRLF
+__Response += '   <script language="javascript">		 ' + CRLF
+__Response += '	<!--campos em branco-->' + CRLF
+__Response += '	function CampoBranco(){' + CRLF
+__Response += "		var erro = '';" + CRLF
+__Response += "		var msg = 'Campos em branco:\n';" + CRLF
+__Response += '		var obj = document.forms[0].CCGC.value;' + CRLF
+__Response += "		if(obj == '' || obj == 0){" + CRLF
+__Response += "			erro='S';" + CRLF
+__Response += "			msg += '* Campo CNPJ\n';" + CRLF
+__Response += '        }' + CRLF
+__Response += '        ' + CRLF
+__Response += '		obj = document.forms[0].CRAZAO.value;' + CRLF
+Return(__Response)
+
+Static Function PlainH_2()
+Local __Response := ""
+
+__Response += "		if(obj == '' || obj == 0){ " + CRLF
+__Response += "			erro='S';" + CRLF
+__Response += "			msg += '* Campo RAZÃO SOCIAL\n';" + CRLF
+__Response += '        }' + CRLF
+__Response += '              ' + CRLF
+__Response += '		obj = document.forms[0].CTEL.value;' + CRLF
+__Response += "		if(obj == '' || obj == 0){" + CRLF
+__Response += "			erro='S';" + CRLF
+__Response += "			msg += '* Campo TELEFONE\n';" + CRLF
+__Response += '        }                        ' + CRLF
+__Response += '        ' + CRLF
+__Response += '		obj = document.forms[0].CEMAIL.value;' + CRLF
+__Response += "		if(obj == '' || obj == 0){  " + CRLF
+__Response += "			erro='S';" + CRLF
+__Response += "			msg += '* Campo EMAIL\n';" + CRLF
+__Response += '        }' + CRLF
+__Response += '        ' + CRLF
+__Response += '		obj = document.forms[0].CCONTATO.value;' + CRLF
+__Response += "		if(obj == '' || obj == 0){" + CRLF
+__Response += "			erro='S';" + CRLF
+__Response += "			msg += '* Campo CONTATO\n';" + CRLF
+__Response += '        }' + CRLF
+__Response += '                                ' + CRLF
+__Response += '		obj = document.forms[0].CMUNIC.value;' + CRLF
+__Response += "		if(obj == '' || obj == 0){ " + CRLF
+__Response += "			erro='S';" + CRLF
+__Response += "			msg += '* Campo MUNICÍPIO\n';" + CRLF
+__Response += '        }' + CRLF
+__Response += '        ' + CRLF
+__Response += "        if(erro == ''){                        " + CRLF
+__Response += '			document.forms[0].action="W_ASSOCMAIL.APW";' + CRLF
+Return(__Response)
+
+Static Function PlainH_3()
+Local __Response := ""
+
+__Response += '			document.forms[0].submit();' + CRLF
+__Response += '			return true;' + CRLF
+__Response += '		}' + CRLF
+__Response += "		if(msg != ''){" + CRLF
+__Response += '			alert(msg);' + CRLF
+__Response += '			return false;' + CRLF
+__Response += '		}' + CRLF
+__Response += '	}' + CRLF
+__Response += '	  	' + CRLF
+__Response += '  	</script>' + CRLF
+__Response += '  ' + CRLF
+__Response += '</head>' + CRLF
+__Response += '<body id="public">' + CRLF
+__Response += '<div id="container">' + CRLF
+__Response += '' + CRLF
+__Response += '<form class="wufoo topLabel page"  method="post" >' + CRLF
+__Response += '' + CRLF
+__Response += '	<div>' + CRLF
+__Response += '         <img id="Image1" src="images/header_associe_se-todos.gif" style="border-width:0px; width:100%;" />' + CRLF
+__Response += '	</div>' + CRLF
+__Response += '' + CRLF
+__Response += '<ul>' + CRLF
+__Response += '' + CRLF
+Return(__Response)
+
+Static Function PlainH_4()
+Local __Response := ""
+
+__Response += '' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+__Response += '		CNPJ' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += "		<input id='CCGC' name='CCGC' size=" + CHR(34) + "19" + CHR(34) + "  maxlength=" + CHR(34) + "18" + CHR(34) + "  onblur=" + CHR(34) + "valida_cnpj(this)" + CHR(34) + "/>" + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '	' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+__Response += '		Razao Social' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += '		<input maxlength="50" name=' + CHR(39) + 'CRAZAO' + CHR(39) + ' ID=' + CHR(39) + 'CRAZAO' + CHR(39) + ' size="50" />' + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>	' + CRLF
+__Response += '' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+__Response += '		Telefone' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += "		<input id='CTEL' name='CTEL' maxlength=" + CHR(34) + "13" + CHR(34) + "  size=" + CHR(34) + "13" + CHR(34) + " onkeypress=" + CHR(34) + "inserirMascara(window.event.keyCode, this);" + CHR(34) + "  /> (99)9999-9999" + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>	' + CRLF
+__Response += '	 ' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+Return(__Response)
+
+Static Function PlainH_5()
+Local __Response := ""
+
+__Response += '		Email' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += '		<input id="CEMAIL" name="CEMAIL" size="60" maxlength=' + CHR(39) + '60' + CHR(39) + '  ONBLUR="VALIDAEMAIL(this);"/>' + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>	 ' + CRLF
+__Response += '	     ' + CRLF
+__Response += '	 ' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+__Response += '		Contato' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += "		<input id='CCONTATO' maxlength=" + CHR(34) + "50" + CHR(34) + " size=" + CHR(34) + "50" + CHR(34) + " name='CCONTATO' />" + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>	 		 ' + CRLF
+__Response += '' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+__Response += '		Municipio' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += '	    <input id="CMUNIC" name="CMUNIC" size="26" />' + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>	' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+__Response += '		Observacao' + CRLF
+__Response += '	</label>' + CRLF
+Return(__Response)
+
+Static Function PlainH_6()
+Local __Response := ""
+
+__Response += '	<span class="full">' + CRLF
+__Response += "		<textarea id='COBS' cols=" + CHR(34) + "40" + CHR(34) + " name='COBS' rows=" + CHR(34) + "6" + CHR(34) + "></textarea>" + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += '		<input class="style14" name="Enviar" type="button" value="Enviar" onclick="CampoBranco()"/>	                            	                                    ' + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+Return(__Response)
+
+Static Function PlainH_7()
+Local __Response := ""
+
+__Response += '' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+Return(__Response)
+
+Static Function PlainH_8()
+Local __Response := ""
+
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += '		<input id="Button1" type="button" value="Voltar" onClick="history.go(-1)" />' + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+Return(__Response)
+
+Static Function PlainH_9()
+Local __Response := ""
+
+__Response += '' + CRLF
+__Response += '</ul>' + CRLF
+__Response += '</form>' + CRLF
+__Response += '' + CRLF
+__Response += '</div><!--container-->' + CRLF
+__Response += '<img id="bottom" src="images/bottom.png" alt="" />' + CRLF
+__Response += '' + CRLF
+__Response += '</body>' + CRLF
+__Response += '</html>' + CRLF
+Return(__Response)

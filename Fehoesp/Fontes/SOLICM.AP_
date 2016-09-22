@@ -1,0 +1,94 @@
+#include "SIGAWIN.CH"
+#define CRLF CHR(13)+CHR(10)
+
+HTML Function solicmensag(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+ If  HttpPost->lOk 
+__Response += PlainH_2()
+ EndIf 
+__Response += PlainH_3()
+__Response += '' + cValToChar(HTTPPOST->MENSAGEM) + '<br><br><br>' + CRLF
+__Response += PlainH_4()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + CRLF
+__Response += '<html xmlns="http://www.w3.org/1999/xhtml" >' + CRLF
+__Response += '<head> ' + CRLF
+__Response += '	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">' + CRLF
+__Response += '    <title>SindHosp</title>  ' + CRLF
+__Response += '' + CRLF
+__Response += '	<script src="js/popcal_config.js"></script>' + CRLF
+__Response += '	<script src="js/popcal_lang.js"></script>' + CRLF
+__Response += '	<script src="js/popcal.js"></script>' + CRLF
+__Response += '	<script src="funcoes.js"></script>' + CRLF
+__Response += '	' + CRLF
+__Response += '	<!-- CSS -->' + CRLF
+__Response += '	<link rel="stylesheet" href="css/structure.css" type="text/css" />' + CRLF
+__Response += '	<link rel="stylesheet" href="css/form.css" type="text/css" />' + CRLF
+__Response += '	' + CRLF
+__Response += '	<!-- JavaScript -->' + CRLF
+__Response += '	<script type="text/javascript" src="scripts/wufoo.js"></script>' + CRLF
+__Response += '    <script language="javascript">		 ' + CRLF
+__Response += '	function Confirma(){' + CRLF
+Return(__Response)
+
+Static Function PlainH_2()
+Local __Response := ""
+
+__Response += "			window.opener.location.replace('W_ATUAEMP.APW');" + CRLF
+Return(__Response)
+
+Static Function PlainH_3()
+Local __Response := ""
+
+__Response += '		this.close();' + CRLF
+__Response += '		return true;' + CRLF
+__Response += '	}' + CRLF
+__Response += '  	</script>' + CRLF
+__Response += '  ' + CRLF
+__Response += '</head>' + CRLF
+__Response += '<body id="public">' + CRLF
+__Response += '<div id="container">' + CRLF
+__Response += '' + CRLF
+__Response += '<form class="wufoo topLabel page"  method="post" >' + CRLF
+__Response += '' + CRLF
+__Response += '	<div>' + CRLF
+__Response += '         <img id="Image1" src="images/header_dados.gif" style="border-width:0px; width:100%;" />' + CRLF
+__Response += '	</div>' + CRLF
+__Response += '' + CRLF
+__Response += '<div class="info">' + CRLF
+__Response += '    <br>' + CRLF
+__Response += '	<h2>Solicitação de Alteração</h2>' + CRLF
+__Response += '	<div></div>' + CRLF
+__Response += '</div>' + CRLF
+__Response += '' + CRLF
+__Response += '<ul>' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="COMPLEX     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+Return(__Response)
+
+Static Function PlainH_4()
+Local __Response := ""
+
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += '		<input id="Button1" type="button" value="Fechar" onClick="Confirma()" />' + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+__Response += '</ul>' + CRLF
+__Response += '</form>' + CRLF
+__Response += '' + CRLF
+__Response += '</div><!--container-->' + CRLF
+__Response += '<img id="bottom" src="images/bottom.png" alt="" />' + CRLF
+__Response += '' + CRLF
+__Response += '</body>' + CRLF
+__Response += '</html>' + CRLF
+Return(__Response)

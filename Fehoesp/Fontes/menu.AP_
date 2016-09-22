@@ -1,0 +1,34 @@
+#include "SIGAWIN.CH"
+#define CRLF CHR(13)+CHR(10)
+
+HTML Function menu(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += '<HTML>' + CRLF
+__Response += '' + CRLF
+__Response += '</head>' + CRLF
+__Response += '<BODY TOPMARGIN="0" LEFTMARGIN="0" BGCOLOR="white" TEXT="black" ALINK="#FFFFFF" LINK="#FFFFFF" VLINK="#FFFFFF">' + CRLF
+__Response += '' + CRLF
+__Response += '<base target="_blank">' + CRLF
+__Response += '<script language="JavaScript" src=' + CHR(39) + 'toolbar.js' + CHR(39) + '></script>' + CRLF
+__Response += '<script language="JavaScript" src=' + CHR(39) + 'global.js' + CHR(39) + '></script>' + CRLF
+__Response += '<BR><BR>' + CRLF
+__Response += '' + CRLF
+__Response += '<DIV ID="DownLevelDiv" ALIGN="center">' + CRLF
+__Response += '<font face="arial, verdana" size="5" color="white">' + CRLF
+__Response += '</DIV> ' + CRLF
+__Response += '<script language="JavaScript">' + CRLF
+__Response += "	DownLevelDiv.style.display ='none';" + CRLF
+__Response += '	setICPBanner("curve.gif","","www.interweb.com.br");' + CRLF
+__Response += '	drawToolbar();' + CRLF
+__Response += '</script> ' + CRLF
+__Response += '</BODY>' + CRLF
+__Response += '</HTML>' + CRLF
+Return(__Response)

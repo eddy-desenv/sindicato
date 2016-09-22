@@ -1,0 +1,388 @@
+#include "SIGAWIN.CH"
+#define CRLF CHR(13)+CHR(10)
+
+HTML Function escrito(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+__Response += PlainH_2()
+__Response += PlainH_3()
+IF HTTPSESSION->AESCAUX <> NIL .OR. HTTPSESSION->EXIBEAUX == 1
+__Response += PlainH_4()
+ENDIF
+__Response += PlainH_5()
+__Response += '<body onLoad="Mostra(' + cValToChar(HTTPSESSION->AUXEXIBE) + ')">' + CRLF
+__Response += PlainH_6()
+IF HTTPSESSION->AESCAUX <> NIL .OR. HTTPSESSION->EXIBEAUX == 1
+__Response += PlainH_7()
+ENDIF
+__Response += PlainH_8()
+__Response += '' + cValToChar(HTTPSESSION->XCGC) + '' + CRLF
+__Response += '<input id="CGC2" name="CGC2" type="hidden" value="' + cValToChar(HTTPSESSION->XCGC) + '"/>' + CRLF
+__Response += PlainH_9()
+__Response += '<input name="RAZAO" id="RAZAO" VALUE=' + CHR(39) + '' + cValToChar(HTTPPOST->RAZAO) + "' type=" + CHR(34) + "text" + CHR(34) + " style=" + CHR(34) + "width: 399px" + CHR(34) + " />" + CRLF
+__Response += '<LABEL id="label1" style="display:none"><I>' + cValToChar(HTTPPOST->RAZAO2) + '</I></LABEL>' + CRLF
+__Response += PlainH_10()
+__Response += '<input name="CEP" id="CEP" VALUE=' + CHR(39) + '' + cValToChar(HTTPPOST->CEP) + "' maxlength=" + CHR(34) + "8" + CHR(34) + " size='8' type=" + CHR(34) + "text" + CHR(34) + " ONBLUR=" + CHR(34) + "EscCep()" + CHR(34) + "/>" + CRLF
+__Response += '<LABEL id="label2" style="display:none"><I>' + cValToChar(HTTPPOST->CEP2) + '</I></LABEL>' + CRLF
+__Response += PlainH_11()
+__Response += '<input name="CEND" id="CEND" VALUE=' + CHR(39) + '' + cValToChar(HTTPPOST->CEND) + "' type=" + CHR(34) + "text" + CHR(34) + " style=" + CHR(34) + "width: 403px" + CHR(34) + " />" + CRLF
+__Response += '<LABEL id="label3" style="display:none"><I>' + cValToChar(HTTPPOST->CEND2) + '</I></LABEL>' + CRLF
+__Response += PlainH_12()
+__Response += '' + cValToChar(HTTPPOST->BAIRRO) + '' + CRLF
+__Response += '<LABEL id="label4" style="display:none"><I>' + cValToChar(HTTPPOST->BAIRRO2) + '</I></LABEL>' + CRLF
+__Response += '<input  name="BAIRRO" id=' + CHR(39) + 'BAIRRO' + CHR(39) + ' VALUE=' + CHR(39) + '' + cValToChar(HTTPPOST->BAIRRO) + "' type=" + CHR(34) + "HIDDEN" + CHR(34) + "/>" + CRLF
+__Response += PlainH_13()
+__Response += '' + cValToChar(HTTPPOST->MUN) + '' + CRLF
+__Response += '<LABEL id="label5" style="display:none"><I>' + cValToChar(HTTPPOST->MUN) + '</I></LABEL>' + CRLF
+__Response += '<input  name="MUN" id=' + CHR(39) + 'MUN' + CHR(39) + ' VALUE=' + CHR(39) + '' + cValToChar(HTTPPOST->MUN) + "' type=" + CHR(34) + "HIDDEN" + CHR(34) + "/>" + CRLF
+__Response += PlainH_14()
+__Response += '' + cValToChar(HTTPPOST->EST) + '' + CRLF
+__Response += '<LABEL id="label6" style="display:none"><I>' + cValToChar(HTTPPOST->EST) + '</I></LABEL>' + CRLF
+__Response += "<input  name='EST' id='EST' VALUE='" + cValToChar(HTTPPOST->EST) + "' type=" + CHR(34) + "HIDDEN" + CHR(34) + "/>" + CRLF
+__Response += PlainH_15()
+__Response += "<input id='EMAIL' name=" + CHR(34) + "EMAIL" + CHR(34) + "  VALUE='" + cValToChar(HTTPPOST->EMAIL) + "' type=" + CHR(34) + "text" + CHR(34) + " style=" + CHR(34) + "width: 300px" + CHR(34) + " ONBLUR=" + CHR(34) + "ValidaEmail(this)" + CHR(34) + " maxlength=" + CHR(34) + "60" + CHR(34) + "  SIZE=" + CHR(34) + "60" + CHR(34) + "/>" + CRLF
+__Response += '<LABEL id="label7" style="display:none"><I>' + cValToChar(HTTPPOST->EMAIL2) + '</I></LABEL>' + CRLF
+__Response += PlainH_16()
+__Response += "<input id='TEL' name=" + CHR(34) + "TEL" + CHR(34) + " maxlength=" + CHR(34) + "13" + CHR(34) + "  type=" + CHR(34) + "text" + CHR(34) + " VALUE='" + cValToChar(HTTPPOST->TEL) + "' size=" + CHR(34) + "13" + CHR(34) + " onkeypress=" + CHR(34) + "inserirMascara(window.event.keyCode, this);" + CHR(34) + "  />" + CRLF
+__Response += '<LABEL id="label8" style="display:none"><I>' + cValToChar(HTTPPOST->FONE2) + '</I></LABEL>' + CRLF
+__Response += PlainH_17()
+__Response += "<input id='FAX' name=" + CHR(34) + "FAX" + CHR(34) + " maxlength=" + CHR(34) + "13" + CHR(34) + "  type=" + CHR(34) + "text" + CHR(34) + " VALUE='" + cValToChar(HTTPPOST->FAX) + "' size=" + CHR(34) + "13" + CHR(34) + " onkeypress=" + CHR(34) + "inserirMascara(window.event.keyCode, this);" + CHR(34) + "  />" + CRLF
+__Response += '<LABEL id="label9" style="display:none" ><I>' + cValToChar(HTTPPOST->FAX2) + '</I></LABEL>' + CRLF
+__Response += PlainH_18()
+__Response += "<input id='CONTATO' name=" + CHR(34) + "CONTATO" + CHR(34) + " VALUE='" + cValToChar(HTTPPOST->CONTATO) + "' type=" + CHR(34) + "text" + CHR(34) + " style=" + CHR(34) + "width: 402px" + CHR(34) + " maxlength='50' SIZE='50'/>" + CRLF
+__Response += '<LABEL id="label10" style="display:none"><I>' + cValToChar(HTTPPOST->CONTATO2) + '</I></LABEL>' + CRLF
+__Response += PlainH_19()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + CRLF
+__Response += '<html xmlns="http://www.w3.org/1999/xhtml" >' + CRLF
+__Response += '<head>    ' + CRLF
+__Response += '	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">' + CRLF
+__Response += '    <title>SINDHOSP</title> ' + CRLF
+__Response += '' + CRLF
+__Response += '	<script src="js/popcal_config.js"></script>' + CRLF
+__Response += '	<script src="js/popcal_lang.js"></script>' + CRLF
+__Response += '	<script src="js/popcal.js"></script>' + CRLF
+__Response += '	<script src="funcoes.js"></script>' + CRLF
+__Response += '' + CRLF
+__Response += '	<!-- CSS -->' + CRLF
+__Response += '	<link rel="stylesheet" href="css/structure.css" type="text/css" />' + CRLF
+__Response += '	<link rel="stylesheet" href="css/form.css" type="text/css" />' + CRLF
+__Response += '	' + CRLF
+__Response += '	<!-- JavaScript -->' + CRLF
+__Response += '	<script type="text/javascript" src="scripts/wufoo.js"></script>' + CRLF
+__Response += '	  ' + CRLF
+__Response += '' + CRLF
+__Response += '  <script language="javascript"> 		 ' + CRLF
+__Response += '	<!--campos em branco-->' + CRLF
+__Response += '	function CampoBranco(){' + CRLF
+__Response += "		var erro = '';" + CRLF
+__Response += "		var msg = 'Campo obrigatório:\n';" + CRLF
+__Response += '		var obj = document.forms[0].CGC.value;' + CRLF
+__Response += '		var chk = 0;' + CRLF
+__Response += '		' + CRLF
+__Response += "		if(obj == '' || obj == 0){" + CRLF
+__Response += "			erro='S';" + CRLF
+__Response += "			msg += '* Campo CNPJ\n';" + CRLF
+__Response += '        }' + CRLF
+Return(__Response)
+
+Static Function PlainH_2()
+Local __Response := ""
+
+__Response += '        ' + CRLF
+__Response += "        if(erro == ''){                        " + CRLF
+__Response += '			document.forms[0].action="W_FUNCESC.APW";' + CRLF
+__Response += '			document.forms[0].submit();' + CRLF
+__Response += '			return true;' + CRLF
+__Response += '		}         ' + CRLF
+__Response += '		' + CRLF
+__Response += "		if(msg != ''){" + CRLF
+__Response += '			alert(msg);' + CRLF
+__Response += '			return false;' + CRLF
+__Response += '		}' + CRLF
+__Response += '	}' + CRLF
+__Response += '	  	' + CRLF
+__Response += '	function Cancela(){ ' + CRLF
+__Response += '		document.forms[0].action="W_LIMPAESC.APW";' + CRLF
+__Response += '		document.forms[0].submit();' + CRLF
+__Response += '		return true;' + CRLF
+__Response += '	} ' + CRLF
+__Response += '	' + CRLF
+__Response += '	function Confirma(){' + CRLF
+__Response += '		document.forms[0].action="W_ATUAESC.APW";' + CRLF
+__Response += '		document.forms[0].submit();' + CRLF
+__Response += '		return true;' + CRLF
+__Response += '	}' + CRLF
+__Response += '' + CRLF
+__Response += '	function Vincula(){' + CRLF
+__Response += '		document.forms[0].action="W_VINCESC.APW";' + CRLF
+__Response += '		document.forms[0].submit();' + CRLF
+__Response += '		return true;' + CRLF
+__Response += '	}' + CRLF
+__Response += '		' + CRLF
+Return(__Response)
+
+Static Function PlainH_3()
+Local __Response := ""
+
+__Response += '	function Mostra(opc){    ' + CRLF
+__Response += '		if (opc > 0)' + CRLF
+__Response += '	    {                  ' + CRLF
+__Response += '			document.getElementById("label1").style.display = "inline";' + CRLF
+__Response += '			document.getElementById("label2").style.display = "inline";' + CRLF
+__Response += '			document.getElementById("label3").style.display = "inline";' + CRLF
+__Response += '			document.getElementById("label4").style.display = "inline";' + CRLF
+__Response += '			document.getElementById("label5").style.display = "inline";' + CRLF
+__Response += '			document.getElementById("label6").style.display = "inline";' + CRLF
+__Response += '			document.getElementById("label7").style.display = "inline";' + CRLF
+__Response += '			document.getElementById("label8").style.display = "inline";' + CRLF
+__Response += '			document.getElementById("label9").style.display = "inline";' + CRLF
+__Response += '			document.getElementById("label10").style.display = "inline";' + CRLF
+__Response += '	     	' + CRLF
+__Response += '	    }' + CRLF
+__Response += '	    else' + CRLF
+__Response += '	    {' + CRLF
+__Response += '			document.getElementById("label1").style.display = "none";	    ' + CRLF
+__Response += '			document.getElementById("label2").style.display = "none";' + CRLF
+__Response += '			document.getElementById("label3").style.display = "none";' + CRLF
+__Response += '			document.getElementById("label4").style.display = "none";' + CRLF
+__Response += '			document.getElementById("label5").style.display = "none";' + CRLF
+__Response += '			document.getElementById("label6").style.display = "none";' + CRLF
+__Response += '			document.getElementById("label7").style.display = "none";' + CRLF
+__Response += '			document.getElementById("label8").style.display = "none";' + CRLF
+__Response += '			document.getElementById("label9").style.display = "none";' + CRLF
+__Response += '			document.getElementById("label10").style.display = "none";' + CRLF
+__Response += '   ' + CRLF
+__Response += '	    }' + CRLF
+__Response += '' + CRLF
+Return(__Response)
+
+Static Function PlainH_4()
+Local __Response := ""
+
+__Response += '	    if (opc == 3 || opc == -1 || opc == 1 ){' + CRLF
+__Response += '		    document.getElementById("FORMAUX").style.display = "none";	' + CRLF
+__Response += '		}' + CRLF
+Return(__Response)
+
+Static Function PlainH_5()
+Local __Response := ""
+
+__Response += '		' + CRLF
+__Response += '	return true;' + CRLF
+__Response += '	}' + CRLF
+__Response += '	</script>' + CRLF
+__Response += '' + CRLF
+__Response += '</head>' + CRLF
+Return(__Response)
+
+Static Function PlainH_6()
+Local __Response := ""
+
+__Response += '<div id="container">' + CRLF
+__Response += '' + CRLF
+__Response += '<form class="wufoo topLabel" method="post" >' + CRLF
+__Response += '' + CRLF
+__Response += '	<div>' + CRLF
+__Response += '         <img id="Image1" src="images/header_dados_escr_contab-todos.gif" style="border-width:0px; width:100%;" />' + CRLF
+__Response += '	</div>' + CRLF
+__Response += '' + CRLF
+__Response += '<ul>' + CRLF
+__Response += '' + CRLF
+Return(__Response)
+
+Static Function PlainH_7()
+Local __Response := ""
+
+__Response += '<DIV ID="FORMAUX">' + CRLF
+__Response += '<li class="     ">' + CRLF
+__Response += '	<CENTER>' + CRLF
+__Response += '	<label class="Field4">' + CRLF
+__Response += '		Alguns dados foram alterados e ainda não foram confirmados pelo Sindicato. ' + CRLF
+__Response += '		Deseja visualizá-los? ' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += '		<BR>' + CRLF
+__Response += '	    <input id="ButtonConfAux" type="button" value="Sim" onclick="Mostra(1)"/>' + CRLF
+__Response += '	    <input id="ButtonCancAux" type="button" value="Não" onclick="Mostra(0)" />						' + CRLF
+__Response += '	</span>  ' + CRLF
+__Response += '	</CENTER>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '</DIV>' + CRLF
+__Response += '' + CRLF
+__Response += '<div class="info">' + CRLF
+__Response += '	<div></div>' + CRLF
+__Response += '</div>' + CRLF
+__Response += '	        	' + CRLF
+Return(__Response)
+
+Static Function PlainH_8()
+Local __Response := ""
+
+__Response += '<li class="     ">' + CRLF
+__Response += '	<label class="Field4" id="title1" for="Field1">' + CRLF
+__Response += '		CNPJ/CEI/CPF' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_9()
+Local __Response := ""
+
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		Razao Social' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_10()
+Local __Response := ""
+
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		CEP' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_11()
+Local __Response := ""
+
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		Endereco' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_12()
+Local __Response := ""
+
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '                                                            ' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		Bairro' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_13()
+Local __Response := ""
+
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		Municipio' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_14()
+Local __Response := ""
+
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		Estado	' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_15()
+Local __Response := ""
+
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '     ' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		Email (Contabilidade)	' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_16()
+Local __Response := ""
+
+__Response += '	</span>' + CRLF
+__Response += '</li>	 ' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		Fone (Contabilidade)	' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_17()
+Local __Response := ""
+
+__Response += '        (99)9999-9999' + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>		 ' + CRLF
+__Response += '	 ' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		Fax (Contabilidade)	' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_18()
+Local __Response := ""
+
+__Response += '        (99)9999-9999' + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>		 ' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<label class="Field4" id="title3" for="Field3">' + CRLF
+__Response += '		Contato (Contabilidade)	' + CRLF
+__Response += '	</label>' + CRLF
+__Response += '	<span class="full">' + CRLF
+Return(__Response)
+
+Static Function PlainH_19()
+Local __Response := ""
+
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '' + CRLF
+__Response += '<li class="       ">' + CRLF
+__Response += '	<span class="full">' + CRLF
+__Response += '		<input id="Button1" type="button" value="Confirmar" onclick="Confirma()"/>' + CRLF
+__Response += '        <input id="Button6" type="button" value="Cancelar" onclick="Cancela()" />' + CRLF
+__Response += '	</span>' + CRLF
+__Response += '</li>' + CRLF
+__Response += '	' + CRLF
+__Response += '</ul>' + CRLF
+__Response += '</form>' + CRLF
+__Response += '' + CRLF
+__Response += '</div><!--container-->' + CRLF
+__Response += '<img id="bottom" src="images/bottom.png" alt="" />' + CRLF
+__Response += '' + CRLF
+__Response += '</body>' + CRLF
+__Response += '</html>' + CRLF
+Return(__Response)

@@ -1,0 +1,136 @@
+#include "SIGAWIN.CH"
+#define CRLF CHR(13)+CHR(10)
+
+HTML Function shperfil(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+__Response += PlainH_2()
+__Response += PlainH_3()
+__Response += PlainH_4()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + CRLF
+__Response += '<html xmlns="http://www.w3.org/1999/xhtml" >' + CRLF
+__Response += '<head>' + CRLF
+__Response += '    <title>SINDHOSP</title>' + CRLF
+__Response += '' + CRLF
+__Response += '  <script language="javascript">		 ' + CRLF
+__Response += '	<!--campos em branco-->' + CRLF
+__Response += '	function CampoBranco(){' + CRLF
+__Response += "		var erro 	= '';  " + CRLF
+__Response += '		var chkerro = 0;' + CRLF
+__Response += "		var msg 	= ''; " + CRLF
+__Response += "		var item	= '';" + CRLF
+__Response += '          ' + CRLF
+__Response += '   		for (i=0;i<document.forms[0].perfil.length;i++) ' + CRLF
+__Response += '      		if(document.forms[0].perfil[i].type == "radio")' + CRLF
+__Response += '      		{   ' + CRLF
+__Response += '      			if(document.forms[0].perfil[i].checked==true){' + CRLF
+__Response += '      				chkerro++;	' + CRLF
+__Response += '					item = document.forms[0].perfil[i].value;      				' + CRLF
+__Response += '	   			}' + CRLF
+__Response += '	         }' + CRLF
+__Response += '		if(chkerro == 0)' + CRLF
+__Response += '		{' + CRLF
+__Response += "			erro='S';" + CRLF
+__Response += "			msg += '* Selecionar um perfil\n';" + CRLF
+__Response += '        }' + CRLF
+__Response += '              ' + CRLF
+__Response += "        if(erro == ''){  " + CRLF
+__Response += "        	if (item == 'A'){" + CRLF
+__Response += '				document.forms[0].action="W_SHCONTRIB.APW";' + CRLF
+__Response += '			}else{' + CRLF
+Return(__Response)
+
+Static Function PlainH_2()
+Local __Response := ""
+
+__Response += '				document.forms[0].action="W_SHFUNC.APW";' + CRLF
+__Response += '			}			' + CRLF
+__Response += '			document.forms[0].submit();' + CRLF
+__Response += '			return true;' + CRLF
+__Response += '		}' + CRLF
+__Response += "		if(msg != ''){" + CRLF
+__Response += '			alert(msg);' + CRLF
+__Response += '			return false;' + CRLF
+__Response += '		}' + CRLF
+__Response += '	}' + CRLF
+__Response += '	 ' + CRLF
+__Response += '' + CRLF
+__Response += '' + CRLF
+__Response += '  	</script>' + CRLF
+__Response += '  ' + CRLF
+__Response += '' + CRLF
+__Response += '</head>' + CRLF
+__Response += '' + CRLF
+__Response += '<BODY TOPMARGIN="0" LEFTMARGIN="0" BGCOLOR="white" TEXT="black" ALINK="#FFFFFF" LINK="#FFFFFF" VLINK="#FFFFFF">' + CRLF
+__Response += '' + CRLF
+__Response += '<form class="style13" method="post">' + CRLF
+__Response += '' + CRLF
+__Response += '<table border="0" width="90%">' + CRLF
+__Response += '        <tr>' + CRLF
+__Response += '            <td style="height: 150px" align="center">' + CRLF
+__Response += '            </TD>' + CRLF
+__Response += '        </TR>' + CRLF
+__Response += '</TABLE>' + CRLF
+__Response += '' + CRLF
+__Response += '    <center>' + CRLF
+__Response += '       <table border="2" width="90%">' + CRLF
+Return(__Response)
+
+Static Function PlainH_3()
+Local __Response := ""
+
+__Response += '        <tr>' + CRLF
+__Response += '            <td style="height: 353px" align="center">' + CRLF
+__Response += '                <strong>PERFIL<br />' + CRLF
+__Response += '                    <br />' + CRLF
+__Response += '                </strong>' + CRLF
+__Response += '                <table>' + CRLF
+__Response += '                    <tr>' + CRLF
+__Response += '                        <td align="right">' + CRLF
+__Response += '                            <input id="perfil" name="perfil" type="radio" value="A"/></td>' + CRLF
+__Response += '                        <td align="left">' + CRLF
+__Response += '                            Contribuinte/Associado</td>' + CRLF
+__Response += '                    </tr>' + CRLF
+__Response += '                    <tr>' + CRLF
+__Response += '                        <td align="right">' + CRLF
+__Response += '                            <input id="perfil" name="perfil"  type="radio" value="F"/></td>' + CRLF
+__Response += '                        <td align="left">' + CRLF
+__Response += '                            Funcionário Sindical</td>' + CRLF
+__Response += '                    </tr>' + CRLF
+__Response += '                    <tr>' + CRLF
+__Response += '                        <td>' + CRLF
+__Response += '                        </td>' + CRLF
+__Response += '                        <td align="left">' + CRLF
+__Response += '                            &nbsp;</td>' + CRLF
+__Response += '                    </tr>' + CRLF
+__Response += '                    <tr>' + CRLF
+__Response += '                        <td align="center" colspan="2">' + CRLF
+__Response += '                            <input class="style14" name="Enviar" type="button" value="Ok" onclick="CampoBranco()"/>' + CRLF
+__Response += '                        </td>' + CRLF
+__Response += '                    </tr>' + CRLF
+__Response += '                </table>' + CRLF
+__Response += '                ' + CRLF
+Return(__Response)
+
+Static Function PlainH_4()
+Local __Response := ""
+
+__Response += '            </td>' + CRLF
+__Response += '        </tr>' + CRLF
+__Response += '    </table>  ' + CRLF
+__Response += '     ' + CRLF
+__Response += '    </center> ' + CRLF
+__Response += '</form>' + CRLF
+__Response += '' + CRLF
+__Response += '' + CRLF
+__Response += '</body>' + CRLF
+__Response += '</html>' + CRLF
+__Response += '' + CRLF
+Return(__Response)

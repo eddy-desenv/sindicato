@@ -1,0 +1,43 @@
+#include "SIGAWIN.CH"
+#define CRLF CHR(13)+CHR(10)
+
+HTML Function altesc(__aCookies,__aPostParms,__nProcId,__aProcParms,__cHTTPPage)
+Local __Response := ""
+
+__Response += PlainH_1()
+__Response += '<input id="CGC" name="CGC" type="hidden" value = ' + CHR(39) + '' + cValToChar(HTTPPOST->CGC) + "'/>" + CRLF
+__Response += PlainH_2()
+
+Return(__Response)
+
+Static Function PlainH_1()
+Local __Response := ""
+
+__Response += '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">' + CRLF
+__Response += '<HTML>' + CRLF
+__Response += '<HEAD>' + CRLF
+__Response += '	<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">' + CRLF
+__Response += '<TITLE>SindHosp</TITLE>' + CRLF
+__Response += '' + CRLF
+__Response += '<script language="javascript">' + CRLF
+__Response += '    function Redirectfun()' + CRLF
+__Response += '    {                                                ' + CRLF
+__Response += '		document.forms[0].action="W_FUNCESC.APW";' + CRLF
+__Response += '		document.forms[0].submit();' + CRLF
+__Response += '		return true;' + CRLF
+__Response += '    } ' + CRLF
+__Response += '</script>' + CRLF
+__Response += '' + CRLF
+__Response += '</HEAD>' + CRLF
+__Response += '' + CRLF
+__Response += '<BODY onload="Redirectfun()">' + CRLF
+__Response += '	<form  method="post" >' + CRLF
+Return(__Response)
+
+Static Function PlainH_2()
+Local __Response := ""
+
+__Response += ' 	</form>' + CRLF
+__Response += '</BODY>' + CRLF
+__Response += '</HTML>' + CRLF
+Return(__Response)

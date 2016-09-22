@@ -1,0 +1,312 @@
+#include "rwmake.ch"
+#include "topconn.ch"
+User Function ETIQCORT()
+SetPrvt("_CALIAS,CBCONT,CBTXT,WNREL,CDESC1,CDESC2")
+SetPrvt("CDESC3,CSTRING,TAMANHO,TIPO,LIMITE,TITULO")
+SetPrvt("CABEC1,CABEC2,ARETURN,NOMEPROG,NLASTKEY,CPERG")
+SetPrvt("M_PAG,LI,_AESTR,C_ARQIMP,CARQIND,CINDSA1")
+SetPrvt("XNOME1,XNOME2,XNOME3,XNOME4,XEND1,XEND2")
+SetPrvt("XEND3,XEND4,XBAIRRO1,XBAIRRO2,XBAIRRO3,XBAIRRO4")
+SetPrvt("XCEP1,XCEP2,XCEP3,XCEP4,XCIDADE1,XCIDADE2")
+SetPrvt("XCIDADE3,XCIDADE4,XESTADO1,XESTADO2,XESTADO3,XESTADO4")
+SetPrvt("NVEZ,LIMPRIME,VEZ,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ Etiqcort ³ Autor ³ Luiz M. Duarte Junior ³ Data ³ 19.01.05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Impressao de etiquetas das cortesias                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+LCONTINUA := .F.
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 := "Este programa ira imprimir as etiquetas de cortesias"
+cDesc2 := ""
+cDesc3 := ""
+cString := "SZ2"
+tamanho := "G"
+tipo := 15
+limite := 220
+titulo := "Etiquetas de Cortesias"
+cabec1 := ""
+cabec2 := ""
+aReturn := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog := "ETIQCORT"
+nLastkey := 0
+cPerg := "RETIQ2"
+m_pag := 1
+li := 0
+pergunte(cPerg,.f.)
+wnrel := "ETIQCORT"
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastkey == 27
+	return
+endif
+SetDefault(aReturn,cString)
+if nLastkey == 27
+	return
+endif
+LCONTINUA := .T.
+If aReturn[5]<>1
+	VERIMP()
+ENDIF
+if lcontinua
+	RptStatus({|| impETIQ() },titulo)
+endif
+return
+*************************
+Static Function ImpETIQ()
+CQUERY := " SELECT * FROM "+RETSQLNAME("SZ2")+" SZ2 "
+CQUERY += " WHERE D_E_L_E_T_='' AND Z2_CEP BETWEEN '"+MV_PAR02+"' AND '"+MV_PAR03+"' "
+CQUERY += " AND  Z2_MATRIZ IN "+FORMATIN(alltrim(MV_PAR01),"/")
+CQUERY += " ORDER BY Z2_CEP "
+TCQUERY cQuery NEW ALIAS "TRB"
+dbselectarea("trb")
+SetRegua(RecCount())
+Xnome1 := Xnome2 := Xnome3 := Xnome4 := ""
+XEND1 := XEND2 := XEND3:= XEND4 :=""
+XBAIRRO1 := XBAIRRO2 := XBAIRRO3 := XBAIRRO4 := ""
+Xcep1 := Xcep2 := Xcep3 := Xcep4 := ""
+Xcidade1 := Xcidade2 := Xcidade3 := Xcidade4 := ""
+Xestado1 := Xestado2 := Xestado3 := Xestado4 := ""
+Xfuncao1 := Xfuncao2 := Xfuncao3 := Xfuncao4 := ""
+Xdestino1:= Xdestino2:= Xdestino3:= Xdestino4:= ""
+Nvez := 1
+limprime := .t.
+NUMETIQ := 0
+DO WHILE !eof()
+	INCREGUA()
+	if Nvez == 1
+		Xnome1    := trb->Z2_Nome
+		Xend1     := trb->z2_end
+		Xbairro1  := trb->z2_bairro
+		Xcep1     := trb->z2_cep
+		Xcidade1  := trb->z2_mun
+		Xestado1  := trb->z2_est
+		xfuncao1  := trb->z2_funcao
+		xdestino1 := trb->z2_destino
+		Nvez := NVEZ +1
+		limprime := .t.
+	elseif Nvez == 2
+		Xnome2    := trb->Z2_Nome
+		Xend2     := trb->z2_end
+		Xbairro2  := trb->z2_bairro
+		Xcep2     := trb->z2_cep
+		Xcidade2  := trb->z2_mun
+		Xestado2  := trb->z2_est
+		xfuncao2  := trb->z2_funcao
+		xdestino2 := trb->z2_destino
+		Nvez := NVEZ +1
+		limprime := .t.
+	elseif Nvez == 3
+		Xnome3    := trb->Z2_Nome
+		Xend3     := trb->z2_end
+		Xbairro3  := trb->z2_bairro
+		Xcep3     := trb->z2_cep
+		Xcidade3  := trb->z2_mun
+		Xestado3  := trb->z2_est
+		xfuncao3  := trb->z2_funcao
+		xdestino3 := trb->z2_destino
+		Nvez := NVEZ +1
+		limprime := .t.
+	endif
+	if Nvez == 4 .and. limprime
+		IF !EMPTY(Xnome1)
+			NUMETIQ ++
+		ENDIF
+		IF !EMPTY(Xnome2)
+			NUMETIQ ++
+		ENDIF
+		IF !EMPTY(Xnome3)
+			NUMETIQ ++
+		ENDIF
+		@ li,000 PSAY XNOME1
+		@ li,060 PSAY XNOME2
+		@ li,120 PSAY XNOME3
+		li:= LI +1
+		@ li,000 PSAY XFUNCAO1
+		@ li,060 PSAY XFUNCAO2
+		@ li,120 PSAY XFUNCAO3
+		li:= LI +1
+		@ li,000 PSAY XDESTINO1
+		@ li,060 PSAY XDESTINO2
+		@ li,120 PSAY xdestino3
+		li:= LI +1
+		@ li,000 PSAY Xend1
+		@ li,060 PSAY Xend2
+		@ li,120 PSAY Xend3
+		li:= LI +1
+		@ li,000 PSAY Xcep1 picture "@r 99999-999"
+		@ li,012 PSAY ALLTRIM(Xcidade1)+"/"+Xestado1
+		@ li,060 PSAY Xcep2 picture "@r 99999-999"
+		@ li,072 PSAY ALLTRIM(Xcidade2)+"/"+Xestado2
+		@ li,120 PSAY Xcep3 picture "@r 99999-999"
+		@ li,132 PSAY ALLTRIM(Xcidade3)+"/"+Xestado3
+		li:= LI +2
+		Nvez := 1
+		Xnome1 := Xnome2 := Xnome3 := Xnome4 := ""
+		XEND1 := XEND2 := XEND3:= XEND4 :=""
+		XBAIRRO1 := XBAIRRO2 := XBAIRRO3 := XBAIRRO4 := ""
+		Xcep1 := Xcep2 := Xcep3 := Xcep4 := ""
+		Xcidade1 := Xcidade2 := Xcidade3 := Xcidade4 := ""
+		Xestado1 := Xestado2 := Xestado3 := Xestado4 := ""
+		Xfuncao1 := Xfuncao2 := Xfuncao3 := Xfuncao4 := ""
+		Xdestino1:= Xdestino2:= Xdestino3:= Xdestino4:= ""
+		limprime := .F.
+	endif
+	dbselectAREA("TRB")
+	DBSKIP()
+ENDDO
+if  limprime
+	IF !EMPTY(Xnome1)
+		NUMETIQ ++
+	ENDIF
+	IF !EMPTY(Xnome2)
+		NUMETIQ ++
+	ENDIF
+	IF !EMPTY(Xnome3)
+		NUMETIQ ++
+	ENDIF
+	@ li,000 PSAY XNOME1
+	@ li,060 PSAY XNOME2
+	@ li,120 PSAY XNOME3
+	li:= LI +1
+	@ li,000 PSAY XFUNCAO1
+	@ li,060 PSAY XFUNCAO2
+	@ li,120 PSAY XFUNCAO3
+	li:= LI +1
+	@ li,000 PSAY XDESTINO1
+	@ li,060 PSAY XDESTINO2
+	@ li,120 PSAY xdestino3
+	li:= LI +1
+	@ li,000 PSAY Xend1
+	@ li,060 PSAY Xend2
+	@ li,120 PSAY Xend3
+	li:= LI +1
+	@ li,000 PSAY Xcep1 picture "@r 99999-999"
+	@ li,012 PSAY ALLTRIM(Xcidade1)+"/"+Xestado1
+	@ li,060 PSAY Xcep2 picture "@r 99999-999"
+	@ li,072 PSAY ALLTRIM(Xcidade2)+"/"+Xestado2
+	@ li,120 PSAY Xcep3 picture "@r 99999-999"
+	@ li,132 PSAY ALLTRIM(Xcidade3)+"/"+Xestado3
+	li:= LI +2
+	vez := 1
+	limprime := .F.
+endif
+@ li,000 psay chr(18)
+li ++
+@ li,000 PSAY "Numero de etiquetas "
+li++
+@ li,000 psay "impressas: "+strzero(numetiq,6)
+li++
+ALERT("Etiquetas: "+strzero(numetiq,6))
+dbselectarea("TRB")
+dbclosearea()
+DBSELECTAREA("SA1")
+RETINDEX("SA1")
+set device to screen
+if aReturn[5] == 1
+	set printer to
+	dbcommit()
+	ourspool(wnrel)
+endif
+MS_FLUSH()
+dbselectarea(_cAlias)
+Return
+*************************
+Static Function VerImp()
+Li:= 0                // Contador de Linhas
+nLinIni:=0
+If aReturn[5]<>1
+	nOpc       := 1
+	SetPrc(0,0)
+	@ li,000 PSAY chr(15)
+	dbCommitAll()
+	While .T.
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2    
+				@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+		IF MsgYesNo("Fomulario esta posicionado ? ")
+			nOpc := 1
+		ElseIF MsgYesNo("Tenta Novamente ? ")
+			nOpc := 2
+		Else
+			nOpc := 3
+		Endif
+		Do Case
+			Case nOpc==1
+				lContinua:=.T.
+				Exit
+			Case nOpc==2
+				Loop
+			Case nOpc==3
+				lContinua:=.F.
+				Return
+		EndCase
+	End
+Endif

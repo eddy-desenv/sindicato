@@ -1,0 +1,521 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function CONSULT1()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,_CCGC,_CCODIGO")
+SetPrvt("_CCODASSO,_CCODCGC,LCGC,ANO,PARC_TMP,AROTINA")
+SetPrvt("COPCAO,NOPCE,NOPCG,M->Z7_FILIAL,M->Z7_CLIENTE,M->Z7_CGC")
+SetPrvt("M->Z7_END,M->Z7_NOME,M->Z7_CODASSO,M->Z7_SITUAC,M->Z7_DTINASS,NUSADO")
+SetPrvt("AHEADER,ACOLS,_NI,CTITULO,CALIASENCHOICE,CALIASGETD")
+SetPrvt("CLINOK,CTUDOK,CFIELDOK,ACPOENCHOICE,_LRET,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ Consult  ³ Autor ³ Andreia dos Santos    ³ Data ³ 15/06/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Consulta Cobranca                                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo  := "Consulta Cobranca"
+n_Opc     := 0
+_cCGC     := Space(14)
+_cCodigo  := space(06)
+_cCodasso := space(06)
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,022,079)
+   SetColor("B/BG,N/W")
+
+   @ 014,010 Say "Informe o C.G.C. ou o c¢digo do Associado"
+   @ 016,010 GET _cCGC	   PICTURE PESQPICT("SA1","A1_CGC",18)
+   @ 018,010 GET _cCodasso PICTURE PESQPICT("SA1","A1_CODASSO",6)
+   SetColor("B/BG,W/N")
+   READ
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Abandona"},22,04,"b/w,w+/n,r/w","CA","",2)
+
+      If n_Opc == 2 .or. Lastkey()==27
+         Return
+      Endif
+
+      Exit
+   End
+   consultar()   
+#ELSE
+
+//   @ 101,082 To 316,433 Dialog janela1 Title _cTitulo
+
+   @ 101,075 To 316,510 Dialog janela1 Title _cTitulo
+
+   @ 040,030 Say "Informe o C.G.C. ou o c¢digo do Associado"
+   @ 047,030 Get _cCGC	   Picture PESQPICT("SA1","A1_CGC",18) Valid .T.
+   @ 057,030 Get _cCodasso Picture PESQPICT("SA1","A1_CODASSO",6)
+
+   @ 077,045 BmpButton Type 1 Action Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 077,045 BmpButton Type 1 Action Execute(Iniciar)
+   @ 076,112 BmpButton Type 2 Action close(janela1)
+   @ 076,179 BmpButton Type 5 Action Perguntar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 076,179 BmpButton Type 5 Action execute(Perguntar)
+   Activate Dialog janela1 Centered
+
+
+#ENDIF
+
+Return
+
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Perguntar
+Static Function Perguntar()
+*-----------------*
+Pergunte("SDH010",.T.)
+Return
+
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Iniciar
+Static Function Iniciar()
+*-----------------*
+Close(janela1)
+Processa( {|| Consultar() })// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Processa( {|| Execute(Consultar) })
+Return
+
+*------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Consultar
+Static Function Consultar()
+*------------------*
+
+Pergunte("SDH010",.F.)
+
+///_cCodigo:=_cCodasso
+
+
+
+If !Empty(_cCGC)
+   dbSelectArea("SE1")
+   dbSetOrder(20)
+   if dbseek(xFilial()+_cCGC)     // Alterado por mafra, motivo:pesquisa direto no arquivo de titulos
+     _cCodCGC := SE1->E1_CGC
+   EndIf
+   lcgc:=.T.   
+ELSE   
+	dbSelectArea("SA1")
+	dbSetOrder(8)
+	if dbseek(xFilial()+_cCodasso)
+	   _cCodigo := SA1->A1_COD
+	endif
+	lcgc:=.F.   
+EndIf
+
+
+If lcgc
+   dbSelectArea("SA1")
+   dbSetOrder(3)
+   dbseek(xFilial()+_cCGC)
+ELSE
+	dbSelectArea("SA1")
+	dbSetOrder(8)
+	dbseek(xFilial()+_cCodasso)
+ENDIF
+If found()
+   
+   If lcgc
+     dbSelectArea("SZ7")
+     dbSetOrder(2) 
+     dbseek(xfilial()+_cCGC)
+   Else
+     dbSelectArea("SZ7")
+     dbSetOrder(1) 
+     dbseek(xfilial()+_cCodigo)
+  EndIf
+    
+        If !found()
+ 			//ZAP
+			//if eof()
+		   		reclock("SZ7",.T.)
+	   			SZ7->Z7_FILIAL   := xFilial()
+	   			SZ7->Z7_CLIENTE  := SA1->A1_COD
+	   			SZ7->Z7_CGC      := SA1->A1_CGC
+		   		SZ7->Z7_END      := SA1->A1_END
+		   		SZ7->Z7_NOME     := SA1->A1_NOME
+		   		SZ7->Z7_CODASSO  := SA1->A1_CODASSO
+		   		SZ7->Z7_SITUAC   := SA1->A1_SITUAC
+		   		SZ7->Z7_DTINASS  := SA1->A1_DTINASS
+		   		msUnlock()
+        EndIf
+endif        
+
+If lcgc
+   dbSelectArea("SE1")
+   dbSetOrder(20)	    && Indice : Filial + cliente + data_vencto
+   dbseek(xFilial()+_cCGC )	     && Posiciona para o final dos
+				     && dados do cliente e retrocede
+				     && (p/ visualizacao decrescente)             
+Else				     
+   dbSelectArea("SE1")
+   dbSetOrder(21)	    && Indice : Filial + cliente + data_vencto
+   dbseek(xFilial()+_cCodigo )	     && Posiciona para o final dos
+				     && dados do cliente e retrocede
+				     && (p/ visualizacao decrescente)             
+Endif				     
+				     
+
+   ProcRegua(RecCount(),22,05)
+ 
+If lcgc
+   While !Eof() .and. SE1->E1_FILIAL+SE1->E1_CGC == xFilial()+_cCGC
+       DBSKIP()
+   EndDo        
+else
+  
+   While !Eof() .and. SE1->E1_FILIAL+SE1->E1_CLIENTE == xFilial()+_cCodigo
+       DBSKIP()
+   EndDo
+   
+EndIf   
+
+   if !Eof()
+      DBSKIP(-1)
+   Endif
+
+
+If lcgc
+*   While !Eof() .and. SE1->E1_FILIAL+SE1->E1_CGC == xFilial()+_cCGC
+    While !Bof() .and. SE1->E1_FILIAL+SE1->E1_CGC == xFilial()+_cCGC
+    #IFNDEF WINDOWS
+        IncProc(22,05)
+      #ELSE
+        IncProc(_cTitulo)
+      #ENDIF
+
+      if mv_par01 <> 04
+	 	if mv_par01<>02
+	    	if strzero(mv_par01,3) <> ALLTRIM(SE1->E1_NATUREZ)
+  	       		dbskip(-1)
+	       		loop
+	    	endif
+	    else
+            if ALLTRIM(SE1->E1_NATUREZ) <> "002" .and. ALLTRIM(SE1->E1_NATUREZ) <> "009" .and. ALLTRIM(SE1->E1_NATUREZ) <> "0301"
+  	           dbskip(-1)
+	           loop
+	        endif
+	    endif
+      endif
+
+      dbSelectArea("SZ8")
+      RecLock("SZ8",.T.)
+      SZ8->Z8_CLIENTE := SE1->E1_CLIENTE
+      SZ8->Z8_NATUREZ := SE1->E1_NATUREZ
+	  SZ8->Z8_CGC     := SE1->E1_CGC
+      SZ8->Z8_VENCTO  := SE1->E1_VENCTO
+
+      if SE1->E1_VALOR == 0 .and. substr(SE1->E1_PREFIXO,3,1)<>"A"   && Referente a termo de acordo e nao a Boleto Avulso Confederativa
+		 SZ8->Z8_PAGTO := SE1->E1_VENCTO
+      else
+         SZ8->Z8_PAGTO := SE1->E1_BAIXA
+      endif
+
+      SZ8->Z8_VALOR   := SE1->E1_VALLIQ		    
+
+      ANO := SUBSTR(SE1->E1_PREFIXO,1,2)
+
+      VerAno()
+
+      PARC_TMP:=""
+
+      if ALLTRIM(SE1->E1_NATUREZ) == "001"
+	 PARC_TMP := SUBSTR(SE1->E1_NUM,1,2)+"/"+ ANO
+      elseif ALLTRIM(SE1->E1_NATUREZ) == "002" .OR. ALLTRIM(SE1->E1_NATUREZ) == "009" .OR. ALLTRIM(SE1->E1_NATUREZ) == "0301"
+	 PARC_TMP := "0"+SE1->E1_PARCELA+"/"+ ANO
+      elseif ALLTRIM(SE1->E1_NATUREZ) == "003"
+	 PARC_TMP := ANO
+      endif
+					     
+      if alltrim(substr(SE1->E1_PREFIXO,3,1)) == "T"
+	 PARC_TMP := SE1->E1_NUM + " T"
+      endif
+
+      SZ8->Z8_PARCELA := PARC_TMP
+
+      MsUnLock()
+      dbSelectArea("SE1")
+*      dbSkip()
+      dbSkip(-1)
+
+  Enddo
+Else    
+*   While !Eof() .and. SE1->E1_FILIAL+SE1->E1_CLIENTE == xFilial()+_cCodigo
+    While !Bof() .and. SE1->E1_FILIAL+SE1->E1_CLIENTE == xFilial()+_cCodigo
+     #IFNDEF WINDOWS
+        IncProc(22,05)
+      #ELSE
+        IncProc(_cTitulo)
+      #ENDIF
+
+      if mv_par01 <> 04
+	 	if mv_par01<>02
+	    	if strzero(mv_par01,3) <> ALLTRIM(SE1->E1_NATUREZ)
+  	       		dbskip(-1)
+	       		loop
+	    	endif
+	    else
+            if ALLTRIM(SE1->E1_NATUREZ) <> "002" .and. ALLTRIM(SE1->E1_NATUREZ) <> "009" .and. ALLTRIM(SE1->E1_NATUREZ) <> "0301"
+  	           dbskip(-1)
+	           loop
+	        endif
+	    endif
+      endif
+
+      dbSelectArea("SZ8")
+      RecLock("SZ8",.T.)
+      SZ8->Z8_CLIENTE := SE1->E1_CLIENTE
+      SZ8->Z8_NATUREZ := SE1->E1_NATUREZ
+      SZ8->Z8_CGC     := SE1->E1_CGC
+      SZ8->Z8_VENCTO  := SE1->E1_VENCTO
+
+      if SE1->E1_VALOR == 0 .and. substr(SE1->E1_PREFIXO,3,1)<>"A"   && Referente a termo de acordo e nao a Boleto Avulso Confederativa
+		 SZ8->Z8_PAGTO := SE1->E1_VENCTO
+      else
+         SZ8->Z8_PAGTO := SE1->E1_BAIXA
+      endif
+
+      SZ8->Z8_VALOR   := SE1->E1_VALLIQ		    
+
+      ANO := SUBSTR(SE1->E1_PREFIXO,1,2)
+
+      VerAno()
+
+      PARC_TMP:=""
+
+      if ALLTRIM(SE1->E1_NATUREZ) == "001"
+	 PARC_TMP := SUBSTR(SE1->E1_NUM,1,2)+"/"+ ANO
+      elseif ALLTRIM(SE1->E1_NATUREZ) == "002" .OR. ALLTRIM(SE1->E1_NATUREZ) == "009" .OR. ALLTRIM(SE1->E1_NATUREZ) == "0301"
+	 PARC_TMP := "0"+SE1->E1_PARCELA+"/"+ ANO
+      elseif ALLTRIM(SE1->E1_NATUREZ) == "003"
+	 PARC_TMP := ANO
+      endif
+					     
+      if alltrim(substr(SE1->E1_PREFIXO,3,1)) == "T"
+	 PARC_TMP := SE1->E1_NUM + " T"
+      endif
+
+      SZ8->Z8_PARCELA := PARC_TMP
+
+      MsUnLock()
+      dbSelectArea("SE1")
+*      dbSkip()
+      dbSkip(-1)
+
+  Enddo
+    
+EndIf
+      
+//endif
+
+
+If lcgc
+  dbSelectArea("SZ7")
+  dbSetOrder(2)
+  dbseek( xfilial()+_cCgc )
+Else
+  dbSelectArea("SZ7")
+  dbSetOrder(1)
+  dbseek( xfilial()+_cCodigo )
+Endif
+aRotina := {{ "Pesquisa","AxPesqui", 0 , 1},;
+            { "Visual"  ,"AxVisual", 0 , 2},;
+            { "Inclui"  ,"AxInclui", 0 , 3},;
+            { "Altera"  ,"AxAltera", 0 , 4, 20 },;
+            { "Exclui"  ,"AxDeleta", 0 , 5, 21 }}
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Opcoes de acesso para a Modelo 3                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cOpcao:="VISUALIZAR"
+Do Case
+   Case cOpcao=="INCLUIR"; nOpcE:=3 ; nOpcG:=3
+   Case cOpcao=="ALTERAR"; nOpcE:=3 ; nOpcG:=3
+   Case cOpcao=="VISUALIZAR"; nOpcE:=2 ; nOpcG:=2
+EndCase
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Cria variaveis M->????? da Enchoice                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*RegToMemory("SZ7",(cOpcao=="INCLUIR"))
+M->Z7_FILIAL  := SZ7->Z7_FILIAL   
+M->Z7_CLIENTE := SZ7->Z7_CLIENTE
+M->Z7_CGC     := SZ7->Z7_CGC
+M->Z7_END     := SZ7->Z7_END
+M->Z7_NOME    := SZ7->Z7_NOME
+M->Z7_CODASSO := SZ7->Z7_CODASSO  
+M->Z7_SITUAC  :=  SZ7->Z7_SITUAC
+M->Z7_DTINASS :=  SZ7->Z7_DTINASS
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Cria aHeader e aCols da GetDados                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nUsado:=0
+dbSelectArea("SX3")
+dbSeek("SZ8")
+aHeader := {}
+    
+
+ 	While !Eof().And.(x3_arquivo=="SZ8")
+	   If Alltrim(x3_campo)=="Z8_CLIENTE"
+	      dbSkip()
+	      Loop
+	   Endif
+	   If X3USO(x3_usado) .And. cNivel >= x3_nivel
+	      nUsado:=nUsado+1
+	      Aadd(aHeader,{ TRIM(x3_titulo), x3_campo, x3_picture,;
+	                          x3_tamanho, x3_decimal,"AllwaysTrue()",;
+	                          x3_usado, x3_tipo, x3_arquivo, x3_context } )
+	   Endif
+	   dbSkip()
+	End
+
+
+
+If cOpcao=="INCLUIR"
+	aCols:={Array(nUsado+1)}
+	aCols[1,nUsado+1]:=.F.
+	For _ni:=1 to nUsado
+            aCols[1,_ni]:=CriaVar(aHeader[_ni,2])
+	Next
+Else
+  aCols:={}
+  If lcgc 
+     dbSelectArea("SZ8")
+     If mv_par01<>02
+       dbsetorder(3)
+     else
+       dbsetorder(4)
+     Endif
+    dbSeek(xFilial()+M->Z7_CGC)
+    While !eof().and. Z8_CGC == M->Z7_CGC
+       AADD(aCols,Array(nUsado+1))
+      For _ni:=1 to nUsado
+          aCols[Len(aCols),_ni]:=FieldGet(FieldPos(aHeader[_ni,2]))
+      Next 
+         aCols[Len(aCols),nUsado+1]:=.F.
+      dbSkip()
+    End
+  Else
+    dbSelectArea("SZ8")
+    If mv_par01<>02
+      dbsetorder(1)
+    else
+      dbsetorder(2)
+    Endif
+  
+    dbSeek(xFilial()+M->Z7_CLIENTE)
+  
+    While !eof().and. Z8_CLIENTE == M->Z7_CLIENTE
+       AADD(aCols,Array(nUsado+1))
+      For _ni:=1 to nUsado
+          aCols[Len(aCols),_ni]:=FieldGet(FieldPos(aHeader[_ni,2]))
+      Next 
+         aCols[Len(aCols),nUsado+1]:=.F.
+      dbSkip()
+    End  
+  Endif  
+    
+Endif
+If Len(aCols)>0
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Executa a Modelo 3                                           ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+    cTitulo:="Consulta Cobranca"
+    cAliasEnchoice:="SZ7"
+    cAliasGetD:="SZ8"
+	cLinOk:="AllwaysTrue()"
+	cTudOk:="AllwaysTrue()"
+	cFieldOk:="AllwaysTrue()"
+    aCpoEnchoice:={"Z7_CGC"}
+
+	_lRet:=Modelo3(cTitulo,cAliasEnchoice,cAliasGetD,aCpoEnchoice,cLinOk,cTudOk,nOpcE,nOpcG,cFieldOk)
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Executar processamento                                       ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//    If _lRet
+//           Aviso("Modelo3()","Confirmada operacao!",{"Ok"})
+//    Endif
+else
+        Aviso("Consulta","Nao ha dados para visualisar!",{"Ok"})
+Endif
+
+
+If lcgc 
+    dbSelectArea("SZ7")
+    dbSetOrder(2)
+    dbseek(xFilial()+_cCgc )
+    while !eof() .and. xFilial()+_cCgc == SZ7->Z7_FILIAL+SZ7->Z7_CGC
+      Reclock("SZ7",.F.)
+      Dbdelete()
+      dbskip()
+    end
+else
+	 dbSelectArea("SZ7")
+	 dbSetOrder(2)
+     dbseek(xFilial()+_cCodigo )
+     while !eof() .and. xFilial()+_cCodigo == SZ7->Z7_FILIAL+SZ7->Z7_CLIENTE
+       Reclock("SZ7",.F.)
+       Dbdelete()
+       dbskip()
+     end   
+EndIF
+
+If lcgc 
+	dbSelectArea("SZ8")
+	dbsetorder(3)
+	dbseek(xFilial()+_cCGC )
+	while !eof() .and. xFilial()+_cCGC == SZ8->Z8_FILIAL+SZ8->Z8_CGC
+	  Reclock("SZ8",.F.)
+	  Dbdelete()
+	  dbskip()
+	end
+Else
+    dbSelectArea("SZ8")
+	dbsetorder(1)
+	dbseek(xFilial()+_cCodigo )
+	while !eof() .and. xFilial()+_cCodigo == SZ8->Z8_FILIAL+SZ8->Z8_CLIENTE
+	  Reclock("SZ8",.F.)
+	  Dbdelete()
+	  dbskip()
+	end
+
+EndIF
+
+
+dbSelectArea("SE1")
+dbsetorder(1)
+
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder)
+
+
+Return
+
+
+// Substituido pelo assistente de conversao do AP5 IDE em 10/07/03 ==> function VerAno
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> function VerAno()
+Static function VerAno()
+
+if val(ANO)<90
+   ANO:="20"+ANO
+else
+   ANO:="19"+ANO
+endif
+
+return 
+

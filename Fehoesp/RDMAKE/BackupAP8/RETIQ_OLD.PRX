@@ -1,0 +1,585 @@
+#include "rwmake.ch"
+#include "topconn.ch"
+User Function RETIQOLD()
+SetPrvt("_CALIAS,CBCONT,CBTXT,WNREL,CDESC1,CDESC2")
+SetPrvt("CDESC3,CSTRING,TAMANHO,TIPO,LIMITE,TITULO")
+SetPrvt("CABEC1,CABEC2,ARETURN,NOMEPROG,NLASTKEY,CPERG")
+SetPrvt("M_PAG,LI,_AESTR,C_ARQIMP,CARQIND,CINDSA1")
+SetPrvt("XNOME1,XNOME2,XNOME3,XNOME4,XEND1,XEND2")
+SetPrvt("XEND3,XEND4,XBAIRRO1,XBAIRRO2,XBAIRRO3,XBAIRRO4")
+SetPrvt("XCEP1,XCEP2,XCEP3,XCEP4,XCIDADE1,XCIDADE2")
+SetPrvt("XCIDADE3,XCIDADE4,XESTADO1,XESTADO2,XESTADO3,XESTADO4")
+SetPrvt("NVEZ,LIMPRIME,VEZ,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ Retiq    ³ Autor ³ Luiz M. Duarte Junior ³ Data ³ 13.12.04 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Impressao de etiquetas                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+LCONTINUA := .F.
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 := "Este programa ir  imprimir as etiquetas"
+cDesc2 := ""
+cDesc3 := ""
+cString := "SA1"
+tamanho := "G"
+tipo := 15
+limite := 220
+titulo := "Etiquetas de Contribuintes"
+cabec1 := ""
+cabec2 := ""
+//	     1	       2	 3	   4	     5	       6	 7	   8	     9	      10	11	  12	    13	      14	15	  16	    17
+// 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+// 123456 123456789012345678901234567890123456789012345  12.345.678/9012-34    12   1234 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 99.999,99
+// XXXXXXXXXXXXXXXXXX(40)XXXXXXXXXXXXXXXXXX XXXXX(15)XXXXXX XXXXXXX(15)XXXX
+//
+aReturn := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog := "RETIQ"
+nLastkey := 0
+cPerg := "RETIQ "
+m_pag := 1
+li := 0
+pergunte(cPerg,.f.)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01                    // DIR                           ³
+//³ mv_par02                    // ERSIN                         ³
+//³ mv_par03                    // BASE                          ³
+//³ mv_par04                    // SIND.MEDICOS                  ³
+//³ mv_par05                    // CIDADE                        ³
+//³ mv_par06                    // CATEGORIA                     ³
+//³ mv_par07                    // FILANTROPICO                  ³
+//³ mv_par08                    // SOCIOS                        ³
+//³ mv_par09                    // ASSOC/CONF                    ³
+//³ mv_par10                    // EMAIL                         ³
+//³ mv_par11                    // DT CADASTRO                   ³
+//³ mv_par12                    // CEP DE                        ³
+//³ mv_par13                    // CEP ATE                       ³
+//³ mv_par14                    // CAPITAL CENTRALIZADO          ³
+//³ mv_par15                    // FOLHA CENTRALIZADA            ³
+//³ mv_par16                    // CONVENIO SUS                  ³
+//³ mv_par17                    // QUAL DESTINO-TODOS/ENTID./ESCR³
+//³ mv_par18                    // QUAL SITUACAO-TODOS/ATIV/INAT.³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel := "RETIQ"
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastkey == 27
+	return
+endif
+SetDefault(aReturn,cString)
+if nLastkey == 27
+	return
+endif           
+LCONTINUA := .T.
+If aReturn[5]<>1
+	VERIMP()
+ENDIF
+if lcontinua
+	RptStatus({|| impETIQ() },titulo) // Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>     RptStatus({|| Execute(impETIQ) },titulo)
+endif
+return
+
+*------------------------------------------------------------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function ImpETIQ
+Static Function ImpETIQ()
+*------------------------------------------------------------------------*
+
+_aEstr := {}
+AADD(_aEstr,{"NOME"      , "C" , 50 , 0})
+AADD(_aEstr,{"ENDERECO"  , "C" , 50 , 0})
+AADD(_aEstr,{"BAIRRO"    , "C" , 25 , 0})
+AADD(_aEstr,{"CEP"       , "C" , 08 , 0})
+AADD(_aEstr,{"CIDADE"    , "C" , 20 , 0})
+AADD(_aEstr,{"ESTADO"    , "C" , 02 , 0})
+AADD(_aEstr,{"TIPOEND"   , "C" , 10 , 0})
+AADD(_aEstr,{"CNPJ"      , "C" , 14 , 0})
+AADD(_aEstr,{"FONE"      , "C" , 15 , 0})
+AADD(_aEstr,{"EMAIL"     , "C" , 40 , 0})
+AADD(_aEstr,{"CONTATO"   , "C" , 40 , 0})
+AADD(_aEstr,{"BASE"      , "C" , 04 , 0})
+AADD(_aEstr,{"SINDMED"   , "C" , 04 , 0})
+AADD(_aEstr,{"ERSIN"     , "C" , 02 , 0})
+AADD(_aEstr,{"SOCIO"     , "C" , 01 , 0})
+AADD(_aEstr,{"CATEGORIA" , "C" , 05 , 0})
+AADD(_aEstr,{"DATAINICIO", "D" , 08 , 0})
+AADD(_aEstr,{"DATAFIM"   , "D" , 08 , 0})
+AADD(_aEstr,{"situacao"  , "C" , 02 , 0})
+c_ArqImp := CriaTrab(_aEstr,.t.)
+dbusearea(.t.,,c_ArqImp,"ETIQ",.T.)
+dbselectarea("ETIQ")
+cArqIND := criatrab("",.f.)
+if mv_par19 == 2
+	IndRegua("ETIQ",cArqIND,"CEP+NOME",,,"Selecionando Registros...")
+else
+	IndRegua("ETIQ",cArqIND,"NOME",,,"Selecionando Registros...")
+endif
+CQUERY := " SELECT * FROM "+RETSQLNAME("SA1")+" SA1 "
+CQUERY += " WHERE A1_CEP BETWEEN '"+MV_PAR11+"' AND '"+MV_PAR12+"' "
+CQUERY += " AND A1_CATEG1 BETWEEN '"+MV_PAR26+"' AND '"+MV_PAR27+"' "
+IF !EMPTY(MV_PAR01)
+	CQUERY += " AND  A1_DIR IN "+FORMATIN(alltrim(MV_PAR01),"/")
+ENDIF
+IF !EMPTY(MV_PAR02)
+	CQUERY += " AND  A1_ERSIN IN "+FORMATIN(alltrim(MV_PAR02),"/")
+ENDIF
+IF !EMPTY(MV_PAR03)
+	CQUERY += " AND  A1_BASE IN "+FORMATIN(alltrim(MV_PAR03),"/")
+ENDIF
+IF !EMPTY(MV_PAR04)
+	CQUERY += " AND  A1_BASE2 IN "+FORMATIN(alltrim(MV_PAR04),"/")
+ENDIF
+IF !EMPTY(MV_PAR05)
+	CQUERY += " AND  A1_MUN ='"+MV_PAR05+"' "
+ENDIF
+IF !EMPTY(MV_PAR06)
+	CQUERY += " AND  A1_CATEG1 IN "+FORMATIN(alltrim(MV_PAR06),"/")
+ENDIF
+IF MV_PAR07 == 2
+	CQUERY += " AND  A1_FILANT IN ('X','S') "
+ELSEIF MV_PAR07 == 3
+	CQUERY += " AND  A1_FILANT NOT IN ('X','S') "
+ENDIF
+IF MV_PAR08 == 2
+	CQUERY += " AND  A1_SITUAC= 'AS' "
+ELSEIF MV_PAR08 == 3
+	CQUERY += " AND  A1_SITUAC= 'SS' "
+ELSEIF MV_PAR08 == 4
+	CQUERY += " AND  A1_SITUAC= 'CT' "
+ELSEIF MV_PAR08 == 5
+	CQUERY += " AND  A1_SITUAC= 'IS' "
+ENDIF
+IF !EMPTY(MV_PAR09)
+	CQUERY += " AND  A1_EMAIL ='"+MV_PAR09+"' "
+ENDIF
+IF !EMPTY(MV_PAR10)
+	CQUERY += " AND  A1_DTCADAS >='"+DTOS(MV_PAR10)+"' "
+ENDIF
+IF MV_PAR13 == 2
+	CQUERY += " AND  A1_CAPCENT ='S' "
+ELSEIF MV_PAR13 == 3
+	CQUERY += " AND  A1_CAPCENT <> 'S' "
+ENDIF
+IF MV_PAR14 == 2
+	CQUERY += " AND  A1_FOLCENT ='S' "
+ELSEIF MV_PAR14 == 3
+	CQUERY += " AND  A1_FOLCENT <> 'S' "
+ENDIF
+IF MV_PAR15 == 2
+	CQUERY += " AND  A1_CONVSUS ='S' "
+ELSEIF MV_PAR15 == 3
+	CQUERY += " AND  A1_CONVSUS <> 'S' "
+ENDIF
+IF MV_PAR16 == 2
+	CQUERY += " AND  A1_ESCCONT ='' "
+ELSEIF MV_PAR16 == 3
+	CQUERY += " AND  A1_ESCCONT <> '' "
+ENDIF
+IF MV_PAR17 == 2
+	CQUERY += " AND  A1_INAT NOT IN('X','S') "
+ELSEIF MV_PAR17 == 3
+	CQUERY += " AND  A1_INAT IN('X','S') "
+ENDIF
+IF MV_PAR28 == 2
+	CQUERY += " AND  A1_CODASSO<>'' "
+ELSEIF MV_PAR28 == 3
+	CQUERY += " AND  A1_CODASSO='' "
+ENDIF
+CQUERY += " ORDER BY A1_NOME "
+TCQUERY cQuery NEW ALIAS "TRB"
+dbselectarea("trb")
+SetRegua(RecCount())
+while !eof()
+	IncRegua()
+	if mv_par19 == 1
+		IF !EMPTY(MV_PAR20)
+			dbSelectArea("SE1")
+			Dbsetorder(1)
+			if !(dbseek( xFilial()+SUBS(mv_par20,5,2)+" "+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par20,5,2)+"E"+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP") .or.;
+				Dbseek( xFilial()+SUBS(mv_par20,5,2)+"A"+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP"))
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR21)
+			dbSelectArea("SE1")
+			Dbsetorder(1)
+			if !(dbseek( xFilial()+SUBS(mv_par21,5,2)+" "+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par21,5,2)+"E"+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par21,5,2)+"A"+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP"))
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR22)
+			dbSelectArea("SE1")
+			Dbsetorder(1)
+			if !dbseek( xFilial()+SUBS(mv_par22,3,2)+"S"+TRB->A1_COD+" DP")
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR23)
+			dbSelectArea("SE1")
+			Dbsetorder(1)
+			if !dbseek( xFilial()+SUBS(mv_par23,3,2)+"S"+TRB->A1_COD+" DP")
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+	ELSEIf mv_par19 == 2
+		IF !EMPTY(MV_PAR20)
+			dbSelectArea("SE1")
+			Dbsetorder(1)
+			if (dbseek( xFilial()+SUBS(mv_par20,5,2)+" "+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par20,5,2)+"E"+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par20,5,2)+"A"+TRB->A1_COD+SUBS(mv_par20,1,1)+"DP"))
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR21)
+			dbSelectArea("SE1")
+			Dbsetorder(1)
+			if (dbseek( xFilial()+SUBS(mv_par21,5,2)+" "+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par21,5,2)+"E"+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP") .or.;
+				dbseek( xFilial()+SUBS(mv_par21,5,2)+"A"+TRB->A1_COD+SUBS(mv_par21,1,1)+"DP"))
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR22)
+			dbSelectArea("SE1")
+			Dbsetorder(1)
+			if dbseek( xFilial()+SUBS(mv_par22,3,2)+"S"+TRB->A1_COD+" DP")
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+		IF !EMPTY(MV_PAR23)
+			dbSelectArea("SE1")
+			Dbsetorder(1)
+			if dbseek( xFilial()+SUBS(mv_par23,3,2)+"S"+TRB->A1_COD+" DP")
+				dbSelectArea("TRB")
+				dbskip()
+				loop
+			endif
+		ENDIF
+	ENDIF
+	DBSELECTAREA("TRB")
+	IF !EMPTY(TRB->A1_ESCCONT)
+		DBSELECTAREA("SZC")
+		DBSETORDER(2)
+		DBSEEK(xfilial()+TRB->A1_ESCCONT)
+	ENDIF
+	dbselectarea("ETIQ")
+	RECLOCK("ETIQ",.t.)
+	IF !EMPTY(TRB->A1_ESCCONT) .AND. !EMPTY(SZC->ZC_CEP)
+		ETIQ->NOME      := TRB->A1_nome
+		ETIQ->ENDERECO  := sZC->ZC_end
+		ETIQ->BAIRRO    := sZC->ZC_bairro
+		ETIQ->CEP       := sZC->ZC_cep
+		etiq->CIDADE    := sZC->ZC_mun
+		ETIQ->ESTADO    := sZC->ZC_est
+		ETIQ->TIPOEND   := "ESCRITORIO"
+		ETIQ->CNPJ      := TRB->a1_cgc
+		ETIQ->FONE      := TRB->a1_tel
+		ETIQ->EMAIL     := TRB->a1_email
+		ETIQ->CONTATO   := TRB->a1_contato
+		ETIQ->BASE      := TRB->a1_base
+		ETIQ->SINDMED   := TRB->a1_base2
+		ETIQ->ERSIN     := TRB->a1_ersin
+		ETIQ->SOCIO     := TRB->a1_tpcli
+		ETIQ->CATEGORIA := TRB->a1_categ1
+		ETIQ->DATAINICIO:= STOD(TRB->a1_dtinass)
+		ETIQ->DATAFIM   := STOD(TRB->A1_dtfimas)
+		ETIQ->SITUACAO  := TRB->A1_SITUAC
+	ELSE
+		ETIQ->NOME      := TRB->A1_nome
+		ETIQ->ENDERECO  := TRB->a1_end
+		ETIQ->BAIRRO    := TRB->A1_bairro
+		ETIQ->CEP       := TRB->a1_cep
+		etiq->CIDADE    := TRB->a1_mun
+		ETIQ->ESTADO    := TRB->a1_est
+		ETIQ->TIPOEND   := "ENTIDADE"
+		ETIQ->CNPJ      := TRB->a1_cgc
+		ETIQ->FONE      := TRB->a1_tel
+		ETIQ->EMAIL     := TRB->a1_email
+		ETIQ->CONTATO   := TRB->a1_contato
+		ETIQ->BASE      := TRB->a1_base
+		ETIQ->SINDMED   := TRB->a1_base2
+		ETIQ->ERSIN     := TRB->a1_ersin
+		ETIQ->SOCIO     := TRB->a1_tpcli
+		ETIQ->CATEGORIA := TRB->a1_categ1
+		ETIQ->DATAINICIO:= STOD(TRB->a1_dtinass)
+		ETIQ->DATAFIM   := STOD(TRB->A1_dtfimas)
+		ETIQ->SITUACAO  := TRB->A1_SITUAC
+	ENDIF
+	msunlock()
+	DBSELECTAREA("TRB")
+	DBSKIP()
+ENDDO
+DBSELECTAREA("eTIQ")
+dbgotop()
+SetRegua(RecCount())
+Xnome1 := Xnome2 := Xnome3 := Xnome4 := ""
+XEND1 := XEND2 := XEND3:= XEND4 :=""
+XBAIRRO1 := XBAIRRO2 := XBAIRRO3 := XBAIRRO4 := ""
+Xcep1 := Xcep2 := Xcep3 := Xcep4 := ""
+Xcidade1 := Xcidade2 := Xcidade3 := Xcidade4 := ""
+Xestado1 := Xestado2 := Xestado3 := Xestado4 := ""
+XcGC1 := XcGC2 := XcGC3 := XcGC4 := ""
+Nvez := 1
+limprime := .t.
+NUMETIQ := 0
+DO WHILE !eof()
+	INCREGUA()
+	if Nvez == 1
+		xcgc1     := etiq->CNPJ
+		Xnome1    := etiq->nome
+		Xend1     := etiq->endereco
+		Xbairro1  := etiq->bairro
+		Xcep1     := etiq->cep
+		Xcidade1  := etiq->cidade
+		Xestado1  := etiq->estado
+		Nvez := NVEZ +1
+		limprime := .t.
+	elseif Nvez == 2
+		xcgc2     := etiq->CNPJ
+		Xnome2    := etiq->nome
+		Xend2     := etiq->endereco
+		Xbairro2  := etiq->bairro
+		Xcep2     := etiq->cep
+		Xcidade2  := etiq->cidade
+		Xestado2  := etiq->estado
+		Nvez := NVEZ +1
+		limprime := .t.
+	elseif Nvez == 3
+		xcgc3     := etiq->CNPJ
+		Xnome3    := etiq->nome
+		Xend3     := etiq->endereco
+		Xbairro3  := etiq->bairro
+		Xcep3     := etiq->cep
+		Xcidade3  := etiq->cidade
+		Xestado3  := etiq->estado
+		Nvez := NVEZ +1
+		limprime := .t.
+	endif
+	if Nvez == 4 .and. limprime
+		IF !EMPTY(XCGC1)
+			NUMETIQ ++
+		ENDIF
+		IF !EMPTY(XCGC2)
+			NUMETIQ ++
+		ENDIF
+		IF !EMPTY(XCGC3)
+			NUMETIQ ++
+		ENDIF
+		@ li,000 PSAY XCGC1 PICTURE "@R 99.999.999/9999-99"
+		@ li,020 psay MV_PAR24
+		@ li,060 PSAY XCGC2 PICTURE "@R 99.999.999/9999-99"
+		@ li,080 psay MV_PAR24
+		@ li,120 PSAY XCGC3 PICTURE "@R 99.999.999/9999-99"
+		@ li,140 psay MV_PAR24
+		li:= LI +1
+		@ li,000 PSAY Xnome1
+		@ li,060 PSAY Xnome2
+		@ li,120 PSAY Xnome3
+		li:= LI +1
+		@ li,000 PSAY MV_PAR25
+		@ li,060 PSAY MV_PAR25
+		@ li,120 PSAY MV_PAR25
+		li:= LI +1
+		@ li,000 PSAY Xend1
+		@ li,060 PSAY Xend2
+		@ li,120 PSAY Xend3
+		li:= LI +1
+		@ li,000 PSAY Xcep1 picture "@r 99999-999"
+		@ li,012 PSAY ALLTRIM(Xcidade1)+"/"+Xestado1
+		@ li,060 PSAY Xcep2 picture "@r 99999-999"
+		@ li,072 PSAY ALLTRIM(Xcidade2)+"/"+Xestado2
+		@ li,120 PSAY Xcep3 picture "@r 99999-999"
+		@ li,132 PSAY ALLTRIM(Xcidade3)+"/"+Xestado3
+		li:= LI +2
+		Nvez := 1
+		Xnome1 := Xnome2 := Xnome3 := Xnome4 := ""
+		XEND1 := XEND2 := XEND3:= XEND4 :=""
+		XBAIRRO1 := XBAIRRO2 := XBAIRRO3 := XBAIRRO4 := ""
+		Xcep1 := Xcep2 := Xcep3 := Xcep4 := ""
+		Xcidade1 := Xcidade2 := Xcidade3 := Xcidade4 := ""
+		Xestado1 := Xestado2 := Xestado3 := Xestado4 := ""
+		XcGC1 := XcGC2 := XcGC3 := XcGC4 := ""
+		
+		limprime := .F.
+	endif
+	dbselectAREA("ETIQ")
+	DBSKIP()
+ENDDO
+if  limprime
+	IF !EMPTY(XCGC1)
+		NUMETIQ ++
+	ENDIF
+	IF !EMPTY(XCGC2)
+		NUMETIQ ++
+	ENDIF
+	IF !EMPTY(XCGC3)
+		NUMETIQ ++
+	ENDIF
+	
+	@ li,000 PSAY XCGC1 PICTURE "@R 99.999.999/9999-99"
+	@ li,020 psay MV_PAR24
+	@ li,060 PSAY XCGC2 PICTURE "@R 99.999.999/9999-99"
+	@ li,080 psay MV_PAR24
+	@ li,120 PSAY XCGC3 PICTURE "@R 99.999.999/9999-99"
+	@ li,140 psay MV_PAR24
+	li:= LI +1
+	@ li,000 PSAY Xnome1
+	@ li,060 PSAY Xnome2
+	@ li,120 PSAY Xnome3
+	li:= LI +1
+	@ li,000 PSAY MV_PAR25
+	@ li,060 PSAY MV_PAR25
+	@ li,120 PSAY MV_PAR25
+	li:= LI +1
+	@ li,000 PSAY Xend1
+	@ li,060 PSAY Xend2
+	@ li,120 PSAY Xend3
+	li:= LI +1
+	@ li,000 PSAY Xcep1 picture "@r 99999-999"
+	@ li,012 PSAY ALLTRIM(Xcidade1)+"/"+Xestado1
+	@ li,060 PSAY Xcep2 picture "@r 99999-999"
+	@ li,072 PSAY ALLTRIM(Xcidade2)+"/"+Xestado2
+	@ li,120 PSAY Xcep3 picture "@r 99999-999"
+	@ li,132 PSAY ALLTRIM(Xcidade3)+"/"+Xestado3
+	li:= LI +2
+	vez := 1
+	limprime := .F.
+endif
+@ li,000 psay chr(18)
+li ++
+@ li,000 PSAY "Numero de etiquetas "
+li++
+@ li,000 psay "impressas: "+strzero(numetiq,6)
+li++
+ALERT("Etiquetas: "+strzero(numetiq,6))
+dbselectarea("ETIQ")
+dbclosearea()
+dbselectarea("TRB")
+dbclosearea()
+DBSELECTAREA("SA1")
+RETINDEX("SA1")
+set device to screen
+if aReturn[5] == 1
+	set printer to
+	dbcommit()
+	ourspool(wnrel)
+endif
+MS_FLUSH()
+dbselectarea(_cAlias)
+Return
+*************************
+Static Function VerImp()
+Li:= 0                // Contador de Linhas
+nLinIni:=0
+If aReturn[5]<>1
+	nOpc       := 1
+	SetPrc(0,0)
+	@ li,000 PSAY chr(15)
+	dbCommitAll()
+	While .T.
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+ 		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li++
+		@ Li ,000 PSAY replicate("*",50)
+		@ Li ,060 PSAY replicate("*",50)
+		@ Li ,120 PSAY replicate("*",50)
+		li+=2
+		IF MsgYesNo("Fomulario esta posicionado ? ")
+			nOpc := 1
+		ElseIF MsgYesNo("Tenta Novamente ? ")
+			nOpc := 2
+		Else
+			nOpc := 3
+		Endif
+		Do Case
+			Case nOpc==1
+				lContinua:=.T.
+				Exit
+			Case nOpc==2
+				Loop
+			Case nOpc==3
+				lContinua:=.F.
+				Return
+		EndCase
+	End
+Endif

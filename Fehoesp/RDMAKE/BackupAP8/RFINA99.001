@@ -1,0 +1,94 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function RFINA99()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA19	³ Autor ³ Luiz Eduardo D da Roz	³ Data ³02.10.2000³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Cadastro de Titulos (Para exclusao)                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso	     ³ Espec¡fico SINDHOSP					  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+                  
+nPos := 0
+cParcela := chr(asc(GetMV("MV_1DUP"))-1)
+
+If SE1->(FieldPos("E1_CODOBS")) > 0
+	aMemos := { {"E1_CODOBS", "E1_OBS" } }
+Endif
+
+nMaxParc  := 0
+
+If TAMSX3("E1_PARCELA")[1] == 1  // TAMANHO DA PARCELA
+	For nX := 1 To 63
+		cParcela:=Soma1( cParcela,, .T. )
+		If cParcela == "*"
+			Exit
+		Endif
+   	nMaxParc++
+	Next
+Else
+	nMaxParc := 999
+Endif
+                  
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo  := "Manutençao de Títulos"
+n_Opc     := 0
+cCadastro := "Manutençao de Títulos"
+/*aRotina   := { { "Pesquisar"   ,"AxPesqui" , 0, 1},;
+{ "Visualisar"   ,"axvisual"  , 0, 2},;
+{ "Excluir"   ,"axexclui"  , 0, 2},;
+{ "Excluir"   ,"axexclui"  , 0, 2},;
+{ "Boleto Bradesco"   ,"u_impbol()"  , 0, 2},;
+{ "Boleto Real"   ,"u_impbolr()"  , 0, 2}}
+*/
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Array contendo as Rotinas a executar do programa 	  ³
+//³ ----------- Elementos contidos por dimensao ------------	  ³
+//³ 1. Nome a aparecer no cabecalho 									  ³
+//³ 2. Nome da Rotina associada											  ³
+//³ 3. Usado pela rotina													  ³
+//³ 4. Tipo de Transa‡„o a ser efetuada								  ³
+//³	 1 -Pesquisa e Posiciona em um Banco de Dados				  ³
+//³	 2 -Simplesmente Mostra os Campos								  ³
+//³	 3 -Inclui registros no Bancos de Dados						  ³
+//³	 4 -Altera o registro corrente									  ³
+//³	 5 -Exclui um registro cadastrado								  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+PRIVATE aRotina := { 	{"Pesquisar" ,'AxPesqui'  , 0 , 1},; // 
+						{"Visualizar" ,"FA280Visua", 0 , 2},; // 
+						{"Incluir" ,"FA040Inclu", 0 , 3},; // 
+						{"Alterar Sindhosp","axaltera", 0 , 4},;
+						{"Excluir Sindhosp",'axexclui()', 0 , 5},;
+						{"Boleto Bradesco" ,"u_impbol()"  , 0, 2},;
+						{"Boleto Real"     ,"u_impbolr()"  , 0, 2},;
+						{"Legenda" ,"FA040Legenda", 0 , 6} }// 
+lF040Auto := .F.
+pergunte("FIN040",.F.)
+
+cLote:=""
+lAltera:=.T.
+cBancoAdt		:= CriaVar("A6_COD")
+cAgenciaAdt	:= CriaVar("A6_AGENCIA")
+cNumCon		:= CriaVar("A6_NUMCON")
+nMoeda  		:= Int(Val(GetMv("MV_MCUSTO")))
+cMarca  		:= GetMark()
+lHerdou		:= .F.
+//aTELA[0][0],aGETS[0]
+lIntegracao := IF(GetMV("MV_EASY")=="S",.T.,.F.)
+
+
+DbSelectArea("SE1")
+DbSetOrder(1)
+mBrowse( 6, 1,22,75,"SE1",,,,,, Fa040Legenda("SE1"))
+return nil
+

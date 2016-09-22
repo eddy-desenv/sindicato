@@ -1,0 +1,138 @@
+#include "rwmake.ch"
+User Function IMPCNES()
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,_CARQCONTRIB,_CARQASSOCIA")
+SetPrvt("_NINCLUIDOS,_NALTERADOS,_NINCONSIST,_CARQUIVO,_NCOD,ANOC")
+SetPrvt("_CTEXTO,W,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ impcNES  ³ Autor ³ Luis Mattos Duarte Jr.³ Data ³ 03/08/05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Importacao do CD CNES                                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo  := "Importacao do Cd do CNES"
+n_Opc := 0
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+@ 023,014 SAY "Este programa fara a importacao dos Clientes do CD do CNES"
+@ 086,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS."
+@ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()
+@ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+Return
+*-----------------------*
+Static Function Iniciar()
+Close(oDlg1)
+Processa( {|| Importar() })
+Return
+*------------------------*
+Static Function Importar()
+Use importar ALIAS "Trb" NEW shared
+dbGotop()
+_NINCLUIDOS := _NALTERADOS := 0
+ProcRegua(RecCount(),22,05)
+xCODIGO := 37328
+while !eof()
+	IncProc(trb->cnpj)
+	dbSelectArea("SA1")
+	dbSetOrder(3)         //Pesquisa por CGC
+	dbSeek(xFilial("SA1")+subs(trb->cnpj,1,14))
+	If !Found()
+		dbSelectArea("Trb")
+		RECLOCK("SA1",.T.)
+		SA1->A1_COD     := STRZERO(xCODIGO,6)
+		SA1->A1_LOJA    := "01"
+		SA1->A1_NOME    := TRB->RAZAO_SOC
+		SA1->A1_CNES    := TRB->CNES
+		sa1->a1_nreduz  := trb->nome_fant
+		sa1->a1_end     := alltrim(trb->endereco)+","+alltrim(trb->numero)
+		sa1->a1_bairro  := trb->bairro
+		sa1->a1_cep     := trb->cep
+		sa1->a1_tel3    :=  trb->telefone
+		sa1->a1_fax2    :=  trb->fax
+        sa1->a1_cgc     := trb->cnpj
+        sa1->a1_mun     := trb->municipio
+        sa1->a1_est     := trb->estado
+        sa1->a1_tpcadas := "N"
+        sa1->a1_dtcadas := ddatabase
+        sa1->a1_inat    := "X"
+  		msunlock()
+		_nincluidos := _nincluidos + 1
+  		xcodigo ++
+	else
+		RecLock("SA1",.F.)
+		if alltrim(sa1->a1_tel3)=="NULL"
+			sa1->a1_tel3 :=  ""
+		endif
+		if alltrim(sa1->a1_fax2)=="NULL"
+			sa1->a1_fax2 :=  ""
+		endif
+		if ALLTRIM(trb->cnes) <> "NULL"
+			SA1->A1_CNES := TRB->CNES
+		ENDIF
+		IF !EMPTY(TRB->FILANTRO)
+			sa1->a1_filant := "X"
+		endif
+		if !empty(trb->excluir)
+			dbdelete()
+		else
+			sa1->a1_inat:=""
+		endif
+		sa1->a1_categ1 := strzero(trb->categoria,5)
+		sa1->a1_categ2 := TRB->categoriA2
+		sa1->a1_ersin := strzero(trb->ersin,2)
+		sa1->a1_base  := strzero(trb->base,4)
+		sa1->a1_base2 := strzero(trb->sind_MED,4)
+		SA1->A1_DTCADAS:= DDATABASE
+		_nAlterados := _nAlterados + 1
+		MsUnLock()			
+		DBSELECTAREA("TRB")
+		RECLOCK("TRB",.F.)
+		DBDELETE()
+		MSUNLOCK()
+	endif
+	dbSelectArea("TRB")
+	dbskip()
+end
+/*Use jEMAIL2 ALIAS "Trb2" NEW shared
+dbGotop()
+ProcRegua(RecCount(),22,05)
+while !eof()
+	IncProc(trb2->cnes)
+	dbSelectArea("SA1")
+	dbSetOrder(10)         //Pesquisa por CGC
+	dbSeek(xFilial("SA1")+subs(trb2->cnES,1,7))
+	IF FOUND()
+		RECLOCK("SA1",.F.)
+		SA1->A1_EMAIL3 := TRB2->E_mail
+		msunlock()
+	endif
+	dbselectarea("trb2")
+	dbskiP()
+enddo
+dbSelectArea("TRB2")
+dbCloseArea()*/
+dbSelectArea("TRB")
+dbCloseArea()
+@ 96,42 TO 290,405 DIALOG oDlg1 TITLE "Termino de Importacao"
+@ 8,10 TO 68,170
+@ 23,22 SAY "Clientes Incluidos"
+@ 23,95 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+@ 33,22 SAY "Clientes Alterados"
+@ 33,95 GET _nAlterados PICTURE "@E 999,999" WHEN .F.
+@ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+dbSelectArea("SA1")
+dbSetOrder(1)
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder) // Atencao (UPDXFUN).
+Return

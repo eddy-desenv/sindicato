@@ -1,0 +1,6 @@
+#include "rwmake.ch"       
+
+User Function AXCADZ2()
+AxCadastro("SZ2","Cadastro de Cortesias")
+return nil
+

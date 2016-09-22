@@ -1,0 +1,493 @@
+Group SindHosp
+   Version=7.0
+   VSSDB=
+   HasProperties=1
+   Properties
+      BeforeApply=
+      AfterApply=
+      Icon=
+      ID=
+      Version=
+      PalmName=
+      OutPut=
+   End
+   ProjectsCount=4
+   Project Financeiro
+      FoldersCount=5
+      Folder Atualizações
+         VSSPath=Nova Pasta1
+         FilesCount=56
+         File \PROTHEUS\AP8\RDMAKE\RFINA22.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA16.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA99.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINATST.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA21.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA22.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA04.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA05.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA08.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA09.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA12.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA19.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA20.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA21.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA24.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA13.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA97.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA98.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA01.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA02.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA09.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA14.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\AC1.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA26.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA25.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA17.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\NUMASSOC.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\excluibx.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\AtuCli99.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\ATUE1_99.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\bpGCli.prw
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\axcadZO.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\RFINA27.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\RFINA28.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\axcadZ3.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA100.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\MA030MEM.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\ATUE_199.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\ATUCL199.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\EFINA121.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA130.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA104.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\rfina30.prw
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\rfina31.prw
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA132.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA134.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\impboli.prw
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA105.PRw
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA127.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA108.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA124.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA128.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA109.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA112.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA32.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\ACENTO.PRW
+             Type=T
+         End
+      End
+      Folder Consultas
+         VSSPath=Nova Pasta2
+         FilesCount=2
+         File \PROTHEUS\AP8\RDMAKE\CONSULT1.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\CONSULT.PRX
+             Type=T
+         End
+      End
+      Folder Relatórios
+         VSSPath=Nova Pasta3
+         FilesCount=35
+         File \PROTHEUS\AP8\RDMAKE\RASSIT1.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RASSIT2.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RASSOC1.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RASSOC2.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RASSOC4.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RASSOC5.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RASSOC6.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RASSOC7.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RASSOC8.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RCONF01.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINR01.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFIN150.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFIN190.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFIN490.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RELCAD.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RETIQ.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\BOLETO.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\TOTCAD.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RELFIN.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RELBXS.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RELINAD.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\ETIQCORT.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\relescr.PRW
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\ETIQESCR.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RELASSOC.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RELCAD2.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\IMPRBOL.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\IMPRBOLR.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\relfranc.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\RELCAIXA.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\IMPBOLR.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\IMPBOL.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\FINR400a.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\rfina29.prx
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\_finr150.PRX
+             Type=T
+         End
+      End
+      Folder Miscelânea
+         VSSPath=Nova Pasta4
+         FilesCount=4
+         File \PROTHEUS\AP8\RDMAKE\RAPTOS.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA02.PRW
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\RFINA23.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA12.PRX
+             Type=T
+         End
+      End
+      Folder teste
+         VSSPath=Nova Pasta5
+         FilesCount=11
+         File \ProtheuS\AP8\RDMAKE\relescr.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\bpGCli.prw
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\bpGECont.prw
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA100.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\ATUCL199.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\DUMMY.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA12.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINATST.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\IMPBOLR.PRW
+             Type=T
+         End
+         File \Protheus\AP8\RDMAKE\UpdxFun.PRW
+             Type=T
+         End
+         File \Protheus\AP8\RDMAKE\mantexto.prw
+             Type=T
+         End
+      End
+   End
+   Project AP7
+      FoldersCount=1
+      Folder Acertos
+         VSSPath=Nova Pasta1
+         FilesCount=11
+         File \PROTHEUS\AP8\RDMAKE\cartao.prw
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\checa.PRW
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EXPATEND.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\IMPMATRIZ.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\AXCADZ2.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\IMPZ9.PRW
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\atuATEND.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\IMPCNES.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA28.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\RFINA12.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\IMPBOLR.PRW
+             Type=T
+         End
+      End
+   End
+   Project Contabilidade
+      FoldersCount=2
+      Folder Relatorios
+         VSSPath=Nova Pasta1
+         FilesCount=4
+         File \PROTHEUS\AP8\RDMAKE\CONR040A.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\CONR040B.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\CON040.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\CON090.PRX
+             Type=T
+         End
+      End
+      Folder Lancamento Padrao
+         VSSPath=Nova Pasta2
+         FilesCount=16
+         File \PROTHEUS\AP8\RDMAKE\EFINA27.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA07.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA10.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA11.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA12.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA13.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA14.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA16.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA18.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA26.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA20.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA24.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA25.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA06.PRX
+             Type=T
+         End
+         File \PROTHEUS\AP8\RDMAKE\EFINA03.PRX
+             Type=T
+         End
+         File \ProtheuS\AP8\Rdmake\EFINA15.PRX
+             Type=T
+         End
+      End
+   End
+   Project Boleto
+      FoldersCount=1
+      Folder Fontes Boleto
+         VSSPath=Nova Pasta1
+         FilesCount=4
+         File \ProtheuS\AP8\RDMAKE\bpGNNumero.prw
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\BPGCLI.PRW
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\bpGECont.prw
+             Type=T
+         End
+         File \ProtheuS\AP8\RDMAKE\bpGNECont.prw
+             Type=T
+         End
+      End
+   End
+   BatchBuild_Item0=Financeiro · Desenvolvimento
+End

@@ -1,0 +1,184 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function EFINA09()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_CALIAS,_CINDICE,_CREGISTRO,_CTELAINTERNA,_DDATA1,_DDATA2")
+SetPrvt("_CTITULO,_CTELA,_NOPCAO,_CCHAVEPRINCIPAL,_DVCTOISS,_NREGISTRO")
+SetPrvt("_DVCTOPRINCIPAL,_CDIA,_CMES,_CANO,_DDATA,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ EFINA09  ³ Autor ³ Jeremias Luna         ³ Data ³ 10.09.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Programa pra troca do vencimento de titulos tipo ISS       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+_cAlias := alias()
+_cIndice := IndexOrd()
+_cRegistro := recno()
+_cTelaInterna := savescreen()
+_dData1 := ctod('//')
+_dData2 := ctod('//')
+_cTitulo := "Atualizacao da data de vencto de Titulo ISS"
+
+#IFNDEF WINDOWS
+
+DrawAdvWindow(_cTitulo,10,10,16,70)
+setcolor("B/BG,N/W")
+
+@12,25 say "Emissao Inicial : "
+@14,25 say "Emissao Final ..: "
+
+_cTela := savescreen()
+
+while .t.
+   restscreen(,,,,_cTela)
+   
+   @12,43 get _dData1 pict '@d' valid empty(_dData1) == .f.
+   @14,43 get _dData2 pict '@d' valid _dData2 >= _dData1
+   read
+   if lastkey() == 27
+      return
+   endif
+
+   while .t.
+      _nOpcao := Menuh({"Confirma","Abandona"},16,15,"b/w,w+/n,r/w","CA","",2)
+
+      if _nOpcao == 2 .or. Lastkey() == 27
+         return
+      else
+         AtualizaData()
+         exit
+      endif
+   enddo
+enddo
+
+#ELSE
+   @096,042 to 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @008,010 to 100,222
+
+   @040,030 say "Emissao Inicial"
+   @060,030 say "Emissao Final"
+
+   @40,75 get _dData1 pict '@d' valid empty(_dData1) == .f.
+   @60,75 get _dData2 pict '@d' valid _dData2 >= _dData1
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION AtualizaData()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(AtualizaData)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+return
+
+*---------------------------------------------------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>  function AtualizaData
+Static function AtualizaData()
+*---------------------------------------------------------------*
+
+close(oDlg1)
+dbselectarea('se2')
+dbsetorder(1)
+dbgotop()
+
+//SetRegua(lastrec())
+ProcRegua(RecCount(),22,05)
+
+while !eof()
+   // IncRegua()
+
+   IncProc("Troca de vencimentos")
+
+   if e2_emissao >= _dData1 .and. e2_emissao <= _dData2
+   else
+      dbselectarea('se2')
+      dbsetorder(1)
+      dbskip()
+      loop
+   endif
+
+   if e2_tipo == 'ISS' .and. alltrim(e2_naturez) == 'ISS'
+   else
+      dbselectarea('se2')
+      dbsetorder(1)
+      dbskip()
+      loop
+   endif
+
+   if e2_saldo == 0 .and. e2_baixa #ctod('//')
+      dbselectarea('se2')
+      dbsetorder(1)
+      dbskip()
+      loop
+   endif
+
+   _cChavePrincipal := e2_filial+e2_prefixo+e2_num+e2_parcela
+   _dVctoIss := e2_vencto
+   _nRegistro := recno()
+   _dVctoPrincipal := ctod('//')
+
+    dbselectarea('se2')
+    dbsetorder(1)
+    dbgotop()
+    dbseek(alltrim(_cChavePrincipal),.t.)
+
+    while eof() == .f. .and. (e2_filial+e2_prefixo+e2_num+e2_parcela) ==;
+                             _cChavePrincipal
+       if e2_tipo == 'ISS' .and. alltrim(e2_naturez) == 'ISS'
+          _dVctoPrincipal := ctod('//')
+       else
+          _dVctoPrincipal := e2_vencto
+          exit
+       endif
+       
+       dbskip()
+    enddo
+
+    dbselectarea('se2')
+    dbsetorder(1)
+    dbgoto(_nRegistro)
+
+    if _dVctoPrincipal == ctod('//')
+       dbskip()
+       loop
+    endif
+
+    if e2_saldo == 0 .and. e2_baixa #ctod('//')
+       dbskip()
+       loop
+    endif
+
+    if _dVctoPrincipal <= _dVctoIss
+       dbskip()
+       loop
+    endif
+
+    _cDia := strzero(day(_dVctoIss),2)
+    _cMes := strzero(month(_dVctoPrincipal)+1,2)
+    _cAno := substr(strzero(year(_dVctoIss),5),4,2)
+    _dData := ctod(_cDia+'/'+_cMes+'/'+_cAno) 
+
+    reclock('se2',.f.)
+    replace e2_vencto  with _dData
+    replace e2_vencrea with DataValida(_dData)
+    dbunlock()
+
+    dbskip()
+    loop
+enddo
+return
+*---------------------------------------------------------------*
+

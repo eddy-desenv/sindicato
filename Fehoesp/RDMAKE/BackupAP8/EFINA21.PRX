@@ -1,0 +1,384 @@
+#include "rwmake.ch"
+User Function EFINA21()
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,_NPC,_NBX")
+SetPrvt("CDESC1,CDESC2,CDESC3,_DTVENC,_DIAVENC,_MESVENC")
+SetPrvt("_ANOVENC,_VALPARC,N,_NNUM,_NPREFIXO,_NPARCELA")
+SetPrvt("_NMINIA,_NAINIA,_NMFINA,_NAFINA,_VMINIA,_VAINIA")
+SetPrvt("_NPINIC,_NAINIC,_NPFINC,_NAFINC,_VECTOCONF,_VPINIC")
+SetPrvt("_VAINIC,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ EFINA21  ³ Autor ³ Luiz E. D. ROZ        ³ Data ³ 09-10-00 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Gera parcelas e Baixas Automaticas em Termos de Acordo     ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo   := "Retorno de Contribuicoes"
+n_Opc := 0
+_nPC  := 0
+_nBX  := 0
+cDesc1  :="Esta Rotina ira Gerar titulos a receber referente"
+cDesc2  :="a parcelas de Termos de Acordos Cadastrados e "
+cDesc3  :="tambem as Baixas Automaticas da Assoc e Confederativa"
+_cTitulo   :="Gera‡Æo de Parcelas/Baixas de Termos de Acordo"
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+@ 023,014 SAY cDesc1
+@ 033,014 SAY cDesc2
+@ 053,014 SAY cDesc3
+
+@ 073,014 SAY "CONFIRME PARA INICIAR A GERACAO DE DADOS         "
+
+@ 110,138 BMPBUTTON TYPE 1 ACTION GERACAO()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(GERACAO)
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+ACTIVATE DIALOG oDlg1 CENTERED
+
+Return
+*************************
+Static Function Iniciar()
+Close(oDlg1)
+Processa( {|| GERACAO() })
+Return
+*************************
+Static Function GERACAO()
+dbSelectArea("SZ1")
+DBSETORDER(1)
+DBGotop()
+While !eof()
+	if SZ1->Z1_GERAPC=="S"
+		GeraPC()
+	Endif
+	if SZ1->Z1_GERABX=="S"
+		GeraBX()
+	Endif
+	dbskip()
+end
+Tone(800,2)
+@ 96,42 TO 290,405 DIALOG oDlg2 TITLE "Termino de Geracao"
+@ 8,10 TO 68,170
+@ 23,22 SAY "Parcelas geradas"
+@ 23,95 GET _nPC PICTURE "@E 999,999" WHEN .F.
+@ 38,22 SAY "Baixas geradas"
+@ 38,95 GET _nBX PICTURE "@E 999,999" WHEN .F.
+@ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg2)
+ACTIVATE DIALOG oDlg2 CENTERED
+Set Device To Screen
+Set Filter To
+dbSelectArea( "SZ1" )
+dbSetOrder(1)
+dbSelectArea("SA1")
+dbSetOrder(1)
+dbSelectArea("SE1")
+dbSetOrder(1)
+dbselectArea("SE5")
+dbsetorder(1)
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder) // Atencao (UPDXFUN).
+Return
+************************
+STATIC FUNCTION GERAPC()
+*** Gera Parcelas
+If SZ1->Z1_NUMPARC <= 0 .or. SZ1->Z1_GERAPC <> "S"
+	return
+Endif
+_DtVenc  :=SZ1->Z1_VENCTO
+_DiaVenc :=Day(_DtVenc)
+_MesVenc :=Month(_DtVenc)
+_AnoVenc :=Year(_DtVenc)
+_ValParc:=SZ1->Z1_VALOR / SZ1->Z1_NUMPARC
+For n:=1 to SZ1->Z1_NUMPARC
+	_nNUM := SZ1->Z1_NUM
+	_nPREFIXO := SZ1->Z1_PREFIXO
+	if n>=1 .and. n<=9          && Verfica Identificacao da PARCELA do tit.
+		_nPARCELA:=str(n,1)      && 1..9
+	endif
+	if n>=10 .and. n<=36
+		_nPARCELA:=chr((65 + (n-10)))   && A..Z
+	endif
+	if n>37
+		_nPARCELA:=chr((97 + (n-38)))   && a..z
+	endif
+	dbselectarea("sa1")
+	dbsetorder(1)
+	dbseek(xfilial()+sz1->z1_cliente)
+	dbSelectArea("SE1")
+	dbSetOrder(1)
+	dbseek( xFilial()+_nPREFIXO + _nNUM + _nPARCELA )
+	if eof()                            && Gerando TITULO A RECEBER
+		RecLock("SE1",.T.)
+		SE1->E1_FILIAL   := xFilial()
+		SE1->E1_PREFIXO  := _nPrefixo
+		SE1->E1_NUM      := _nNUM
+		SE1->E1_PARCELA  := _nPARCELA    && Numero para cada parcela
+		SE1->E1_TIPO     := "DP"
+		SE1->E1_NATUREZ  := SZ1->Z1_NATUREZ
+		SE1->E1_CLIENTE  := SZ1->Z1_CLIENTE
+		SE1->E1_LOJA     := SA1->A1_LOJA
+		SE1->E1_SINDICA  := SA1->A1_SINDICA
+		SE1->E1_CODASSO  := IIF(EMPTY(SZ1->Z1_CODASSO),".",SZ1->Z1_CODASSO)
+		SE1->E1_CGC      := SZ1->Z1_CGC
+		SE1->E1_CATEG1   := SZ1->Z1_CATEG
+		SE1->E1_ERSIN    := SZ1->Z1_ERSIN
+		SE1->E1_BASE     := SZ1->Z1_BASE
+		SE1->E1_NOMCLI   := SZ1->Z1_NOMCLI
+		SE1->E1_EMISSAO  := SZ1->Z1_EMISSAO
+		SE1->E1_VENCTO   := DATAVALIDA(_DtVenc)          && Vencto e Prox. Vencto
+		SE1->E1_VENCORI  := DATAVALIDA(_DtVenc)
+		SE1->E1_VENCREA  := DataValida( _DtVenc,.t.)
+		_MesVenc :=_MesVenc + 1
+		if _MesVenc > 12
+			_AnoVenc :=_AnoVenc + 1
+			_MesVenc := 1
+		EndIf
+		if ( _DiaVenc == 31 .and. ( _MesVenc == 4 .or. _MesVenc == 6 .or. _MesVenc == 9 .or. _MesVenc == 11 ) )
+			_DtVenc  :=ctod( "30/" + STRZERO(_MesVenc,2) + "/" + STRZERO(_AnoVenc,4) )
+		Else
+			if ( _DiaVenc > 28 .and. _MesVenc == 2 )
+				_DtVenc  :=ctod( "28/" + STRZERO(_MesVenc,2) + "/" + STRZERO(_AnoVenc,4) )
+			else
+				_DtVenc  :=ctod( STRZERO(_DiaVenc,2) + "/" + STRZERO(_MesVenc,2) + "/" + STRZERO(_AnoVenc,4) )
+			EndIf
+		EndIf
+		SE1->E1_VALOR    := _ValParc
+		SE1->E1_EMIS1    := SZ1->Z1_EMISSAO
+		SE1->E1_SITUACA  := "0"
+		SE1->E1_SALDO    := _ValParc
+		SE1->E1_VLCRUZ   := _ValParc
+		SE1->E1_VALJUR   := 1
+		SE1->E1_MOEDA    := 1
+		SE1->E1_HIST     := SZ1->Z1_HIST
+		SE1->E1_MENS1    := SZ1->Z1_HIST +" - Parcela:"+_nparcela+" de "+str(sz1->z1_numparc,2)
+		SE1->E1_MENS2    := "Apos Vencto Multa 10% + 1% Juros"
+		SE1->E1_MENS3    := "Nao receber Apos 30 Dias do Vencimento"
+		//APOS BORDERO
+		SE1->E1_PORTADO := "356"
+		SE1->E1_AGEDEP  := "1874"
+		SE1->E1_CONTA   := "6713328"
+		SE1->E1_MOVIMEN :=  DDatabase
+		SE1->E1_SITUACA := "1"
+		SE1->E1_OCORREN := "01"
+		SE1->E1_ORIGEM  := "EFINA21"
+		SE1->E1_STATUS  := "A"
+		SE1->E1_OK      := CHR(56)+CHR (121)
+		_nPC := _nPC+1
+		dbcommit()
+		MsUnlock()
+	endif
+Next
+dbSelectArea( "SZ1" )
+RecLock("SZ1",.F.)
+Replace Z1_GERAPC with "G"
+Dbcommit()
+MsUnLock()
+Return
+**********************
+STATIC FUNCTION GERABX()
+If SZ1->Z1_GERABX <> "S"
+	return
+Endif
+&& Baixas Associativa
+_nMINIA:=strzero(val(substr(SZ1->Z1_PCINIA,1,2)),2)   && Intervalo geracao baixas
+_nAINIA:=substr(SZ1->Z1_PCINIA,3,4)                   && Associativa
+_nMFINA:=strzero(val(substr(SZ1->Z1_PCFINA,1,2)),2)
+_nAFINA:=substr(SZ1->Z1_PCFINA,3,4)
+Do While .T.
+	If ( ( val(_nMINIA) > val(_nMFINA) ) .and. ( val(_nAINIA) == val(_nAFINA ) ) )
+		exit
+	EndIf
+	If val(_nAINIA) > val(_nAFINA )
+		exit
+	EndIf
+	if val(_nMINIA) == 0  .or. val(SZ1->Z1_CODASSO) == 0   && Sem parc. assoc. a gerar
+		exit
+	EndIf
+	dbselectarea("sa1")
+	dbsetorder(1)
+	dbseek(xfilial()+sz1->z1_cliente)
+	dbSelectArea("SE1") //GERANDO Contas a receber
+	dbsetorder(1)
+	dbseek(xFilial() + substr(_nAINIA,3,2)+" " + _nMINIA + substr(SZ1->Z1_CODASSO,3,4))
+	if eof()
+		RecLock("SE1",.T.)
+		SE1->E1_FILIAL   := xFilial()
+		SE1->E1_PREFIXO  := substr(_nAINIA,3,2)+" "
+		SE1->E1_NUM      := _nMINIA + substr(SZ1->Z1_CODASSO,3,4)
+		SE1->E1_PARCELA  := ""
+		SE1->E1_TIPO     := "DP"
+		SE1->E1_NATUREZ  := SZ1->Z1_NATUREZ
+		SE1->E1_CLIENTE  := SZ1->Z1_CLIENTE
+		SE1->E1_SINDICA  := SA1->A1_SINDICA
+		SE1->E1_LOJA     := SA1->A1_LOJA
+		SE1->E1_NOMCLI   := SZ1->Z1_NOMCLI
+		SE1->E1_EMISSAO  := SZ1->Z1_EMISSAO
+		SE1->E1_VENCTO   := CTOD("01/"+_nMINIA+"/"+_nAINIA)
+		SE1->E1_VENCREA  := DataValida( CTOD("01/"+_nMINIA+"/"+_nAINIA),.t.)
+		SE1->E1_VALOR    := SZ1->Z1_PCVLRA
+		SE1->E1_EMIS1    := SZ1->Z1_EMISSAO
+		SE1->E1_SITUACA  := "0"
+		SE1->E1_SALDO    := 0
+		SE1->E1_VLCRUZ   := SZ1->Z1_PCVLRA
+		SE1->E1_VALJUR   := 1
+		SE1->E1_VENCORI  := CTOD("01/"+_nMINIA+"/"+_nAINIA)
+		SE1->E1_MOEDA    := 1
+		SE1->E1_HIST     := "Ref. Termo " + SZ1->Z1_NUM
+		//APOS BORDERO
+		SE1->E1_PORTADO := "356"
+		SE1->E1_AGEDEP  := "1874"
+		SE1->E1_CONTA   := "7710534"
+		SE1->E1_MOVIMEN :=  DDatabase
+		SE1->E1_SITUACA := "1"
+		SE1->E1_OCORREN := "01"
+		SE1->E1_ORIGEM  := "EFINA21"
+		SE1->E1_STATUS  := "B"
+		SE1->E1_OK      := CHR(56)+CHR (121)
+		SE1->E1_BAIXA   := CTOD("01/"+_nMINIA+"/"+_nAINIA)
+		SE1->E1_OK      := CHR(69)+CHR (120)
+		SE1->E1_CGC     := SZ1->Z1_CGC
+		SE1->E1_CODASSO := SZ1->Z1_CODASSO
+		SE1->E1_CATEG1  := SZ1->Z1_CATEG
+		SE1->E1_ERSIN   := SZ1->Z1_ERSIN
+		SE1->E1_BASE    := SZ1->Z1_BASE
+		_nBX := _nBX + 1
+		dbcommit()
+		MsUnlock()
+	else
+		if se1->e1_saldo > 0
+			reclock("se1",.f.)
+	 		SE1->E1_VALOR    := SZ1->Z1_PCVLRA	
+			se1->e1_vlcrUz   := SZ1->Z1_PCVLRA
+			SE1->E1_SALDO    := 0
+			SE1->E1_BAIXA    := DDATABASE
+			SE1->E1_HIST     := "Ref. Termo " + SZ1->Z1_NUM
+			_nBX := _nBX + 1
+			MSUNLOCK()
+		ENDIF
+	ENDIF
+	DBSELECTAREA("SE5")
+	RECLOCK("SE5",.t.)
+	SE5->E5_FILIAL := "01"
+	SE5->E5_DATA   := DDATABASE
+	SE5->E5_TIPO   := SE1->E1_TIPO
+	SE5->E5_NATUREZ:= SE1->E1_NATUREZ
+	SE5->E5_BANCO  := "CAR"
+	SE5->E5_AGENCIA:= "CAR"
+	SE5->E5_CONTA  := "CARTEIRA"
+	SE5->E5_VENCTO := SE1->E1_VENCTO
+	SE5->E5_BENEF  := SE1->E1_NOMCLI
+	SE5->E5_HISTOR := "Valor recebido s/ Titulo"
+	se5->e5_tipodoc:= "VL"
+	se5->e5_prefixo:= se1->e1_prefixo
+	se5->e5_numero := se1->e1_num
+	se5->e5_parcela:= se1->e1_parcela
+	se5->e5_clifor := se1->e1_cliente
+	se5->e5_loja   := se1->e1_loja
+	se5->e5_dtdigit:= ddatabase
+	se5->e5_motbx  := "NOR"
+	se5->e5_seq    := "01"
+	se5->e5_dtdispo:= ddatabase
+	SE5->E5_RECPAG := "R"
+	MSUNLOCK()
+	_vMINIA:=val(_nMINIA)
+	_vAINIA:=val(_nAINIA)
+	if _vMINIA == 12
+		_vMINIA := 1
+		_vAINIA := _vAINIA + 1
+	else
+		_vMINIA := _vMINIA + 1
+	EndIf
+	_nMINIA:=strzero(_vMINIA,2)
+	_nAINIA:=str(_vAINIA,4)
+EndDo
+&& Baixas Confederativa
+_nPINIC:=substr(SZ1->Z1_PCINIC,1,1)   && Intervalo geracao baixas
+_nAINIC:=substr(SZ1->Z1_PCINIC,2,4)   && Confederativa
+_nPFINC:=substr(SZ1->Z1_PCFINC,1,1)
+_nAFINC:=substr(SZ1->Z1_PCFINC,2,4)
+Do While ! ( ( val(_nPINIC) > val(_nPFINC) ) .and. ( val(_nAINIC) == val(_nAFINC ) ) )
+	if val(_nPINIC) == 0  && Sem parc. conf. a gerar
+		exit
+	EndIf
+	if val( _nAINIC ) >	val( _nAFINC )
+		exit
+	endIf
+	dbselectarea("sa1")
+	dbsetorder(1)
+	dbseek(xfilial()+sz1->z1_cliente)
+	if !empty(sa1->A1_codasso)
+		dbselectarea("SA1")
+	    RECLOCK("SA1",.F.)
+	    SA1->A1_SITUAC="AS"
+	    MSUNLOCK()
+	ENDIF
+	dbSelectArea("SE1") //GERANDO Contas a receber
+	dbseek(xFilial() + substr(_nAINIC,3,2) + " " + SZ1->Z1_CLIENTE + _nPINIC )
+	if eof()
+		dbseek(xFilial() + substr(_nAINIC,3,2) + "E" + SZ1->Z1_CLIENTE + _nPINIC	)
+		if eof()
+			_VectoCONF:=Ctod("30/"+iif(_nPINIC=="1","03","09")+"/"+_nAINIC)
+			RecLock("SE1",.T.)
+			SE1->E1_FILIAL   := xFilial()
+			SE1->E1_PREFIXO  := substr(_nAINIC,3,2)+" "
+			SE1->E1_NUM      := SZ1->Z1_CLIENTE
+			SE1->E1_PARCELA  := _nPINIC
+			SE1->E1_TIPO     := "DP"
+			SE1->E1_NATUREZ  := SZ1->Z1_NATUREZ
+			SE1->E1_CLIENTE  := SZ1->Z1_CLIENTE
+			SE1->E1_SINDICA  := SA1->A1_SINDICA
+			SE1->E1_LOJA     := SA1->A1_LOJA
+			SE1->E1_NOMCLI   := SZ1->Z1_NOMCLI
+			SE1->E1_EMISSAO  := SZ1->Z1_EMISSAO
+			SE1->E1_VENCTO   := _VectoCONF
+			SE1->E1_VENCREA  := DataValida( _VectoCONF,.t.)
+			SE1->E1_VALOR    := SZ1->Z1_PCVLRC
+			SE1->E1_EMIS1    := SZ1->Z1_EMISSAO
+			SE1->E1_SITUACA  := "0"
+			SE1->E1_SALDO    := 0
+			SE1->E1_VLCRUZ   := SZ1->Z1_PCVLRC
+			SE1->E1_VALJUR   := 1
+			SE1->E1_VENCORI  := _VectoCONF
+			SE1->E1_MOEDA    := 1
+			SE1->E1_HIST     := "Ref. Termo " + SZ1->Z1_NUM
+			SE1->E1_PORTADO := "356"
+			SE1->E1_AGEDEP  := "1874"
+			SE1->E1_CONTA   := "6713328"
+			SE1->E1_MOVIMEN :=  DDatabase
+			SE1->E1_SITUACA := "1"
+			SE1->E1_OCORREN := "01"
+			SE1->E1_ORIGEM  := "EFINA21"
+			SE1->E1_STATUS  := "B"
+			SE1->E1_OK      := CHR(56)+CHR (121)
+			SE1->E1_BAIXA   := _VectoCONF
+			SE1->E1_OK      := CHR(69)+CHR (120)
+			SE1->E1_CGC     := SZ1->Z1_CGC
+			SE1->E1_CODASSO := SZ1->Z1_CODASSO
+			SE1->E1_CATEG1  := SZ1->Z1_CATEG
+			SE1->E1_ERSIN   := SZ1->Z1_ERSIN
+			SE1->E1_BASE    := SZ1->Z1_BASE
+			_nBX := _nBX + 1
+			dbcommit()
+			MsUnlock()
+		ENDIF
+	EndIf
+	_vPINIC:=val(_nPINIC)
+	_vAINIC:=val(_nAINIC)
+	if _vPINIC == 2
+		_vPINIC := 1
+		_vAINIC := _vAINIC + 1
+	else
+		_vPINIC := _vPINIC + 1
+	EndIf
+	_nPINIC:=strzero(_vPINIC,1)
+	_nAINIC:=str(_vAINIC,4)
+EndDo
+dbSelectArea( "SZ1" )
+RecLock("SZ1",.F.)
+Replace Z1_GERABX with "G"
+Dbcommit()
+MsUnLock()
+Return

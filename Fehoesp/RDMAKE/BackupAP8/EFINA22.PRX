@@ -1,0 +1,166 @@
+#include "rwmake.ch"
+User Function EFINA22()
+SetPrvt("_OLDAREA,_OLDORDER,N_OPC,_NPC,_NBX,CDESC1")
+SetPrvt("CDESC2,CDESC3,_CTITULO,CPERG,_DTVENC,_DIAVENC")
+SetPrvt("_MESVENC,_ANOVENC,_VALPARC,_NMINIA,_NAINIA,_NMFINA")
+SetPrvt("_NAFINA,_VMINIA,_VAINIA,")
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ EFINA22  ³ Autor ³ Luiz E. D. ROZ        ³ Data ³ 15-03-01 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Gera titulos referente a Contratos Prestacao Servicos (CT) ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+n_Opc := 0
+_nPC  := 0
+_nBX  := 0
+cDesc1  :="Esta Rotina ira Gerar titulos a receber referente"
+cDesc2  :="a Contratos de Prestacao de Servicos de"
+cDesc3  :="entidades fora da categoria representada pelo SINDHOSP"
+_cTitulo   := "Geracao titulos referente a Contratos"
+n_Opc := 0
+cPerg    := "FINA22"
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis utilizadas para parametros                                       ³
+³ mv_par01   // CNPJ Cliente                                                 ³
+³ mv_par02   // Data da Emissao                                              ³
+³ mv_par03   // Data do Primeiro vencimento                                  ³
+³ mv_par04   // Valor da Parcela (Titulo)                                    ³
+³ mv_par05   // Numero Parcelas                                              ³
+³ mv_par06   // Historico                                                    ³
+³ mv_par07   // Parcela Inicial MM/AAAA                                      ³
+³ mv_par08   // Parcela Final   MM/AAAA                                      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+pergunte(cPerg,.T.)
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+@ 023,014 SAY cDesc1
+@ 033,014 SAY cDesc2
+@ 043,014 SAY cDesc3
+@ 073,014 SAY "CONFIRME PARA INICIAR A GERACAO DE DADOS         "
+@ 110,138 BMPBUTTON TYPE 1 ACTION INICIAR()
+@ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+Return
+
+
+*************************
+Static Function Iniciar()
+Close(oDlg1)
+Processa( {|| GERACAO() })
+Return
+
+*************************
+Static Function GERACAO()
+GeraPC()
+@ 96,42 TO 290,405 DIALOG oDlg2 TITLE "Termino de Geracao"
+@ 8,10 TO 68,170
+@ 23,22 SAY "Parcelas geradas"
+@ 23,95 GET _nPC PICTURE "@E 999,999" WHEN .F.
+@ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg2)
+ACTIVATE DIALOG oDlg2 CENTERED
+Set Device To Screen
+Set Filter To
+dbSelectArea("SA1")
+dbSetOrder(1)
+dbSelectArea("SE1")
+dbSetOrder(1)
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder) // Atencao (UPDXFUN).
+Return
+*************************
+STATIC FUNCTION GERAPC()
+dbSelectArea("SA1")
+dbSetOrder(3)
+dbseek( xFilial() + MV_PAR01 )
+If ! FOUND()
+	return
+Endif
+_DtVenc  :=MV_PAR03
+_DiaVenc :=Day(_DtVenc)
+_MesVenc :=Month(_DtVenc)
+_AnoVenc :=Year(_DtVenc)
+_ValParc:= mv_par04
+_nMINIA:=substr(mv_par07,1,2)
+_nAINIA:=substr(mv_par07,4,4)
+_nMFINA:=substr(mv_par08,1,2)
+_nAFINA:=substr(mv_par08,4,4)
+Do While .T.
+	If ( ( val(_nMINIA) > val(_nMFINA) ) .and. ( val(_nAINIA) == val(_nAFINA ) ) )
+		exit
+	EndIf
+	If val(_nAINIA) > val(_nAFINA )
+		exit
+	EndIf
+	if val(_nMINIA) == 0  .or. val(SA1->A1_CODASSO) == 0   && Sem parc. assoc. a gerar
+		exit
+	EndIf
+	dbSelectArea("SE1") //GERANDO Contas a receber
+	dbseek(xFilial() + substr(_nAINIA,3,2)+" " + _nMINIA + substr(SA1->A1_CODASSO,3,4))
+	if eof()
+		RecLock("SE1",.T.)
+		SE1->E1_FILIAL   := xFilial()
+		SE1->E1_PREFIXO  := substr(_nAINIA,3,2)+" "
+		SE1->E1_NUM      := _nMINIA + substr(SA1->A1_CODASSO,3,4)
+		SE1->E1_PARCELA  := ""
+		SE1->E1_TIPO     := "DP"
+		SE1->E1_NATUREZ  := "0327"  //VERIFICAR
+		SE1->E1_CLIENTE  := SA1->A1_COD
+		SE1->E1_LOJA     := SA1->A1_LOJA
+		SE1->E1_SINDICA  := SA1->A1_SINDICA
+		SE1->E1_NOMCLI   := SA1->A1_NREDUZ
+		SE1->E1_EMISSAO  := mv_par02
+		SE1->E1_VENCTO   := CTOD(strzero(_DiaVenc,2)+"/"+_nMINIA+"/"+_nAINIA)
+		SE1->E1_VENCREA  := DataValida( CTOD(strzero(_DiaVenc,2)+"/"+_nMINIA+"/"+_nAINIA),.t.)
+		SE1->E1_VALOR    := mv_par04
+		SE1->E1_EMIS1    := mv_par02
+		SE1->E1_SITUACA  := "0"
+		SE1->E1_SALDO    := mv_par04
+		SE1->E1_VLCRUZ   := mv_par04
+		SE1->E1_VALJUR   := 0
+		SE1->E1_VENCORI  := CTOD(strzero(_DiaVenc,2)+"/"+_nMINIA+"/"+_nAINIA)
+		SE1->E1_MOEDA    := 1
+		SE1->E1_HIST     := mv_par06
+		SE1->E1_MENS1    := ALLTRIM(mv_par06)+" - "+"Parcela " + strzero(_nPC+1,2) + "/" + strzero(mv_par05,2)
+		SE1->E1_MENS2    := "Apos o Vencimento Multa de 10% + 1% de juros ao mes."
+		SE1->E1_MENS3    := "Nao receber apos 30 dias do vencimento."
+		//APOS BORDERO
+		SE1->E1_PORTADO := "356"
+		SE1->E1_AGEDEP  := "1874"
+		SE1->E1_CONTA   := "9721760"
+		SE1->E1_MOVIMEN :=  DDatabase
+		SE1->E1_SITUACA := "1"
+		SE1->E1_OCORREN := "01"
+		SE1->E1_ORIGEM  := "EFINA22"
+		SE1->E1_STATUS  := "A"
+		SE1->E1_OK      := CHR(56)+CHR (121)
+		SE1->E1_CGC     := SA1->A1_CGC
+		SE1->E1_CODASSO := SA1->A1_CODASSO
+		SE1->E1_CATEG1  := SA1->A1_CATEG1
+		SE1->E1_ERSIN   := SA1->A1_ERSIN
+		SE1->E1_BASE    := SA1->A1_BASE
+		_nPC := _nPC+1
+		dbcommit()
+		MsUnlock()
+	ENDIF
+	_vMINIA:=val(_nMINIA)
+	_vAINIA:=val(_nAINIA)
+	if _vMINIA == 12
+		_vMINIA := 1
+		_vAINIA := _vAINIA + 1
+	else
+		_vMINIA := _vMINIA + 1
+	EndIf
+	_nMINIA:=strzero(_vMINIA,2)
+	_nAINIA:=str(_vAINIA,4)
+EndDo
+Return
+

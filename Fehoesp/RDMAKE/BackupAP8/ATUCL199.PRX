@@ -1,0 +1,78 @@
+#include "rwmake.ch"
+#include "topconn.ch"
+User Function AtuCl199()
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ AtuCli99 ³ Autor ³ Luis Mattos Duarte Jr.³ Data ³ 13/04/05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Atualizacao Titulos dos Clientes 999999                    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß\ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo  := "Atualizacao Titulos dos Clientes 999999"
+n_Opc := 0
+@ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+@ 008,010 TO 100,222
+@ 023,014 SAY "Este programa verifica e ajusta tirulos com cod. de cliente 999999."
+@ 086,014 SAY "CONFIRME PARA INICIAR A ATUALIZACAO DOS DADOS."
+@ 110,168 BMPBUTTON TYPE 1 ACTION Iniciar()
+@ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+ACTIVATE DIALOG oDlg1 CENTERED
+Return
+**************************
+Static Function Iniciar()
+Close(oDlg1)
+Processa( {|| ATUALIZA() })
+Return
+**************************
+Static Function ATUALIZA()
+numtit := 0
+cquery := "SELECT * FROM SE1010 SE1 WHERE E1_CLIENTE='999999' AND SE1.D_E_L_E_T_='' AND LEFT(E1_CGC,8)<>'47436373' ORDER BY E1_CGC "
+TCQUERY cQuery NEW ALIAS "TRB"
+DBSELECTAREA("TRB")
+DBGOTOP()
+PROCREGUA(RECCOUNT())
+DO WHILE !EOF()
+	INCPROC("Contribuinte: "+TRB->E1_CONFED )
+	DBSELECTAREA("SA1")
+	DBSETORDER(3)
+	DBSEEK(Rtrim(XFILIAL()+trb->E1_CONFED ))
+	if found()
+		DBSELECTAREA("SE1")
+		DBGOTO(TRB->R_E_C_N_O_)
+
+		RECLOCK("SE1",.F.)
+
+		SE1->E1_NUM      := GETSXENUM("SE1","E1_NUM")
+		se1->e1_cliente := sa1->a1_cod
+		se1->e1_loja    := sa1->a1_loja
+		SE1->E1_SINDICA := SA1->A1_SINDICA
+		se1->e1_nomcli  := sa1->a1_nome
+		se1->e1_codasso := sa1->a1_codasso
+		se1->e1_categ1  := sa1->a1_categ1
+		se1->e1_ersin   := sa1->a1_ersin
+		se1->e1_base    := sa1->a1_base		
+		se1->e1_CGC     := sa1->a1_CGC		
+
+		MSUNLOCK()
+		CONFIRMSX8()
+
+		numtit ++
+
+	endif
+	dbselectarea("trb")
+	dbskip()
+enddo
+dbselectarea("trb")
+dbCLOSEAREA("TRB")
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder) // Atencao (UPDXFUN).
+alert("Alterados "+alltrim(str(numtit))+" Titulos")
+Return

@@ -1,0 +1,231 @@
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ Consult  ³ Autor ³ Andreia dos Santos    ³ Data ³ 15/06/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Consulta Cobranca                                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo  := "Consolida registros da ASSOCIATIVA"
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,018,079)
+   SetColor("B/BG,N/W")
+
+   @ 011,010 Say "Este programa ira transportar os dados referente"
+   @ 012,010 Say "as contribuicoes ASSOCIATIVAS."
+   @ 014,035 Say "Programa especifico SINDHOSP"
+   SetColor("B/BG,W/N")
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Abandona"},18,04,"b/w,w+/n,r/w","CA","",2)
+
+      If n_Opc == 2 .or. Lastkey()==27
+
+         Return
+      Endif
+
+      Exit
+   End
+   Transport()   
+#ELSE
+
+//   @ 101,082 To 316,433 Dialog janela1 Title _cTitulo
+
+   @ 101,075 To 316,510 Dialog janela1 Title _cTitulo
+
+   @ 014,010 Say "Este programa ira transportar os dados referente"
+   @ 015,010 Say "as contribuicoes ASSOCIATIVAS."
+   @ 017,035 Say "Programa especifico SINDHOSP"
+
+   @ 077,045 BmpButton Type 1 Action Execute(Iniciar)
+   @ 076,112 BmpButton Type 2 Action close(janela1)
+   Activate Dialog janela1 Centered
+
+#ENDIF
+Return
+
+
+*-----------------*
+Function Iniciar
+*-----------------*
+Close(janela1)
+Processa( {|| Execute(Transport) })
+Return
+
+
+*------------------*
+Function Transport
+*------------------*
+
+cFilial := SM0->M0_CODIGO
+cExtens  := ".DBF"
+cArquiv := "SZN" + cFilial+"0" + cExtens
+
+If File(cArquiv)
+   Ferase(Substr(cArquiv,1,6) + "*.*")
+EndIf
+
+ChkFile("SZN",.F.)
+DbSelectArea("SE1")
+DbSetOrder(1)
+ProcRegua(RecCount(),18,05)
+
+While !Eof()
+    #IFNDEF WINDOWS
+       IncProc(18,05)
+    #ELSE
+       IncProc(_cTitulo)
+    #ENDIF
+
+          If AllTrim( SE1->E1_NATUREZ ) == "001"
+             aCtReceber := {}
+             cChave := SE1->(E1_CLIENTE + E1_LOJA)
+             AADD(aCtReceber,SE1->E1_FILIAL)
+             AADD(aCtReceber,SE1->E1_PREFIXO)
+             AADD(aCtReceber,SE1->E1_NUM)
+             AADD(aCtReceber,SE1->E1_PARCELA)
+             AADD(aCtReceber,SE1->E1_NATUREZ)
+             AADD(aCtReceber,SE1->E1_CLIENTE)
+             AADD(aCtReceber,SE1->E1_LOJA)
+             AADD(aCtReceber,SE1->E1_NOMCLI)
+             AADD(aCtReceber,SE1->E1_EMISSAO)
+             AADD(aCtReceber,SE1->E1_VENCTO)
+             AADD(aCtReceber,SE1->E1_VENCREA)
+             AADD(aCtReceber,SE1->E1_VALOR)
+             AADD(aCtReceber,SE1->E1_BAIXA)
+             AADD(aCtReceber,SE1->E1_NUMBOR)
+             AADD(aCtReceber,SE1->E1_DATABOR)
+             AADD(aCtReceber,SE1->E1_EMIS1)
+             AADD(aCtReceber,SE1->E1_HIST)
+             AADD(aCtReceber,SE1->E1_MOVIMEN)
+             AADD(aCtReceber,SE1->E1_SITUACA)
+             AADD(aCtReceber,SE1->E1_DESCONT)
+             AADD(aCtReceber,SE1->E1_MULTA)
+             AADD(aCtReceber,SE1->E1_JUROS)
+             AADD(aCtReceber,SE1->E1_CORREC)
+             AADD(aCtReceber,SE1->E1_VALLIQ)
+             AADD(aCtReceber,SE1->E1_VENCORI)
+             AADD(aCtReceber,SE1->E1_CONTA)
+             AADD(aCtReceber,SE1->E1_VALJUR)
+             AADD(aCtReceber,SE1->E1_PORCJUR)
+             AADD(aCtReceber,SE1->E1_OCORREN)
+             AADD(aCtReceber,SE1->E1_DTIMPOR)
+             AADD(aCtReceber,SE1->E1_CRED)
+             AADD(aCtReceber,SE1->E1_DEB)
+             AADD(aCtReceber,SE1->E1_CGC)
+             AADD(aCtReceber,SE1->E1_CODASSO)
+             AADD(aCtReceber,SE1->E1_CATEG1)
+             If delete()
+                del := .t.
+                Else
+                del := .f.
+             EndIf
+
+             DbSelectArea("SA1")
+             DbSetOrder(1)
+             DbSeek( xFilial( "SA1" ) + cChave )
+
+             aClientes := {}
+             AADD(aClientes,SA1->A1_END)
+             AADD(aClientes,SA1->A1_BAIRRO)
+             AADD(aClientes,SA1->A1_CEP)
+             AADD(aClientes,SA1->A1_MUN)
+             AADD(aClientes,SA1->A1_EST)
+             AADD(aClientes,SA1->A1_TEL)
+             AADD(aClientes,SA1->A1_FAX)
+             AADD(aClientes,SA1->A1_LEITOS)
+             AADD(aClientes,SA1->A1_ATIVIDA)
+             AADD(aClientes,SA1->A1_CONTATO)
+             AADD(aClientes,SA1->A1_DTINIC)
+             AADD(aClientes,SA1->A1_ERSIN)
+             AADD(aClientes,SA1->A1_NATHOSP)
+             AADD(aClientes,SA1->A1_DTINASS)
+             AADD(aClientes,SA1->A1_DTFIMAS)
+             AADD(aClientes,SA1->A1_SITUAC)
+             AADD(aClientes,SA1->A1_CATLEIT)
+             AADD(aClientes,SA1->A1_DTIMPOR)
+             AADD(aClientes,SA1->A1_DTCADAS)
+             AADD(aClientes,SA1->A1_CODESCC)
+
+            DbSelectArea("SZN")
+            DbAppend()
+
+            // alterado em 27/05/99, o arquivos da familia SE? foram gerados
+            // com o campo ??_FILIAL com o conteudo "01" , o cadastro da empresa
+            // esta com conteudo BRANCO, dando divergencia na leitura dos dados
+            // MSG. SP 27/05/99.
+
+            SZN->ZN_FILIAL   := "  "    //  aCtReceber[1]
+            SZN->ZN_PREFIXO  := aCtReceber[2]
+            SZN->ZN_NUM      := aCtReceber[3]
+            SZN->ZN_PARCELA  := aCtReceber[4]
+            SZN->ZN_NATUREZ  := aCtReceber[5]
+            SZN->ZN_CLIENTE  := aCtReceber[6]
+            SZN->ZN_LOJA     := aCtReceber[7]
+            SZN->ZN_NOMCLI   := aCtReceber[8]
+            SZN->ZN_EMISSAO  := aCtReceber[9]
+            SZN->ZN_VENCTO   := aCtReceber[10]
+            SZN->ZN_VENCREA  := aCtReceber[11]
+            SZN->ZN_VALOR    := aCtReceber[12]
+            SZN->ZN_BAIXA    := aCtReceber[13]
+            SZN->ZN_NUMBOR   := aCtReceber[14]
+            SZN->ZN_DATABOR  := aCtReceber[15]
+            SZN->ZN_EMIS1    := aCtReceber[16]
+            SZN->ZN_HIST     := aCtReceber[17]
+            SZN->ZN_MOVIMEN  := aCtReceber[18]
+            SZN->ZN_SITUACA  := aCtReceber[19]
+            SZN->ZN_DESCONT  := aCtReceber[20]
+            SZN->ZN_MULTA    := aCtReceber[21]
+            SZN->ZN_JUROS    := aCtReceber[22]
+            SZN->ZN_CORREC   := aCtReceber[23]
+            SZN->ZN_VALLIQ   := aCtReceber[24]
+            SZN->ZN_VENCORI  := aCtReceber[25]
+            SZN->ZN_CONTA    := aCtReceber[26]
+            SZN->ZN_VALJUR   := aCtReceber[27]
+            SZN->ZN_PORCJUR  := aCtReceber[28]
+            SZN->ZN_OCORREN  := aCtReceber[29]
+            SZN->ZN_DTIMPOR  := aCtReceber[30]
+            SZN->ZN_CRED     := aCtReceber[31]
+            SZN->ZN_DEB      := aCtReceber[32]
+            SZN->ZN_CGC      := aCtReceber[33]
+            SZN->ZN_CODASSO  := aCtReceber[34]
+            SZN->ZN_CATEG1   := aCtReceber[35]
+
+            SZN->ZN_END      := aClientes[1]
+            SZN->ZN_BAIRRO   := aClientes[2]
+            SZN->ZN_CEP      := aClientes[3]
+            SZN->ZN_MUN      := aClientes[4]
+            SZN->ZN_EST      := aClientes[5]
+            SZN->ZN_TEL      := aClientes[6]
+            SZN->ZN_FAX      := aClientes[7]
+            SZN->ZN_LEITOS   := aClientes[8]
+            SZN->ZN_ATIVIDA  := aClientes[9]
+            SZN->ZN_CONTATO  := aClientes[10]
+            SZN->ZN_DTINIC   := aClientes[11]
+            SZN->ZN_ERSIN    := aClientes[12]
+            SZN->ZN_NATHOSP  := aClientes[13]
+            SZN->ZN_DTINASS  := aClientes[14]
+            SZN->ZN_DTFIMAS  := aClientes[15]
+            SZN->ZN_SITUAC   := aClientes[16]
+            SZN->ZN_CATLEIT  := aClientes[17]
+            SZN->ZN_DTIMPOR  := aClientes[18]
+            SZN->ZN_DTCADAS  := aClientes[19]
+            SZN->ZN_CODESCC  := aClientes[20]   
+            DbCommit()
+
+            If del
+               Delete
+            EndIf
+            DbSelectArea("SE1")
+          EndIf
+          DbSkip()
+EndDo
+Return

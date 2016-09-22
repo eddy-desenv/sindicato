@@ -1,0 +1,281 @@
+#IFNDEF WINDOWS
+   #DEFINE PSAY SAY
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ RASSOC01 ³ Autor ³ Andreia dos Santos    ³ Data ³ 10.08.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressao de Pagamentos Associativos nao efetuados         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+_cOldAlias := alias()
+cbcont  := 0
+cbtxt   := ""
+wnrel   := ""
+cDesc1  :="Este programa ir  imprimir a relacao de pagamentos"
+cDesc2  :="mensais nao efetuados"
+cDesc3  :=""
+cString :="SE1"
+cSavCor :=SetColor()
+tamanho := "P"
+
+titulo :="Emissao de Titulos a Receber"
+cabec1 := "CODIGO NOME                                          PARCELA         VALOR "
+cabec2 := ""
+        // 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+        //                                                        999,999,999,999.99
+        //           10        20        30        40        50
+
+aReturn  := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog :="RASSOC1"
+nLastKey := 0
+cPerg    :="ASSOC1"
+M_PAG    := 1
+li       :=0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte(cPerg,.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01                    // Vencimento de                 ³
+//³ mv_par02                    // Vencimento Ate                ³
+//³ mv_par03                    // ERSIN DE                      ³
+//³ mv_par04                    // ERSIN ate                     ³
+//³ mv_par05                    // Natureza de                   ³
+//³ mv_par06                    // Ate Natureza                  ³
+//³ mv_par07			// Escritorio Contabil		 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+
+wnrel := "RASSOC1"            //Nome Default do relatorio em Disco
+
+aOrd  := {"Por ERSIN+NOME"}
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,aOrd,,Tamanho)
+
+
+If nLastKey == 27
+   Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey == 27
+   SetColor(cSavCor)
+   Return
+Endif
+
+#IFDEF WINDOWS
+    RptStatus({|| Execute(IMPRIME) },titulo)  // Chamada do Relatorio
+    Return
+    Function IMPRIME
+
+#ENDIF
+
+_aEstr := {}
+AADD(_aEstr,{"ERSIN"  ,"C",02,0})
+AADD(_aEstr,{"CODIG"  ,"C",06,0})
+AADD(_aEstr,{"NOME"   ,"C",45,0})
+AADD(_aEstr,{"PARCELA","C",05,0})
+AADD(_aEstr,{"VALOR"  ,"N",17,2})
+AADD(_aEstr,{"VENC"   ,"C",07,0})
+AADD(_aEstr,{"CIDADE" ,"C",15,0})
+
+
+c_ArqImp := CriaTrab(_aEstr,.t.)
+
+dbUseArea(.t.,,c_ArqImp,"IMP",.T.)
+dbSelectArea("IMP")
+
+cArqIND := criatrab("",.f.)
+IndRegua("IMP",cArqIND,"ERSIN+CIDADE+VENC+NOME",,,"Selecionando Registros...")
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Localiza o 1.Titulo a ser impresso                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+dbSelectArea("SE1")
+dbSetorder(7)  // POR VENCIMENTO
+dbSeek(xFilial()+dtos(mv_par01),.T.)
+
+SetRegua(RecCount())
+lEnd := .f.
+
+while !eof() .and. SE1->E1_VENCTO <= mv_par02
+
+   #IFNDEF WINDOWS
+      Inkey()
+      If LastKey() ==286
+	 lEnd := .t.
+      End
+   #ENDIF
+
+   If lEnd
+      @Prow()+1,1 PSAY "Cancelado pelo operador"
+      Exit
+   EndIF
+
+   IncRegua()
+
+   if !empty( SE1->E1_BAIXA )
+      dbskip()
+      loop
+   endif
+
+   if SE1->E1_NATUREZ < mv_par05 .or. SE1->E1_NATUREZ > mv_par06
+      dbskip()
+      loop
+   endif
+
+
+   dbSelectArea("SA1")
+   dbSetOrder(1)
+   dbseek(xfilial()+SE1->E1_CLIENTE )
+
+   if SA1->A1_ERSIN < mv_par03 .or. SA1->A1_ERSIN > mv_par04
+      dbSelectArea("SE1")
+      dbskip()
+      loop
+   endif
+
+   if !empty(mv_par07) .and. SA1->A1_CODESCC # mv_par07
+      dbSelectArea("SE1")
+      dbskip()
+      loop
+   endif
+
+   dbSelectArea("IMP")
+   RecLock("IMP",.T.)
+   IMP->ERSIN := SA1->A1_ERSIN
+   IMP->CODIG := SA1->A1_CODASSO
+   IMP->NOME  := SA1->A1_NOME
+   IMP->PARCELA := strzero(month(SE1->E1_VENCTO),2)+'/'+;
+                   substr(strzero(year(SE1->E1_VENCTO),5),4,2)
+   IMP->VALOR := SE1->E1_VALOR
+   IMP->VENC  := str(month(SE1->E1_VENCTO),2)+"/"+str(year(SE1->E1_VENCTO),4)
+   IMP->CIDADE:= SA1->A1_MUN
+
+   dbSelectArea("SE1")
+   dbskip()
+end
+
+
+dbSelectArea("IMP")
+dbGotop()
+
+li := 80
+
+_nTotal  := 0
+_nTotTit := 0
+while !eof()
+   _cERSIN := IMP->ERSIN
+   _cCIDADE:= IMP->CIDADE
+   _nTotMes:= 0
+   _nTit   := 0
+//   Cabec1  := "MES : "+ mesExtenso(val(substr(IMP->VENC,1,2)))+"/"+substr(IMP->VENC,6,2)
+//   Cabec1  := Cabec1 + " Cidade: " + _cCIDADE
+//   cabec1 := "CODIGO NOME                                          PARCELA         VALOR "
+//   cabec(titulo,cabec1,cabec2,nomeprog,tamanho,18)
+
+  IF li > 58
+     cabec(titulo,cabec1,cabec2,nomeprog,tamanho,18)
+//     @prow()+1,000 PSAY "ERSIN: "+_cERSIN + " - Cidade: " + _cCIDADE
+  EndIF
+
+  @prow()+1,000 PSAY "ERSIN: "+_cERSIN + " - Cidade: " + _cCIDADE
+
+  li:=prow()+1
+
+   while !eof() .and. IMP->ERSIN == _cERSIN .and. IMP->CIDADE == _cCIDADE
+
+       _cMes   := IMP->VENC
+
+       while !eof() .and. IMP->VENC == _cMes .and. IMP->ERSIN == _cERSIN .and. IMP->CIDADE == _cCIDADE
+          IF li > 58
+             cabec(titulo,cabec1,cabec2,nomeprog,tamanho,18)
+             @prow()+1,000 PSAY "ERSIN: "+_cERSIN + " - Cidade: " + _cCIDADE
+          EndIF
+
+          @ li, 000 PSAY IMP->CODIG
+          @ li, 007 PSAY IMP->NOME
+          @ li, 054 PSAY IMP->PARCELA
+          @ li, 061 PSAY IMP->VALOR picture "@e 999,999,999,999.99"
+
+          li := li+1
+          _nTotMes := _nTotMes+ IMP->VALOR
+          _nTit    := _nTit + 1
+          _nTotal  := _nTotal+ IMP->VALOR
+          _nTotTit := _nTotTit+1
+          dbskip()
+       end
+   end
+//   li := li+1
+   @ LI,000 PSAY replicate("-",80)
+   li := li+1
+   If _nTit == 1
+       @ li,008 PSAY "Total no Mes : " + transform(_nTit,"@e 999,999") + " TITULO "
+       ElseIf _nTit >= 2
+          @ li,008 PSAY "Total no Mes : " + transform(_nTit,"@e 999,999") + " TITULOS "
+   EndIf
+   @ li,061 PSAY _nTOTMes picture "@e 999,999,999,999.99"
+     li := li+1
+   @li,000 PSAY replicate("-",80)
+   li := li+2
+end
+
+if _nTotal > 0
+   li := li+1
+   @ LI,000 PSAY replicate("-",80)
+   li := li+1
+   @ li,008 PSAY "Total no Periodo : " + transform(_nTotTit,"@e 999,999")
+   @ li,061 PSAY _nTOTAL picture "@e 999,999,999,999.99"
+   li := li+1
+   @ LI,000 PSAY replicate("-",80)
+endif
+
+if li <> 80
+   roda(cbcont,cbtxt,TAMANHO)
+endif
+
+
+Set Device To Screen
+dbSelectArea("SE1")
+dbSetOrder(1)
+Set Filter To
+
+If aReturn[5] == 1
+   Set Printer To
+   dbCommit()
+   ourspool(wnrel)                                  
+Endif
+
+MS_FLUSH()
+
+dbSelectArea("IMP")
+dbCloseArea()
+
+If File(c_ArqImp+".DBF")
+   Ferase(c_ArqImp+".DBF")
+   Ferase(c_ArqImp+ordbagext())
+EndIf
+
+dbSelectArea(_cOldAlias)
+
+Return
+

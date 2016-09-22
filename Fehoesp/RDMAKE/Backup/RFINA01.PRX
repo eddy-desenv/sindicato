@@ -1,0 +1,323 @@
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA01  ³ Autor ³ Andreia dos Santos    ³ Data ³ 12/03/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Importacao de Fornecedores                                 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cTitulo   := "Importacao de Fornecedores"
+n_Opc := 0
+cPerg    := "FINA03"
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis utilizadas para parametros                         ³
+³ mv_par01           // Arquivo a ser Importado(Fornecedores)  ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+
+Pergunte(cPerg,.T.)
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Verifica diretorio de busca de arquivo para importacao      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+
+dbSelectArea("SX6")  //Parametros
+dbSetOrder(1)
+dbSeek(xFilial("SX6")+"MV_DIR_IMP")
+_cPath := AllTrim(SX6->X6_CONTEUD)+Space(50-Len(AllTrim(SX6->X6_CONTEUD)))
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,022,079)
+   SetColor("B/BG,N/W")
+
+   @ 011,010 Say "Este programa fara a importacao dos Fornecedores de um arquivo"
+   @ 012,010 Say "tipo DBF, incluindo Fornecedores"
+
+   @ 014,010 Say "Caminho - Conforme Parametro MV_DIR_IMP "
+   @ 015,010 Say _cPath       PICTURE "@!"
+   SetColor("B/BG,W/N")
+
+   @ 019,010 Say "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS"
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Parametros","Abandona"},22,04,"b/w,w+/n,r/w","CPA","",2)
+
+      If n_Opc == 3 .or. Lastkey()==27
+         Return
+      Endif
+
+      If n_Opc == 2
+         Pergunte(cPerg,.T.)
+         Loop
+      Endif
+
+      Exit
+   End
+   Importar()   
+#ELSE
+   @ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 TO 100,222
+   @ 023,014 SAY "Este programa fara a importacao dos Fornecedores de um arquivo"
+   @ 033,014 SAY "tipo DBF, incluindo Fornecedores "
+
+   @ 053,014 Say "Caminho - Conforme Parametro MV_DIR_IMP "
+   @ 063,014 Get _cPath  PICTURE "@S30" WHEN .f.
+
+   @ 086,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+Return
+
+*-----------------*
+Function Iniciar
+*-----------------*
+Close(oDlg1)
+Processa( {|| Execute(Importar) })
+Return
+
+*------------------*
+Function Importar
+*------------------*
+
+_cArqFornec  := mv_par01
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Verificando se o arquivo a ser importado existe             ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+
+If !File(AllTrim(_cPath)+AllTrim(_cArqFornec))
+   Help(" ",1,"ARRVAZ")
+   Return
+endif
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Criando estrutura para arquivo temporario                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+_aEstrutura := {}  
+
+AADD( _aEstrutura,{"GRUPO"      , "C" , 03 , 0 } )
+AADD( _aEstrutura,{"TIPO"       , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"CODIGO"     , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"ZONA"       , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"NOME"       , "C" , 40 , 0 } )
+AADD( _aEstrutura,{"NOMEFANTA"  , "C" , 20 , 0 } )
+AADD( _aEstrutura,{"CONTATO"    , "C" , 25 , 0 } )
+AADD( _aEstrutura,{"CARGO"      , "C" , 25 , 0 } )
+AADD( _aEstrutura,{"ENDERECO"   , "C" , 40 , 0 } )
+AADD( _aEstrutura,{"BAIRRO"     , "C" , 20 , 0 } )
+AADD( _aEstrutura,{"CIDADE"     , "C" , 20 , 0 } )
+AADD( _aEstrutura,{"UF"         , "C" , 02 , 0 } )
+AADD( _aEstrutura,{"PAIS"       , "C" , 20 , 0 } )
+AADD( _aEstrutura,{"CEP"        , "C" , 09 , 0 } )
+AADD( _aEstrutura,{"SITUACAO"   , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"DATASITUAC" , "D" , 08 , 0 } )
+AADD( _aEstrutura,{"COMENTARIO" , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"OBSERVACAO" , "M" , 10 , 0 } ) 
+AADD( _aEstrutura,{"FONE1"      , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"FONE2"      , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"FONE3"      , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"FAX"        , "C" , 11 , 0 } )
+AADD( _aEstrutura,{"TELEX"      , "C" , 11 , 0 } )
+AADD( _aEstrutura,{"CAIXA_POST" , "C" , 10 , 0 } ) 
+AADD( _aEstrutura,{"CIC_OU_CGC" , "C" , 19 , 0 } ) 
+AADD( _aEstrutura,{"RG_OU_INSC" , "C" , 19 , 0 } )
+AADD( _aEstrutura,{"CT_OU_CCM"  , "C" , 19 , 0 } )
+AADD( _aEstrutura,{"TIPO_COBRA" , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"CONT_COBRA" , "C" , 05 , 0 } ) 
+AADD( _aEstrutura,{"BANNUMERO"  , "C" , 10 , 0 } ) 
+AADD( _aEstrutura,{"BANFILIAL"  , "C" , 05 , 0 } )
+AADD( _aEstrutura,{"BANAGENCIA" , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"IPI_1_PARC" , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"CONDICAO"   , "C" , 03 , 0 } )
+AADD( _aEstrutura,{"DESCONTO"   , "N" , 05 , 2 } )
+AADD( _aEstrutura,{"ACRESCIMO"  , "N" , 05 , 2 } ) 
+AADD( _aEstrutura,{"COMISSAO"   , "N" , 05 , 2 } ) 
+AADD( _aEstrutura,{"REPRESENTA" , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"CIF_FOB"    , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"TRANSPORTA" , "C" , 05 , 0 } )  
+AADD( _aEstrutura,{"AUX_CONTAA" , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"AUX_CONTAB" , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"END_COBRAN" , "C" , 40 , 0 } )
+AADD( _aEstrutura,{"BAI_COBRAN" , "C" , 20 , 0 } )
+AADD( _aEstrutura,{"CID_COBRAN" , "C" , 20 , 0 } )  
+AADD( _aEstrutura,{"EST_COBRAN" , "C" , 02 , 0 } )
+AADD( _aEstrutura,{"CEP_COBRAN" , "C" , 09 , 0 } )
+AADD( _aEstrutura,{"CLI_COBRAN" , "C" , 15 , 0 } ) 
+AADD( _aEstrutura,{"TEMOUTCOB"  , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"COB_CLIENT" , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"ZONAENTREG" , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"END_ENTREG" , "C" , 40 , 0 } )
+AADD( _aEstrutura,{"BAI_ENTREG" , "C" , 20 , 0 } )
+AADD( _aEstrutura,{"CID_ENTREG" , "C" , 20 , 0 } )
+AADD( _aEstrutura,{"EST_ENTREG" , "C" , 02 , 0 } )
+AADD( _aEstrutura,{"CEP_ENTREG" , "C" , 09 , 0 } )
+AADD( _aEstrutura,{"CGC_ENTREG" , "C" , 19 , 0 } )
+AADD( _aEstrutura,{"INS_ENTREG" , "C" , 19 , 0 } )
+AADD( _aEstrutura,{"TEMOUTENT"  , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"CLI_ENTREG" , "C" , 15 , 0 } ) 
+AADD( _aEstrutura,{"ENT_CLIENT" , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"CADASTRO"   , "D" , 08 , 0 } )
+AADD( _aEstrutura,{"SUFRAMA"    , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"JUNTA"      , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"ATIVIDADE"  , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"TABELAESTO" , "C" , 02 , 0 } )
+AADD( _aEstrutura,{"CENTRO"     , "C" , 12 , 0 } )
+AADD( _aEstrutura,{"MOEDA"      , "N" , 02 , 0 } )
+AADD( _aEstrutura,{"CONTRIBUIN" , "N" , 01 , 0 } )
+AADD( _aEstrutura,{"TEM_AR"     , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"TEM_MAR"    , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"TEM_TER"    , "C" , 01 , 0 } ) 
+AADD( _aEstrutura,{"TEMPO_AR"   , "N" , 03 , 0 } )
+AADD( _aEstrutura,{"TEMPO_MAR"  , "N" , 03 , 0 } )
+AADD( _aEstrutura,{"TEMPO_TER"  , "N" , 03 , 0 } )
+AADD( _aEstrutura,{"BLOQUEIA"   , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"CODESPECIF" , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"EMP_FILIAL" , "C" , 05 , 0 } )
+AADD( _aEstrutura,{"CLIFOR"     , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"DEPTO"      , "C" , 20 , 0 } )
+AADD( _aEstrutura,{"NOMEBANCO"  , "C" , 40 , 0 } )
+AADD( _aEstrutura,{"CAMARACOMP" , "C" , 03 , 0 } )
+AADD( _aEstrutura,{"DIG_CONTA"  , "C" , 02 , 0 } )
+AADD( _aEstrutura,{"DIG_AGENC"  , "C" , 02 , 0 } )
+AADD( _aEstrutura,{"M_DIRETA"   , "C" , 01 , 0 } )
+                                                 
+c_ArqTmp := CriaTrab(_aEstrutura,.t.)
+dbUseArea(.t.,,c_ArqTmp,"TMP")
+dbSelectArea("TMP")
+
+Append From &(AllTrim(_cPath)+AllTrim(_cArqFornec)) SDF
+
+dbGotop()
+
+
+ProcRegua(RecCount(),22,05)
+
+_nIncluidos := 0
+
+Do While !Eof() 
+
+    #IFNDEF WINDOWS
+       IncProc(22,05)
+    #ELSE
+       IncProc(_cTitulo)
+    #ENDIF
+
+    if TMP->GRUPO # "FOR"
+       dbskip()
+       loop
+    endif
+
+    dbSelectArea("SA2")
+    dbSetOrder(1)
+    dbgobottom()
+
+    _nCod := val(SA2->A2_COD)+1
+
+    RecLock("SA2",.T.)
+    SA2->A2_FILIAL  := xFilial("SA2")
+    SA2->A2_COD     := strzero(_nCod,6) 
+    SA2->A2_LOJA    := "01"
+    SA2->A2_NOME    := TMP->NOME
+    SA2->A2_NREDUZ  := TMP->CODIGO
+    SA2->A2_END     := TMP->ENDERECO
+    SA2->A2_MUN     := TMP->CIDADE
+    SA2->A2_EST     := TMP->UF
+    SA2->A2_BAIRRO  := TMP->BAIRRO
+    SA2->A2_CEP     := substr(TMP->CEP,1,5)+substr(TMP->CEP,7,3)
+
+    SA2->A2_TIPO    := if( len(alltrim(TMP->CIC_OU_CGC))==18,"J",;
+                       if( len(alltrim(TMP->CIC_OU_CGC))==14,"F","X") ) // J,F,X VERIFICAR
+    if len(alltrim(TMP->CIC_OU_CGC)) == 18
+
+       SA2->A2_CGC     := substr(alltrim(TMP->CIC_OU_CGC),01,2) + ;
+                          substr(alltrim(TMP->CIC_OU_CGC),04,3) + ;
+                          substr(alltrim(TMP->CIC_OU_CGC),08,3) + ;
+                          substr(alltrim(TMP->CIC_OU_CGC),12,4) + ;
+                          substr(alltrim(TMP->CIC_OU_CGC),17,2)
+
+    elseif len(alltrim(TMP->CIC_OU_CGC)) == 14
+
+       SA2->A2_CGC     := substr(alltrim(TMP->CIC_OU_CGC),01,3) + ;
+                          substr(alltrim(TMP->CIC_OU_CGC),05,3) + ;
+                          substr(alltrim(TMP->CIC_OU_CGC),09,3) + ;
+                          substr(alltrim(TMP->CIC_OU_CGC),13,2) 
+
+    else
+      SA2->A2_CGC     := alltrim(TMP->CIC_OU_CGC)
+    endif
+
+    SA2->A2_TEL     := TMP->FONE1
+    SA2->A2_TELEX   := TMP->TELEX
+    SA2->A2_FAX     := TMP->FAX
+    SA2->A2_INSCR   := TMP->RG_OU_INSC
+    SA2->A2_SCONTAT := TMP->CONTATO
+    SA2->A2_CONTA   := TMP->AUX_CONTAB
+    SA2->A2_TRANSP  := TMP->TRANSPORTA
+    SA2->A2_COND    := TMP->CONDICAO
+    SA2->A2_PAIS    := TMP->PAIS
+    SA2->A2_TELEFON := TMP->FONE2
+    SA2->A2_SITUACA := TMP->SITUACAO
+    SA2->A2_STIPO   := TMP->TIPO
+    SA2->A2_DTIMPOR := dDataBase
+    SA2->A2_DTCAD   := TMP->CADASTRO
+    dbcommit()
+   _nIncluidos := _nIncluidos + 1
+   MsUnLock()
+
+   dbSelectArea("TMP")
+   dbSkip()
+Enddo
+
+Tone(800,2)
+Tone(1500,2)
+
+#IFNDEF WINDOWS
+   DrawAdvWindow("Termino de Importacao",010,010,021,069)
+   SetColor("B/BG,N/W")
+   @ 12,14 SAY "Fornecedores Incluidos"
+   @ 12,37 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   READ
+   @ 19,19 SAY "Pressione Qualquer Tecla para Continuar"
+   Inkey(0)
+#ELSE
+   @ 96,42 TO 290,405 DIALOG oDlg1 TITLE "Termino de Importacao"
+   @ 8,10 TO 68,170
+   @ 23,22 SAY "Fornecedores Incluidos"
+   @ 23,95 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   @ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg1)
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+dbSelectArea("TMP")
+dbCloseArea()
+
+If File(c_ArqTmp+".DBF")
+   Ferase(c_ArqTmp+".DBF")
+EndIf
+
+dbSelectArea("SA2")
+dbSetOrder(1)        
+
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder)
+
+
+Return

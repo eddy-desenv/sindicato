@@ -1,0 +1,96 @@
+cTela := savescreen()
+
+@08,05 clear to 16,70
+@08,05 to 16,70
+
+dbselectarea('si1')
+dbgotop()
+
+while eof() == .f.
+	@10,10 say i1_filial
+	@12,10 say i1_codigo
+	@14,10 say i1_desc
+
+	reclock('si1',.f.)
+
+	_field->i1_debm01	:= 0.0
+	_field->i1_crdm01	:= 0.0
+
+	_field->i1_debm02	:= 0.0
+	_field->i1_crdm02	:= 0.0
+
+	_field->i1_debm03	:= 0.0
+	_field->i1_crdm03	:= 0.0
+
+	_field->i1_debm04	:= 0.0
+	_field->i1_crdm04	:= 0.0
+
+	_field->i1_debm05	:= 0.0
+	_field->i1_crdm05	:= 0.0
+
+	_field->i1_debm06	:= 0.0
+	_field->i1_crdm06	:= 0.0
+
+	_field->i1_debm07	:= 0.0
+	_field->i1_crdm07	:= 0.0
+
+	_field->i1_debm08	:= 0.0
+	_field->i1_crdm08	:= 0.0
+
+	_field->i1_debm09	:= 0.0
+	_field->i1_crdm09	:= 0.0
+
+	_field->i1_debm10	:= 0.0
+	_field->i1_crdm10	:= 0.0
+
+	_field->i1_debm11	:= 0.0
+	_field->i1_crdm11	:= 0.0
+
+	_field->i1_debm12	:= 0.0
+	_field->i1_crdm12	:= 0.0
+
+	_field->i1_debm13	:= 0.0
+	_field->i1_crdm13	:= 0.0
+
+	_field->i1_debm14	:= 0.0
+	_field->i1_crdm14	:= 0.0
+
+	_field->i1_debm15	:= 0.0
+	_field->i1_crdm15	:= 0.0
+
+	_field->i1_debm16	:= 0.0
+	_field->i1_crdm16	:= 0.0
+
+	_field->i1_debm17	:= 0.0
+	_field->i1_crdm17	:= 0.0
+
+	dbunlock()
+	dbskip()
+enddo			
+
+@08,05 clear to 16,70
+@08,05 to 16,70
+
+dbselectarea('si2')
+dbgotop()
+
+while eof() == .f.
+	@10,15 say i2_num
+	@11,15 say i2_linha
+	@12,15 say i2_data
+	@13,15 say i2_debito
+	@14,15 say i2_credito
+
+	if i2_data <= ctod('30/09/98')
+		reclock('si2',.f.)
+		dbdelete()
+		dbunlock()
+	endif
+
+	dbskip()
+enddo
+
+restscreen(,,,,cTela)
+return
+
+

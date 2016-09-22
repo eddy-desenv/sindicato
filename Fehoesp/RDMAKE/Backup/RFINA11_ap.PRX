@@ -1,0 +1,355 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function RFINA11()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_CALIAS,_NORDEM,_NREGISTRO,_CTITULO,NOPCAO,CPERG")
+SetPrvt("_CPATH,_CARQLANC,_AESTRUTURA,C_ARQTMP,_CARQUIVO,_CARQIND")
+SetPrvt("_NINCLUIDOS,_NNUM,_NDOC,_NLIN,_CHIST,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA11  ³ Autor ³ Andreia dos Santos    ³ Data ³ 26.05.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Importacao de Lancamentos Contabeis                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+_cAlias := alias()
+_nOrdem := IndexOrd()
+_nRegistro := recno()
+_cTitulo := "Importacao de Lancamentos Contabeis"
+nOpcao := 0
+cPerg := "FINA03"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01           // Arquivo a ser Importado()              ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+Pergunte(cPerg,.T.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica diretorio de busca de arquivo para importacao      ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+dbSelectArea("SX6")  //Parametros
+dbSetOrder(1)
+dbSeek(xFilial("SX6")+"MV_DIR_IMP")
+_cPath := AllTrim(SX6->X6_CONTEUD)+Space(50-Len(AllTrim(SX6->X6_CONTEUD)))
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,022,079)
+   setcolor("B/BG,N/W")
+
+   @ 011,010 say "Este programa fara a importacao dos Lancametos Contabeis"
+   @ 012,010 say ""
+
+   @ 014,010 say "Caminho - Conforme Parametro MV_DIR_IMP "
+   @ 015,010 say _cPath       PICTURE "@!"
+
+   setcolor("B/BG,W/N")
+
+   @ 019,010 say "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS"
+
+   While .T.
+      nOpcao := Menuh({"Confirma","Parametros","Abandona"},22,04,"b/w,w+/n,r/w","CPA","",2)
+
+      if nOpcao == 3 .or. Lastkey()==27
+         Return
+      endif
+
+      if nOpcao == 2
+         Pergunte(cPerg,.T.)
+         Loop
+      endif
+
+      Exit
+   End
+   Importar()   
+#else
+   @ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 TO 100,222
+   @ 023,014 say "Este programa fara a importacao dos Lancamentos Contabeis"
+   @ 033,014 say " "
+
+   @ 053,014 say "Caminho - Conforme Parametro MV_DIR_IMP "
+   @ 063,014 Get _cPath  PICTURE "@S30" WHEN .f.
+
+   @ 086,014 say "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#endif
+
+Return
+
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Iniciar
+Static Function Iniciar()
+*-----------------*
+Close(oDlg1)
+Processa( {|| Importar() })// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Processa( {|| Execute(Importar) })
+Return
+
+*------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Importar
+Static Function Importar()
+*------------------*
+
+_cArqLanc  := mv_par01
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verificando se o arquivo a ser importado existe             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+if !File(AllTrim(_cPath)+AllTrim(_cArqLanc))
+   Help(" ",1,"ARRVAZ")
+   Return
+endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Criando estrutura para arquivo temporario                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+/*
+_aEstrutura := {}
+
+AADD( _aEstrutura,{"Ltb_Data"   , "D" , 08 , 0 } )
+AADD( _aEstrutura,{"Ltb_Numero" , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"Ltb_Sequen" , "C" , 04 , 0 } )
+AADD( _aEstrutura,{"Ltb_Conta"  , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"Ltb_Digito" , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"Ltb_DebCre" , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"Ltb_Auxili" , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"Ltb_CC"     , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"Ltb_CGC"    , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"Ltb_Valor"  , "N" , 14 , 2 } )
+AADD( _aEstrutura,{"Ltb_CodHis" , "C" , 05 , 0 } )
+AADD( _aEstrutura,{"Ltb_Histor" , "M" , 40 , 0 } )
+AADD( _aEstrutura,{"Ltb_DataIx" , "D" , 08 , 0 } )
+AADD( _aEstrutura,{"Ltb_ValoIX" , "N" , 14 , 2 } )
+AADD( _aEstrutura,{"Ltb_MoedIx" , "N" , 02 , 0 } )
+AADD( _aEstrutura,{"Ltb_Modulo" , "C" , 03 , 0 } )
+AADD( _aEstrutura,{"Ltb_NumDoc" , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"Ltb_Orides" , "C" , 15 , 0 } ) 
+AADD( _aEstrutura,{"Ltb_Parcel" , "C" , 07 , 0 } )
+AADD( _aEstrutura,{"Ltb_Tag"    , "L" , 01 , 0 } )
+AADD( _aEstrutura,{"Ltb_Alte1"  , "N" , 12 , 2 } )
+AADD( _aEstrutura,{"Ltb_Alte2"  , "N" , 12 , 2 } )
+AADD( _aEstrutura,{"Ltb_Alte3"  , "N" , 12 , 2 } )
+AADD( _aEstrutura,{"Emp_Filial" , "C" , 05 , 0 } ) 
+                                                 
+c_ArqTmp := CriaTrab(_aEstrutura,.t.)
+dbUseArea(.t.,,c_ArqTmp,"TMP")
+dbSelectArea("TMP")
+
+Append From &(AllTrim(_cPath)+AllTrim(_cArqLanc)) SDF
+
+dbGotop()
+*/
+
+_cArquivo := alltrim(_cPath) + alltrim(_cArqLanc)
+Use (_cArquivo) ALIAS "TMP" NEW via "DBFNTX"
+
+_cArqInd := CriaTrab(,.f.)
+IndRegua("TMP",_cArqInd,"dtos(ltb_data)+ltb_Numero+ltb_sequen",,,"Selecionando Registros...")
+dbSetIndex(_cArqInd)
+
+ProcRegua(RecCount(),22,05)
+
+_nIncluidos := 0
+
+_nNum := "0001"
+_nDoc := "001"
+_nLin := "00"
+
+Do While !Eof()
+    #IFNDEF WINDOWS
+       IncProc(22,05)
+    #else
+       IncProc(_cTitulo)
+    #endif
+
+    _nLin := val(_nlin)+1
+
+    if strzero( val( TMP->Ltb_Numero ),4 ) == _nNum
+       if _nLin == 100
+          _nDoc := strzero( val(_nDoc)+1,3 )
+          _nLin := "01" 
+       else
+         _nLin := strzero(_nlin,2)
+       endif
+    else
+       _nNum := strzero( val( TMP->Ltb_Numero ),4 )
+       _nDoc := "001"
+       _nLin := "01"
+    endif
+
+    dbSelectArea("SI2")
+    dbSetOrder(1)
+
+    RecLock("SI2",.T.)
+    SI2->I2_FILIAL  := xFilial("SI2")
+    SI2->I2_NUM     := _nNum+_nDoc   
+    SI2->I2_LINHA   := _nLin
+    SI2->I2_DATA    := TMP->Ltb_Data            //Data do Lancamento Cont
+    SI2->I2_DC      := TMP->Ltb_DebCre          //Ident. Debito/Credito/X
+    SI2->I2_DEBITO  := if(TMP->Ltb_DebCre=="D",TMP->Ltb_Conta,"")           //Numero da Conta Debito
+    SI2->I2_DCD     := ""                       //Digito Controle Debito
+    SI2->I2_CREDITO := if(TMP->Ltb_DebCre=="C",TMP->Ltb_Conta,"")           //Numero da Conta Credito
+    SI2->I2_DCC     := ""                       //Digito Controle Credito
+    SI2->I2_MOEDAS  := "SSSSS"                  //Moedas Utilizadas no Lanc
+    SI2->I2_VALOR   := TMP->Ltb_Valor           //Valor do Lancamento
+    SI2->I2_HP      := TMP->Ltb_CodHis          //Cod Historico Padrao
+    SI2->I2_DTVENC  := dDataBase               //Data Historica
+    SI2->I2_CRITER  := "DDDD"                  //Criterio de Conversao
+    SI2->I2_PERIODO := substr(dtos(Tmp->Ltb_data),3,2)+substr(dtos(Tmp->Ltb_data),5,2)                        //Periodo do Lcto Contabil
+    SI2->I2_FILORIG := xFilial("SI2")          //Filial Origem
+
+    _cHist := ALLTRIM(TMP->Ltb_Hist1) +" "+alltrim(TMP->Ltb_Hist2)
+
+    SI2->I2_HIST  := substr( _cHist,1,40)
+
+    if len( _cHist ) > 40 .and.  len(alltrim(substr(_cHist,41,40))) > 5
+       
+       _nLin := strzero(val(_nlin)+1,2)
+
+       if val(_nLin) == 100
+          _nDoc := strzero( val(_nDoc)+1,3 )
+          _nLin := "01"
+       endif
+
+       RecLock("SI2",.T.)
+       SI2->I2_FILIAL  := xFilial("SI2")
+       SI2->I2_NUM     := _nNum+_nDoc
+       SI2->I2_LINHA   := _nLin
+       SI2->I2_DATA    := TMP->Ltb_Data            //Data do Lancamento Cont
+       SI2->I2_DC      := "-"                      //Complemento de Historico      SI2->I2_MOEDAS  := "SSSSS"                  //Moedas Utilizadas no Lanc
+       SI2->I2_DTVENC  := dDataBase                //Data Historica
+       SI2->I2_PERIODO := substr(dtos(Tmp->Ltb_data),3,2)+substr(dtos(Tmp->Ltb_data),5,2)                        //Periodo do Lcto Contabil
+       SI2->I2_FILORIG := xFilial("SI2")           //Filial Origem
+       SI2->I2_HIST  := substr(ALLTRIM( _cHist ),41,40)
+
+       if  len( _cHist ) > 80 .and.  len(alltrim(substr(_cHist,81,40))) > 5
+
+           _nLin := strzero(val(_nlin)+1,2)
+
+           if val(_nLin) == 100
+             _nDoc := strzero( val(_nDoc)+1,3 )
+             _nLin := "01"
+          endif
+          RecLock("SI2",.T.)
+          SI2->I2_FILIAL  := xFilial("SI2")
+          SI2->I2_NUM     := _nNum+_nDoc
+          SI2->I2_LINHA   := _nLin
+          SI2->I2_DATA    := TMP->Ltb_Data            //Data do Lancamento Cont
+          SI2->I2_DC      := "-"                      //Complemento de Historico      SI2->I2_MOEDAS  := "SSSSS"                  //Moedas Utilizadas no Lanc
+          SI2->I2_DTVENC  := dDataBase                //Data Historica
+          SI2->I2_PERIODO := substr(dtos(Tmp->Ltb_data),3,2)+substr(dtos(Tmp->Ltb_data),5,2)                        //Periodo do Lcto Contabil
+          SI2->I2_FILORIG := xFilial("SI2")           //Filial Origem
+          SI2->I2_HIST  := substr(ALLTRIM(TMP->Ltb_Hist2),1,40)   //substr( _cHist,1,40)
+       endif
+
+       if len( _cHist ) > 120 .and.  len(alltrim(substr(_cHist,121,40))) > 5
+          _nLin := strzero(val(_nlin)+1,2)
+
+          if val(_nLin) == 100
+             _nDoc := strzero( val(_nDoc)+1,3 )
+             _nLin := "01"
+          endif
+          RecLock("SI2",.T.)
+          SI2->I2_FILIAL  := xFilial("SI2")
+          SI2->I2_NUM     := _nNum+_nDoc
+          SI2->I2_LINHA   := _nLin
+          SI2->I2_DATA    := TMP->Ltb_Data            //Data do Lancamento Cont
+          SI2->I2_DC      := "-"                      //Complemento de Historico      SI2->I2_MOEDAS  := "SSSSS"                  //Moedas Utilizadas no Lanc
+          SI2->I2_DTVENC  := dDataBase                //Data Historica
+          SI2->I2_PERIODO := substr(dtos(Tmp->Ltb_data),3,2)+substr(dtos(Tmp->Ltb_data),5,2)                        //Periodo do Lcto Contabil
+          SI2->I2_FILORIG := xFilial("SI2")           //Filial Origem
+          SI2->I2_HIST  := substr(ALLTRIM(TMP->Ltb_Hist2),41,40)
+       endif
+    endif
+
+    SI2->I2_CCD     := ""                       //Centro de Custo Debitar
+    SI2->I2_CCC     := ""                       //Centro de Custo Creditar
+    SI2->I2_ATIVDEB := ""                       //Codigo Atividade Debito
+    SI2->I2_ATIVCRD := ""                       //Codigo Atividade Credito
+//  SI2->I2_VLMOED2 :=                
+//  SI2->I2_VLMOED3 :=                 
+//  SI2->I2_VLMOED4 :=              
+//  SI2->I2_VLMOED5 :=            
+
+    SI2->I2_ROTINA  := ""                      //Rotina geradora do lcto
+
+    SI2->I2_LISTADO := ""                      //Identifica se foi listado
+    SI2->I2_ORIGEM  := ""                      //Origem do Lanc. Contabil
+    SI2->I2_PERMAT  := ""                      //Periodo Contabil Matriz
+    
+    SI2->I2_INTERCP := ""                      //Registro e Intecompany?
+    SI2->I2_IDENTCP := ""                      //Identificacao do InterCp
+    SI2->I2_LOTE    := ""                      //No. do Lote
+    SI2->I2_DOC     := ""                      //No. do Documento
+
+    dbcommit()
+   _nIncluidos := _nIncluidos + 1
+
+   MsUnLock()
+
+   dbSelectArea("TMP")
+   dbSkip()
+Enddo
+
+Tone(800,2)
+Tone(1500,2)
+
+#IFNDEF WINDOWS
+   DrawAdvWindow("Termino de Importacao",010,010,021,069)
+   setcolor("B/BG,N/W")
+   @ 12,14 say "Lancamentos Incluidos"
+   @ 12,37 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   READ
+   @ 19,19 say "Pressione Qualquer Tecla para Continuar"
+   Inkey(0)
+#else
+   @ 96,42 TO 290,405 DIALOG oDlg1 TITLE "Termino de Importacao"
+   @ 8,10 TO 68,170
+   @ 23,22 say "Lancamentos Incluidos"
+   @ 23,95 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   @ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg1)
+   ACTIVATE DIALOG oDlg1 CENTERED
+#endif
+
+dbSelectArea("TMP")
+dbCloseArea()
+
+/*
+if File(c_ArqTmp+".DBF")
+   Ferase(c_ArqTmp+".DBF")
+endif
+*/
+
+dbSelectArea("SI2")
+dbSetOrder(1)        
+
+dbSelectArea(_cAlias)
+dbSetOrder(_nOrdem)
+dbgoto(_nRegistro)
+
+return
+

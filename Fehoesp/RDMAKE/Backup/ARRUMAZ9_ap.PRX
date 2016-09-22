@@ -1,0 +1,152 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function ARRUMAZ9()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,_ASTRU2,C_ARQTMP2")
+
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo   := "Arruma numero bancario"
+n_Opc := 0
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,017,079)
+   SetColor("B/BG,N/W")
+   SetColor("B/BG,W/N")
+   @ 014,010 Say "CONFIRME PARA INICIAR A GERACAO DE DADOS"
+   While .T.
+      n_Opc := Menuh({"Confirma","Parametros","Abandona"},17,04,"b/w,w+/n,r/w","CPA","",2)
+      If n_Opc == 3 .or. Lastkey()==27
+         Return
+      Endif
+      If n_Opc == 2
+         Pergunte(cPerg,.T.)
+         Loop
+      Endif
+      Exit
+   End
+   Gerar()   
+#ELSE
+   @ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 TO 100,222
+   @ 063,014 SAY "CONFIRME PARA INICIAR A GERACAO DE DADOS         "
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+Return
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Iniciar
+Static Function Iniciar()
+*-----------------*
+Close(oDlg1)
+Processa( {|| Gerar() })// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Processa( {|| Execute(Gerar) })
+Return
+*------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Gerar
+Static Function Gerar()
+*------------------*
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Criando estrutura para arquivo temporario                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+/*_aStru2 := {}
+    AADD( _aStru2, { "COD_REGIST"  , "C" , 001 , 0 } )
+    AADD( _aStru2, { "COD_INSCRI"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "CGC_SDHOSP"  , "C" , 014 , 0 } )
+    AADD( _aStru2, { "ZERO_1"      , "C" , 001 , 0 } )
+    AADD( _aStru2, { "AG_CEDENTE"  , "C" , 004 , 0 } )
+    AADD( _aStru2, { "ZERO_2"      , "C" , 001 , 0 } )
+    AADD( _aStru2, { "CT_CEDENTE"  , "C" , 007 , 0 } )
+    AADD( _aStru2, { "VAGO_1"      , "C" , 032 , 0 } )
+    AADD( _aStru2, { "ZERO_3"      , "C" , 002 , 0 } )
+    AADD( _aStru2, { "NUMTIT_BAN"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "VAGO_2"      , "C" , 031 , 0 } )
+    AADD( _aStru2, { "COD_OCORRE"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "VAGO_3"      , "C" , 010 , 0 } )                                  
+    AADD( _aStru2, { "DATA_VENC"   , "C" , 006 , 0 } )
+    AADD( _aStru2, { "VLR_TITULO"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "IDENT_BANC"  , "C" , 003 , 0 } )
+    AADD( _aStru2, { "VAGO_4"      , "C" , 005 , 0 } )                                   
+    AADD( _aStru2, { "ESP_TITULO"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "VAGO_5"      , "C" , 001 , 0 } )                                   
+    AADD( _aStru2, { "DATA_EMISS"  , "C" , 006 , 0 } )
+    AADD( _aStru2, { "VAGO_6"      , "C" , 004 , 0 } )
+    AADD( _aStru2, { "JUROS_MORA"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "DATA_DESCO"  , "C" , 006 , 0 } )
+    AADD( _aStru2, { "VLR_DESCON"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "VLR_IOC"     , "C" , 013 , 0 } )
+    AADD( _aStru2, { "VLR_ABATIM"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "CPF_OU_CGC"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "CGC_SACADO"  , "C" , 014 , 0 } )
+    AADD( _aStru2, { "NOME_SACAD"  , "C" , 040 , 0 } )
+    AADD( _aStru2, { "END_SACADO"  , "C" , 040 , 0 } )
+    AADD( _aStru2, { "BAIRRO_SAC"  , "C" , 012 , 0 } )
+    AADD( _aStru2, { "CEP_SACADO"  , "C" , 008 , 0 } )
+    AADD( _aStru2, { "CIDADE_SAC"  , "C" , 015 , 0 } )
+    AADD( _aStru2, { "ESTADO_SAC"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "SACADOR"     , "C" , 040 , 0 } )
+    AADD( _aStru2, { "VAGO_7"      , "C" , 001 , 0 } )
+    AADD( _aStru2, { "VLR_MOEDA"   , "C" , 001 , 0 } )
+    AADD( _aStru2, { "TIPO_MOEDA"  , "C" , 001 , 0 } )
+    AADD( _aStru2, { "NUM_SEQUEN"  , "C" , 006 , 0 } )
+c_ArqTmp2 := CriaTrab(_aStru2,.t.)
+dbUseArea(.t.,,c_ArqTmp2,"DETA")
+*/
+use cescr11 alias deta new shared
+//dbSelectArea("DETA")
+//append from entida11.rem  sdf
+//append from cescr11.rem  sdf
+dbselectarea("deta")
+dbgotop()
+ProcRegua(RecCount(),22,05)
+DO WHILE !EOF()
+    INCPROC() 
+   #IFNDEF WINDOWS
+        IncProc(22,05)
+   #ELSE
+        IncProc()
+   #ENDIF
+   IF DETA->COD_REGIST <> "1"
+       DBSKIP()
+       LOOP
+   ENDIF
+   DbSelectArea("SZ9")
+   dbsetorder(1)
+   dbseek( xFilial() + DETA->NUMTIT_BAN )
+   DO WHILE !EOF() .AND. SZ9->Z9_TITULO == DETA->NUMTIT_BAN
+        reclock("Sz9",.F.)
+        dbdelete()
+        MSUNLOCK()
+        dbskip()
+    ENDDO
+    DBSELECTAREA("SE1")
+    DBSETORDER(11)
+    Dbseek( xFilial()+deta->numtit_ban ) // Num_tit
+    DO WHILE !EOF() .AND. SE1->E1_CONFED == DETA->NUMTIT_BAN
+        If se1->e1_vencto == ctod("30/11/04")
+            DBSELECTAREA("se1")
+            reclock("SE1",.F.)
+            dbdelete()
+            MSUNLOCK()
+        ENDIF
+        DBSKIP()        
+    ENDDO
+    DBSELECTAREA("SZ9")
+    RECLOCK("SZ9",.T.)
+    SZ9->Z9_TITULO := DETA->NUMTIT_BAN
+    SZ9->Z9_CGC    := DETA->CGC_SACADO
+    SZ9->z9_VENCTO := CTOD("30/11/04")
+    MSUNLOCK()
+    DBSELECTAREA("DETA")
+    DBSKIP()
+ENDDO
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

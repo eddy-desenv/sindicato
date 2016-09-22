@@ -1,0 +1,307 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function TRANSP()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,CFILIAL,CEXTENS")
+SetPrvt("CARQUIV,ADADOS,DEL,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ Consult  ³ Autor ³ Andreia dos Santos    ³ Data ³ 15/06/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Consulta Cobranca                                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo  := "Consolida registros da ASSOCIATIVA"
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,018,079)
+   SetColor("B/BG,N/W")
+
+   @ 011,010 Say "Este programa ira transportar os dados referente"
+   @ 012,010 Say "as contribuicoes ASSOCIATIVAS."
+   @ 014,035 Say "Programa especifico SINDHOSP"
+   SetColor("B/BG,W/N")
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Abandona"},18,04,"b/w,w+/n,r/w","CA","",2)
+
+      If n_Opc == 2 .or. Lastkey()==27
+
+         Return
+      Endif
+
+      Exit
+   End
+   Transport()   
+#ELSE
+
+//   @ 101,082 To 316,433 Dialog janela1 Title _cTitulo
+
+   @ 101,075 To 316,510 Dialog janela1 Title _cTitulo
+
+   @ 014,010 Say "Este programa ira transportar os dados referente"
+   @ 015,010 Say "as contribuicoes ASSOCIATIVAS."
+   @ 017,035 Say "Programa especifico SINDHOSP"
+
+   @ 077,045 BmpButton Type 1 Action Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 077,045 BmpButton Type 1 Action Execute(Iniciar)
+   @ 076,112 BmpButton Type 2 Action close(janela1)
+   Activate Dialog janela1 Centered
+
+#ENDIF
+Return
+
+
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Iniciar
+Static Function Iniciar()
+*-----------------*
+Close(oDlg1)
+Processa( {|| Transport() })// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Processa( {|| Execute(Transport) })
+Return
+
+
+*------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Transport
+Static Function Transport()
+*------------------*
+
+cFilial := SM0->M0_CODIGO
+cExtens  := ".DBF"
+cArquiv := "SZM" + cFilial + cExtens
+
+If File(cArquiv)
+   Ferase(Substr(cArquiv,1,6) + "*.*")
+EndIf
+
+ChkFile("SZM",.F.)
+DbSelectArea("SE1")
+DbSetOrder(1)
+ProcRegua(RecCount(),18,05)
+
+While !Eof()
+    #IFNDEF WINDOWS
+       IncProc(18,05)
+    #ELSE
+       IncProc(_cTitulo)
+    #ENDIF
+
+          If AllTrim( SE1->E1_NATUREZ ) == "001"
+             aDados := {}
+             AADD(aDados,SE1->E1_FILIAL)
+             AADD(aDados,SE1->E1_PREFIXO)
+             AADD(aDados,SE1->E1_NUM)
+             AADD(aDados,SE1->E1_PARCELA)
+             AADD(aDados,SE1->E1_TIPO)
+             AADD(aDados,SE1->E1_NATUREZ)
+             AADD(aDados,SE1->E1_PORTADO)
+             AADD(aDados,SE1->E1_AGEDEP)
+             AADD(aDados,SE1->E1_CLIENTE)
+             AADD(aDados,SE1->E1_LOJA)
+             AADD(aDados,SE1->E1_NOMCLI)
+             AADD(aDados,SE1->E1_EMISSAO)
+             AADD(aDados,SE1->E1_VENCTO)
+             AADD(aDados,SE1->E1_VENCREA)
+             AADD(aDados,SE1->E1_VALOR)
+             AADD(aDados,SE1->E1_IRRF)
+             AADD(aDados,SE1->E1_ISS)
+             AADD(aDados,SE1->E1_NUMBCO)
+             AADD(aDados,SE1->E1_INDICE)
+             AADD(aDados,SE1->E1_BAIXA)
+             AADD(aDados,SE1->E1_NUMBOR)
+             AADD(aDados,SE1->E1_DATABOR)
+             AADD(aDados,SE1->E1_EMIS1)
+             AADD(aDados,SE1->E1_HIST)
+             AADD(aDados,SE1->E1_LA)
+             AADD(aDados,SE1->E1_LOTE)
+             AADD(aDados,SE1->E1_MOTIVO)
+             AADD(aDados,SE1->E1_MOVIMEN)
+             AADD(aDados,SE1->E1_OP)
+             AADD(aDados,SE1->E1_SITUACA)
+             AADD(aDados,SE1->E1_CONTRAT)
+             AADD(aDados,SE1->E1_SALDO)
+             AADD(aDados,SE1->E1_SUPERVI)
+             AADD(aDados,SE1->E1_VEND1)
+             AADD(aDados,SE1->E1_VEND2)
+             AADD(aDados,SE1->E1_VEND3)
+             AADD(aDados,SE1->E1_VEND4)
+             AADD(aDados,SE1->E1_VEND5)
+             AADD(aDados,SE1->E1_COMIS1) 
+             AADD(aDados,SE1->E1_COMIS2)
+             AADD(aDados,SE1->E1_COMIS3)
+             AADD(aDados,SE1->E1_COMIS4)
+             AADD(aDados,SE1->E1_COMIS5)
+             AADD(aDados,SE1->E1_DESCONT)
+             AADD(aDados,SE1->E1_MULTA)
+             AADD(aDados,SE1->E1_JUROS)
+             AADD(aDados,SE1->E1_CORREC)
+             AADD(aDados,SE1->E1_VALLIQ)
+             AADD(aDados,SE1->E1_VENCORI)
+             AADD(aDados,SE1->E1_CONTA)
+             AADD(aDados,SE1->E1_VALJUR)
+             AADD(aDados,SE1->E1_PORCJUR)
+             AADD(aDados,SE1->E1_MOEDA)
+             AADD(aDados,SE1->E1_BASCOM1)
+             AADD(aDados,SE1->E1_BASCOM2)
+             AADD(aDados,SE1->E1_BASCOM3)
+             AADD(aDados,SE1->E1_BASCOM4)
+             AADD(aDados,SE1->E1_BASCOM5)
+             AADD(aDados,SE1->E1_FATPREF)
+             AADD(aDados,SE1->E1_FATURA)
+             AADD(aDados,SE1->E1_OK)
+             AADD(aDados,SE1->E1_PROJETO)
+             AADD(aDados,SE1->E1_CLASCON)
+             AADD(aDados,SE1->E1_VALCOM1)
+             AADD(aDados,SE1->E1_VALCOM2)
+             AADD(aDados,SE1->E1_VALCOM3)
+             AADD(aDados,SE1->E1_VALCOM4)
+             AADD(aDados,SE1->E1_VALCOM5)
+             AADD(aDados,SE1->E1_OCORREN)
+             AADD(aDados,SE1->E1_INSTR1)
+             AADD(aDados,SE1->E1_INSTR2)
+             AADD(aDados,SE1->E1_PEDIDO)
+             AADD(aDados,SE1->E1_DTVARIA)
+             AADD(aDados,SE1->E1_VARURV)
+             AADD(aDados,SE1->E1_VLCRUZ)
+             AADD(aDados,SE1->E1_DTFATUR)
+             AADD(aDados,SE1->E1_NUMNOTA)
+             AADD(aDados,SE1->E1_SERIE)
+             AADD(aDados,SE1->E1_STATUS)
+             AADD(aDados,SE1->E1_ORIGEM)
+             AADD(aDados,SE1->E1_IDENTEE)
+             AADD(aDados,SE1->E1_NUMCART)
+             AADD(aDados,SE1->E1_DTIMPOR)
+             AADD(aDados,SE1->E1_CRED)
+             AADD(aDados,SE1->E1_DEB)
+             AADD(aDados,SE1->E1_CC)
+             AADD(aDados,SE1->E1_CGC)
+             AADD(aDados,SE1->E1_CODASSO)
+             AADD(aDados,SE1->E1_CATEG1)
+             AADD(aDados,SE1->E1_MENS1)
+             AADD(aDados,SE1->E1_MENS2)
+             AADD(aDados,SE1->E1_MENS3)
+             If delete()
+                del := .t.
+                Else
+                del := .f.
+             EndIf
+
+            DbSelectArea("SZM")
+            DbAppend()
+            SZM->ZM_FILIAL   := aDados[01]
+            SZM->ZM_PREFIXO  := aDados[02]
+            SZM->ZM_NUM      := aDados[03]
+            SZM->ZM_PARCELA  := aDados[04]
+            SZM->ZM_TIPO     := aDados[05]
+            SZM->ZM_NATUREZ  := aDados[06]
+            SZM->ZM_PORTADO  := aDados[07]
+            SZM->ZM_AGEDEP   := aDados[08]
+            SZM->ZM_CLIENTE  := aDados[09]
+            SZM->ZM_LOJA     := aDados[10]
+            SZM->ZM_NOMCLI   := aDados[11]
+            SZM->ZM_EMISSAO  := aDados[12]
+            SZM->ZM_VENCTO   := aDados[13]
+            SZM->ZM_VENCREA  := aDados[14]
+            SZM->ZM_VALOR    := aDados[15]
+            SZM->ZM_IRRF     := aDados[16]
+            SZM->ZM_ISS      := aDados[17]
+            SZM->ZM_NUMBCO   := aDados[18]
+            SZM->ZM_INDICE   := aDados[19]
+            SZM->ZM_BAIXA    := aDados[20]
+            SZM->ZM_NUMBOR   := aDados[21]
+            SZM->ZM_DATABOR  := aDados[22]
+            SZM->ZM_EMIS1    := aDados[23]
+            SZM->ZM_HIST     := aDados[24]
+            SZM->ZM_LA       := aDados[25]
+            SZM->ZM_LOTE     := aDados[26]
+            SZM->ZM_MOTIVO   := aDados[27]
+            SZM->ZM_MOVIMEN  := aDados[28]
+            SZM->ZM_OP       := aDados[29]
+            SZM->ZM_SITUACA  := aDados[30]
+            SZM->ZM_CONTRAT  := aDados[31]
+            SZM->ZM_SALDO    := aDados[32]
+            SZM->ZM_SUPERVI  := aDados[33]
+            SZM->ZM_VEND1    := aDados[34]
+            SZM->ZM_VEND2    := aDados[35]
+            SZM->ZM_VEND3    := aDados[36]
+            SZM->ZM_VEND4    := aDados[37]
+            SZM->ZM_VEND5    := aDados[38]
+            SZM->ZM_COMIS1   := aDados[39]
+            SZM->ZM_COMIS2   := aDados[40]
+            SZM->ZM_COMIS3   := aDados[41]
+            SZM->ZM_COMIS4   := aDados[42]
+            SZM->ZM_COMIS5   := aDados[43]
+            SZM->ZM_DESCONT  := aDados[44]
+            SZM->ZM_MULTA    := aDados[45]
+            SZM->ZM_JUROS    := aDados[46]
+            SZM->ZM_CORREC   := aDados[47]
+            SZM->ZM_VALLIQ   := aDados[48]
+            SZM->ZM_VENCORI  := aDados[49]
+            SZM->ZM_CONTA    := aDados[50]
+            SZM->ZM_VALJUR   := aDados[51]
+            SZM->ZM_PORCJUR  := aDados[52]
+            SZM->ZM_MOEDA    := aDados[53]
+            SZM->ZM_BASCOM1  := aDados[54]
+            SZM->ZM_BASCOM2  := aDados[55]
+            SZM->ZM_BASCOM3  := aDados[56]
+            SZM->ZM_BASCOM4  := aDados[57]
+            SZM->ZM_BASCOM5  := aDados[58]
+            SZM->ZM_FATPREF  := aDados[59]
+            SZM->ZM_FATURA   := aDados[60]
+            SZM->ZM_OK       := aDados[61]
+            SZM->ZM_PROJETO  := aDados[62]
+            SZM->ZM_CLASCON  := aDados[63]
+            SZM->ZM_VALCOM1  := aDados[64]
+            SZM->ZM_VALCOM2  := aDados[65]
+            SZM->ZM_VALCOM3  := aDados[66]
+            SZM->ZM_VALCOM4  := aDados[67]
+            SZM->ZM_VALCOM5  := aDados[68]
+            SZM->ZM_OCORREN  := aDados[69]
+            SZM->ZM_INSTR1   := aDados[70]
+            SZM->ZM_INSTR2   := aDados[71]
+            SZM->ZM_PEDIDO   := aDados[72]
+            SZM->ZM_DTVARIA  := aDados[73]
+            SZM->ZM_VARURV   := aDados[74]
+            SZM->ZM_VLCRUZ   := aDados[75]
+            SZM->ZM_DTFATUR  := aDados[76]
+            SZM->ZM_NUMNOTA  := aDados[77]
+            SZM->ZM_SERIE    := aDados[78]
+            SZM->ZM_STATUS   := aDados[79]
+            SZM->ZM_ORIGEM   := aDados[80]
+            SZM->ZM_IDENTEE  := aDados[81]
+            SZM->ZM_NUMCART  := aDados[82]
+            SZM->ZM_DTIMPOR  := aDados[83]
+            SZM->ZM_CRED     := aDados[84]
+            SZM->ZM_DEB      := aDados[85]
+            SZM->ZM_CC       := aDados[86]
+            SZM->ZM_CGC      := aDados[87]
+            SZM->ZM_CODASSO  := aDados[88]
+            SZM->ZM_CATEG1   := aDados[89]
+            SZM->ZM_MENS1    := aDados[90]
+            SZM->ZM_MENS2    := aDados[91]
+            SZM->ZM_MENS3    := aDados[92]
+            DbCommit()
+
+            If del
+               Delete
+            EndIf
+          DbSelectArea("SE1")
+          EndIf
+          DbSkip()
+EndDo
+Return

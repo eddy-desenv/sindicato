@@ -1,0 +1,10 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function TESTE2()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//cabecalho
+axcadastro("SZN","ARQ. SZN")
+
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

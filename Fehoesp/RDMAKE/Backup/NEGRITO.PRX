@@ -1,0 +1,112 @@
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Teste de Negrito na EPSON (matricial)                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+#IFNDEF WINDOWS
+   #Define PSay Say
+#ENDIF
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+tamanho:="M"
+titulo := "LIBERACAO DE ENTREGAS"
+cDesc1 :="Este programa ira emitir Liberacao de Entregas,"
+cDesc2 :="utilizando recursos do SIGA Advanced."
+cDesc3 :="* NORX05 *"
+aReturn := { "Especial", 1,"Administracao", 1, 2, 1, "",1 }
+cString:="SA1"
+nLastKey:= 0
+cPerg:="XXX"
+wnrel:="XXX"       // nome default do relatorio em disco
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:=SetPrint(cString,wnrel,cPerg,Titulo,cDesc1,cDesc2,cDesc3,.F.,,.T.,tamanho)
+
+If LastKey() == 27 .or. nLastKey == 27
+   Return
+Endif
+SetDefault(aReturn,cString)
+If LastKey() == 27 .or. nLastKey == 27
+   Return
+Endif
+
+#IFDEF WINDOWS
+   RptStatus({|| Execute(RptDetail)})
+   Return
+   Function RptDetail
+#ENDIF
+
+Set Device to Print
+Set Print On
+SetPRC(0,0)
+@ 00,00 PSay Chr(15)       // Comprime Caracter
+
+@ 1,0 PSay Chr(27)+Chr(71)
+@ 1,0 PSay "E L I C E   I N D U S T R I A   E   C O M E R C I O   L T D A"
+@ 1,111 PSay "L I B E R A C A O"
+@ 1,132 PSay Chr(27)+Chr(72)
+@ 2,0 PSay "Rua Marechal Rondon, 1920  -  Salto - SP"
+@ 2,116 PSay Chr(27)+Chr(71)
+@ 2,118 PSay "D E"
+@ 2,132 PSay Chr(27)+Chr(72)
+@ 3,0 PSay "Fone: (011) 7828-1933         Fax: (011) 7828-1659"+IIf(AllTrim(Subs(SM0->M0_NOME,1,15))=="ELICE","/7828-1354","")
+@ 3,110 PSay Chr(27)+Chr(71)
+@ 3,112 PSay "E N T R E G A S"
+@ 3,132 PSay Chr(27)+Chr(72)
+@ 4,0 PSay "CGC: 59.530.774/0001-77       Inscricao Estadual: 600.041.412.110"
+@ 5,0 PSay Repl("-",132)
+@ 6,0 PSay Chr(27)+Chr(71)
+@ 6,0 PSay "Local de Entrega.:"
+@ 6,132 PSay Chr(27)+Chr(72)
+@ 7,10 PSay "Rua Nove de Julho, 160"
+@ 7,70 PSay Chr(27)+Chr(71)
+@ 7,75 PSay "No.Prog.Anterior.:"
+@ 7,93 PSay Chr(27)+Chr(72)
+@ 7,94 PSay "0040"
+@ 7,103 PSay Chr(27)+Chr(71)
+@ 7,104 PSay "Data Prog.Anterior.:"
+@ 7,124 PSay Chr(27)+Chr(72)
+@ 7,125 PSay "08/01/01"
+@ 8,0 PSay Chr(27)+Chr(71)
+@ 8,75 PSay "No.Prog.Atual....:"
+@ 8,93 PSay Chr(27)+Chr(72)
+@ 8,94 PSay "0001"
+@ 8,103 PSay Chr(27)+Chr(71)
+@ 8,104 PSay "Data Prog.Atual....:"
+@ 8,124 PSay Chr(27)+Chr(72)
+@ 8,125 PSay "01/02/01"
+@ 10,0 PSay Repl("-",132)
+@ 11,0 PSay Chr(27)+Chr(71)
+@ 11,5 PSay "OBS: - ESTE PEDIDO SUBSTITUI O ANTERIOR. VERIFICAR CAMPO DE ULTIMO RECEBIMENTO."
+@ 12,10 PSay "- EXIGIMOS 100% DA ENTREGA NO PRAZO PARA TAMBEM CONSEGUIRMOS ATENDER NOSSOS CLIENTES."
+@ 12,132 PSay Chr(27)+Chr(72)
+@ 13,0 PSay Repl("-",132)
+nLin:=14
+@ nLin,0 PSay Chr(27)+Chr(71)
+@ nLin,0 PSay "Fornecedor.......:"
+@ nLin,25 PSay "0917    -  ACOPLAST INDUSTRIA E COMERCIO LTDA"
+@ nLin+1,0 PSay "Endereco.........:"
+@ nLin+1,24 PSay Chr(27)+Chr(72)
+@ nLin+1,25 PSay "RUA ANGELO NEGRI, 95               PQ.INDUSTRIAL JUVENA      ITAPIRA      -  SP"
+@ nLin+2,0 PSay Chr(27)+Chr(71)
+@ nLin+2,0 PSay "Fone.............:"
+@ nLin+2,24 PSay Chr(27)+Chr(72)
+@ nLin+2,25 PSay "019 3863 8023"
+@ nLin+2,44 PSay Chr(27)+Chr(71)
+@ nLin+2,45 PSay "Fax:"
+@ nLin+2,49 PSay Chr(27)+Chr(72)
+@ nLin+2,50 PSay "019 3843 2421"
+@ nLin+2,70 PSay Chr(27)+Chr(71)
+@ nLin+2,71 PSay "Telex:"
+@ nLin+2,77 PSay Chr(27)+Chr(72)
+@ nLin+2,78 PSay "99149779"
+@ nLin+2,96 PSay Chr(27)+Chr(71)
+@ nLin+2,97 PSay "Att:"
+@ nLin+2,101 PSay Chr(27)+Chr(72)
+@ nLin+2,102 PSay "Rinaldo"
+@ nLin+3,0 PSay Repl("-",132)
+
+Set Device To Screen
+Return

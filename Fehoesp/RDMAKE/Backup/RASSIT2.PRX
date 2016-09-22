@@ -1,0 +1,531 @@
+#IFNDEF WINDOWS
+    #DEFINE PSAY SAY
+#ENDIF
+&&STATIC NAT_CLIENTE, AnoCorr
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ RASSIT2  ³ Autor ³ Luiz E. D. da Roz     ³ Data ³ 25.06.02 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Impressao de Inadimplentes/Pagantes Confed./Assist. por Pc ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 := "Este programa ir  imprimir a relacao de Inadimplentes/Pagantes"
+cDesc2 := "contribuicao Confed./Assist. conforme parcelas especificas (RASSIT2.PRX)"
+cDesc3 := ""
+cString := "SE1"
+tamanho := "G"
+tipo := 15
+limite := 220
+
+titulo := "RELATORIO DE POSICAO PAGAMENTOS DA CONTRIBUICAO "
+cabec1 := "NUMERO NOME                                           CNPJ                ERSIN  ENDERECO                                 CIDADE                                                         TELEFONE        SITUACAO"
+cabec2 := ""
+
+	//	     1	       2	 3	   4	     5	       6	 7	   8	     9	      10	11	  12	    13	      14	15	  16	    17
+	// 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+	// 123456 123456789012345678901234567890123456789012345  12.345.678/9012-34    12   1234 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 99.999,99
+	// XXXXXXXXXXXXXXXXXX(40)XXXXXXXXXXXXXXXXXX XXXXX(15)XXXXXX XXXXXXX(15)XXXX
+	//
+// cabec2 := " "
+
+aReturn := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog := "RASSIT2"
+nLastkey := 0
+cPerg := "ASSIS2"
+m_pag := 1
+li := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+pergunte(cPerg,.f.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01         P/AAAA     // Parcela Inicial Pagtes Confed ³
+//³ mv_par02         P/AAAA     // Parcela Final   Pagtes Confed ³
+//³ mv_par03         P/AAAA     // Parcela Inicial nPagtes Confed³
+//³ mv_par04         P/AAAA     // Parcela Final   nPagtes Confed³
+//³ mv_par05                    // Do ERSIN                      ³
+//³ mv_par06                    // Ate o ERSIN                   ³
+//³ mv_par07                    // Da Categoria                  ³
+//³ mv_par08                    // Ate a Categoria               ³
+//³ mv_par09                    // Da BASE                       ³
+//³ mv_par10                    // Ate a BASE                    ³
+//³ mv_par11                    // Contribuintes                 ³
+//³                                Todos / Socios / Nao Socios   ³
+//³ mv_par12                    // Natureza                      ³
+//³                                Confederativa / Assistencial  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+wnrel := "RASSIT2"            //Nome Default do relatorio em Disco
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastkey == 27
+    return
+endif
+
+SetDefault(aReturn,cString)
+if nLastkey == 27
+   return
+endif
+
+#IFDEF WINDOWS
+    RptStatus({|| Execute(imprime) },titulo)  // Chamada do Relatorio
+    return
+#else
+    imprime()
+    return
+#endif
+
+*------------------------------------------------------------------------*
+ function Imprime
+*------------------------------------------------------------------------*
+
+if mv_par12==1
+   titulo := titulo + " Confederativa"
+   _vnatureza:="002"            
+else
+   titulo := titulo + " Assistencial"
+   _vnatureza:="0301"
+endif
+
+if .not. empty(mv_par01)
+   titulo := titulo + " / Pagantes : Parc. " 
+   if mv_par01<>mv_par02
+      titulo := titulo + mv_par01 + " a Parc. " + mv_par02
+   else
+      titulo := titulo + mv_par01 
+   endif
+endif
+
+if .not. empty(mv_par03)
+   titulo := titulo + " / Nao Pagantes : Parc. " 
+   if mv_par03<>mv_par04
+      titulo := titulo + mv_par03 + " a Parc. " + mv_par04
+   else
+      titulo := titulo + mv_par03 
+   endif
+endif
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Inicia a selecao dos titulos PAGOS / NAO PAGOS               ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+dbselectarea('sa1')
+dbsetorder(3)
+dbgotop()
+
+SetRegua(RecCount())
+
+nLinha   := 80
+
+nCliente := 0
+
+LinC:=.t.
+
+
+while !eof()
+    IncRegua()
+
+    if a1_conf=="G"  && Somente habilidados para envio
+    else
+         dbselectarea('sa1')
+         dbsetorder(3)
+         dbskip()
+         loop
+    endif
+
+    *---------------------------------------------------*
+    * Seleciona somente o que esta dentro dos parametros
+    *---------------------------------------------------*
+    if a1_ersin >= mv_par05 .and. a1_ersin <= mv_par06
+    else
+         dbselectarea('sa1')
+         dbsetorder(3)
+         dbskip()
+         loop
+    endif
+
+    if a1_categ1 >= mv_par07 .and. a1_categ1 <= mv_par08
+    else
+         dbselectarea('sa1')
+         dbsetorder(3)
+         dbskip()
+         loop
+    endif
+
+    if a1_base >= mv_par09 .and. a1_base <= mv_par10
+    else
+         dbselectarea('sa1')
+         dbsetorder(3)
+         dbskip()
+         loop
+    endif
+
+    && Seleciona somente socios
+    if (val(a1_codasso) == 0 .or. a1_situac == "IS" .or. a1_situac == "CT") .and. mv_par11==2	 
+       dbselectarea('sa1')
+       dbsetorder(3)
+       dbskip()
+       loop
+    endif
+
+    && Seleciona somente nao socios
+    if (a1_situac == "AS" .or. a1_situac == "SS") .and. mv_par11==3	 
+       dbselectarea('sa1')
+       dbsetorder(3)
+       dbskip()
+       loop
+    endif
+
+    _cCliente := a1_cod+a1_loja
+    _cNumero  := a1_cod
+    _cErsin   := a1_ersin
+    _cNome    := a1_nome
+    _cCnpj    := a1_cgc
+
+    && Verifica periodo para Pagantes
+
+    if .not. empty(mv_par01)		   
+
+
+       && ALERT ("Checando Pagantes")
+
+       pAnoIni := val(SUBSTR(mv_par01,3,4))
+       pAnoFin := val(SUBSTR(mv_par02,3,4))
+
+       pPcIni := val(SUBSTR(mv_par01,1,1))
+       pPcFin := val(SUBSTR(mv_par02,1,1))
+
+       piPcIni:=pPcIni
+       piPcFin:=pPcFin
+
+       pAnoC:=pAnoIni
+
+       C_TotPcPg := 0   && Conta quantas parcelas devem ser checadas / Confederativa
+       T_TotPcPg := 0   && parcelas baixadas
+
+       Do While (pAnoC<pAnoFin .or. (pAnoC=pAnoFin .and. piPcIni<=pPcFin))   
+
+          if pAnoC<pAnoFin .or. (pAnoC=pAnoFin .and. piPcIni<=pPcFin)
+
+	     AnoCorr:=pAnoC
+
+	     VerNATcLI()  && Verifica Natureza para Ano Corrente
+
+             && Alert("NAT_CLIENTE:"+NAT_CLIENTE)
+
+	     if NAT_Cliente==_vnatureza .or. NAT_CLIENTE=="GERAL"
+
+                && Parcela a ser considerada
+                C_TotPcPg := C_TotPcPg + 1   && Conta quantas parcelas devem ser checadas / Confederativa
+
+ 		&& Procura parcela no contas a receber
+
+             && ALERT("PROCURA: " + str(pANoC) + " " + str(piPcIni,1))      
+
+                dbselectarea("se1")
+                Dbsetorder(17)  
+                dbseek( xFilial() + substr(strzero(pANoC,4),3,2) + _cNumero + str(piPcIni,1) + _vnatureza )      
+             && Alert("Chave(dbseek("+alltrim(xFilial()+ substr(strzero(pANoC,4),3,2) + " " + _cNumero + str(piPcIni,1))+"DP)")      
+
+                if found() 
+                   if .NOT. EMPTY(se1->e1_baixa)
+                      T_TotPcPg := T_TotPcPg + 1  && Parcela Quitada 
+	           EndIf
+		EndIf
+       		&& ALERT( STR(T_TOTPCPG) )
+
+	     EndIf
+
+
+          endif
+
+          if piPcIni==1 
+             piPcIni:=2
+          else
+             piPcIni:=1
+             pAnoC:=pAnoC+1
+          Endif
+
+       EndDo 
+
+       && ALERT("PAGTOS ENCONTRADOS: "+ str(T_TotPcPg,2))
+
+       if T_TotPcPg<C_TotPcPg .or. T_TotPcPg==0   && Nao pagante para periodo especificado
+
+          && ALERT("Prox. Cliente")
+
+          dbselectarea('sa1')
+          dbsetorder(3)
+          dbskip()
+          loop
+
+       EndIf
+
+    EndIf
+
+    if .not. empty(mv_par03) 
+
+
+       && ALERT ("Checando NAO Pagantes")
+
+       nAnoIni := VAL(substr(mv_par03,3,4))	   && P/AAAA
+       nAnoFin := VAL(substr(mv_par04,3,4))	   && P/AAAA
+
+       nPcIni := VAL(substr(mv_par03,1,1))
+       nPcFin := VAL(substr(mv_par04,1,1))
+
+       niPcIni:=nPcIni
+       niPcFin:=nPcFin
+
+       nAnoC:=nAnoIni
+
+       C_TotNPg := 0   && Conta quantas parcelas devem ser checadas 
+       T_TotNPg := 0   && parcelas nao pagas
+
+       Do While nAnoC<nAnoFin .or. (nAnoC=nAnoFin .and. niPcIni<=nPcFin)
+
+         if nAnoC<nAnoFin .or. (nAnoC=nAnoFin .and. niPcIni<=nPcFin)
+
+	    AnoCorr:=nAnoC
+
+	    VerNATcLI()  && Verifica Natureza para Ano Corrente
+
+            && Alert("NAT_CLIENTE:"+NAT_CLIENTE)
+
+
+            && Parcela a ser considerada
+            C_TotNPg := C_TotNPg + 1   && Conta quantas parcelas devem ser checadas / Confederativa
+
+
+	    if NAT_Cliente==_vnatureza .or. NAT_CLIENTE=="GERAL"
+
+
+            && Procura parcela no contas a receber
+
+            && ALERT("PROCURA SEM : "  + _cCnpj + " " + _cNome + " " + str(NANoC) + " " + str(NiPcIni,1))      
+
+               dbselectarea("se1")
+               Dbsetorder(17)  
+               dbseek(xFilial()+ substr(strzero(nANoC,4),3,2) + _cNumero + str(niPcIni,1)+ _vnatureza)      
+    
+               if ( found() )
+                  && Alert("Tem Parcela")
+                  if empty(se1->e1_baixa)   
+                     T_TotNPg := T_TotNPg + 1  && Parcela Nao Quitada 
+	           && Alert( "FORA 1: " + str(T_TotNPg,2) )
+	          EndIf
+	       Else
+                  T_TotNPg := T_TotNPg + 1  && Parcela Nao Quitada 
+               endif
+	    EndIf
+	 EndIf
+
+         if niPcIni==1 
+            niPcIni:=2
+         else
+            niPcIni:=1
+            nAnoC:=nAnoC+1
+         Endif
+
+       EndDo
+
+       && ALERT("PAGTOS A CONSIDERAR NAO ENCONTRADOS/BAIXADOS: "+ str(T_TotnPg,2))
+       && ALERT("PAGTOS NAO ENCONTRADOS/BAIXADOS: "+ str(C_TotnPg,2))
+
+
+       If T_TotNPg<>C_TotNPg .OR. C_TotNPg==0   && Nao Pagante para periodo especificado
+
+         dbselectarea('sa1')
+         dbsetorder(3)
+         dbskip()
+         loop
+
+       EndIf
+
+    EndIf
+  
+    && Cliente valido para intervalo
+
+    if nLinha >= 60
+       cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+       nLinha := prow() + 1
+    endif
+
+    nCliente := nCliente + 1
+
+    @nLinha,000 PSAY SA1->A1_COD
+    @nLinha,007 PSAY SA1->A1_NOME
+    @nLinha,054 PSAY SA1->A1_CGC PICTURE "@R 99.999.999/9999-99"
+    @nLinha,076 PSAY SA1->A1_ERSIN
+    @nLinha,081 PSAY SA1->A1_END
+    @nLinha,122 PSAY SA1->A1_MUN
+    @nLinha,182 PSAY SA1->A1_TEL
+    @nLinha,203 PSAY SA1->A1_SITUAC
+
+    nLinha := nLinha + 1 
+
+    dbselectarea('sa1')
+    dbsetorder(3)
+    dbskip()
+    
+Enddo
+
+if nCliente>0
+   nLinha := nLinha + 2
+
+   @nLinha,00 PSAY replicate("-",limite)
+
+   nLinha := nLinha + 1
+
+   @nLinha,35 PSAY 'CLIENTES: '			       
+   @nLinha,45 PSAY nCliente picture '@e 999,999'
+
+   nLinha := nLinha + 1
+
+   @nLinha,00 PSAY replicate("-",limite)
+
+EndIf
+
+if nLinha <> 80
+    roda(cbcont,cbtxt,tamanho)
+else
+    eject
+endif
+
+set device to screen
+
+if aReturn[5] == 1
+   set printer to
+   dbcommit()
+   ourspool(wnrel)                                  
+endif
+
+MS_FLUSH()
+
+dbselectarea(_cAlias)
+
+return
+
+
+* Verifica se Cliente pertence a Natureza Confederativa, 
+* Assistencia ou Ambas para o Ano a verificar...
+
+Procedure VerNatCli
+&& Entrada: AnoCorr -> Ano Corrente
+&& Saida  : NAT_Cliente -> Natureza do Cliente para Ano Em Analise
+&&
+&& Verifica se Cliente ‚ CONFEDERATIVA OU ASSISTENCIAL
+
+NAT_Cliente:=""
+
+ANO_ATUAL:=AnoCorr       && 1a. parcela no ano
+
+Pagou1aCnf:=.t.
+Pagou2aCnf:=.t.
+Pagou1aAss:=.t.
+Pagou2aAss:=.t.
+
+&& Procura parcela no contas a receber
+
+&& Verifica se pagou a 1a. parcela emitida do ano para Confederativa
+
+&& Boleto Normal / Avulso / Escritorio Contabil
+dbselectarea("se1")
+Dbsetorder(17)  
+dbseek( xFilial() + substr(strzero(ANO_ATUAL,4),3,2) +  _cNumero + "1" +"002" )      
+
+if .not. (found()) 
+   Pagou1aCnf:=.f.
+EndIf
+
+&& Verifica se pagou a 2a. parcela emitida do ano para Confederativa
+
+&& Boleto Normal / Avulso / Escritorio Contabil
+dbselectarea("se1")
+Dbsetorder(17)  
+dbseek( xFilial() + substr(strzero(ANO_ATUAL,4),3,2) +  _cNumero + "2" +"002" )      
+
+if .not. (found()) 
+   Pagou2aCnf:=.f.
+EndIf
+
+&& Verifica se pagou a 1a. parcela emitida do ano para Assistencial
+&& Localiza ordem da 1a. parcela referente ao ano
+dbselectarea("SEC")
+Dbsetorder(2)  
+dbseek( xFilial() + SA1->A1_BASE + strzero(ANO_ATUAL,4) + "1" )
+
+if found()  && Existe Assistencial para BASE e PERIODO
+   && Boleto Normal / Avulso / Escritorio Contabil
+   dbselectarea("se1")
+   Dbsetorder(17)  
+   dbseek( xFilial() + substr(SEC->EC_EXERC,3,2) +  _cNumero + SEC->EC_PARCELA +"0301" )      
+   if .not. found() 
+      Pagou1aAss:=.f.
+   EndIf
+EndIf
+
+&& Verifica se pagou a 2a. parcela emitida do ano para Assistencial
+&& Localiza ordem da 2a. parcela referente ao ano
+dbselectarea("SEC")
+Dbsetorder(2)  
+dbseek( xFilial() + SA1->A1_BASE + strzero(ANO_ATUAL,4) + "2" )
+
+if found()  && Existe Assistencial para BASE e PERIODO
+   && Boleto Normal / Avulso / Escritorio Contabil
+   dbselectarea("se1")
+   Dbsetorder(17)  
+   dbseek( xFilial() + substr(SEC->EC_EXERC,3,2) +  _cNumero + SEC->EC_PARCELA +"0301" )      
+   if .not. found() 
+      Pagou2aAss:=.f.
+   EndIf
+EndIf
+
+NAT_Cliente:=""
+
+&& REALIZA A CARACTERIZACAO DO CLIENTE (CONFEDERATIVA / ASSISTENCIAL )
+&& Conforme definicoes Junto ao Depto Financeiro
+
+if .not. Pagou1aCnf .and. .not. Pagou1aAss     && Inadimplente de ambas contribuicoes
+   NAT_Cliente:="GERAL"
+endif
+
+if Pagou1aCnf .and. .not. Pagou1aAss
+   NAT_Cliente:="002"
+endif
+
+if .not. Pagou1aCnf .and. Pagou1aAss
+   NAT_Cliente:="0301"
+endif
+
+if .not. Pagou1aCnf .and. .not. Pagou2aCnf .and. Pagou2aAss
+   NAT_Cliente:="0301"
+endif
+
+&& ALERT("Natureza CLIENTE: " + NAT_CLIENTE)
+
+return
+

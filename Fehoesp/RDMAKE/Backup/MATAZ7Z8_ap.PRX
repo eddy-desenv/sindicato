@@ -1,0 +1,24 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function MATAZ7Z8()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+DBSELECTAREA("SZ7")
+DBGOTOP()
+DO WHILE !EOF()
+    RECLOCK("SZ7",.F.)
+    DBDELETE()
+    MSUNLOCK()
+    DBSKIP()
+ENDDO
+
+DBSELECTAREA("SZ8")
+DBGOTOP()
+DO WHILE !EOF()
+    RECLOCK("SZ8",.F.)
+    DBDELETE()
+    MSUNLOCK()
+    DBSKIP()
+ENDDO
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

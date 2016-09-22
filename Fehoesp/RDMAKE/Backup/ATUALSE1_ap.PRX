@@ -1,0 +1,24 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function ATUALSE1()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+* ATUALSE1.PRX
+
+cls
+dbselectarea("SE1")
+dbgotop()
+while !eof()
+   SA1->(dbseek(xFilial("SA1") + se1->e1_cliente))
+   reclock("SE1",.F.)
+   SE1->E1_CGC	  := SA1->A1_CGC
+   SE1->E1_CODASSO:= SA1->A1_CODASSO
+   SE1->E1_CATEG1 := SA1->A1_CATEG1
+
+   msunlock()
+   dbskip()
+end
+
+
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

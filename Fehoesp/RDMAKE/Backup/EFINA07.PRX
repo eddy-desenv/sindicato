@@ -1,0 +1,50 @@
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ EFINA07  ³ Autor ³ Luiz Eduardo D. da Roz³ Data ³04.02.2000³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ LP 521 p/ baixa de titulos a receber/selecao conta contabil³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cConta := " "
+
+dbSelectArea("SED")
+dbSetOrder(1)
+if dbseek(xFilial()+alltrim(se1->e1_naturez))
+   _cConta := SED->ED_CONTA
+endif
+
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder)
+
+__return(_cConta)
+
+
+
+if alltrim(se1->e1_naturez) == "001"
+   _cConta := "1123010001"						      
+elseif alltrim(se1->e1_naturez) == "002"
+   _cConta := "3111010001"
+elseif alltrim(se1->e1_naturez) == "003"
+   _cConta := "3111030001"
+elseif alltrim(se1->e1_naturez) == "009"
+   _cConta := "3111010002"
+elseif alltrim(se1->e1_naturez) == "0327"
+   _cConta := "3111060012"
+elseif alltrim(se1->e1_naturez) == "0301"
+   _cConta := "3111020001"
+else
+   _cConta := " "
+endif
+
+
+

@@ -1,0 +1,92 @@
+#INCLUDE "rwmake.ch"
+USER FUNCTION MIGSIND()
+_oldArea  := alias()
+_oldOrder := indexord()
+_cTitulo   := "Migracao de Contrib.Sindical"
+
+_nTotal:= 0		 // totalizador de registros
+_nTotal2:= 0		 // totalizador de termos confed.
+_nTotal3:= 0		 // totalizador avulsos confed.
+_nTotJur:= 0		 // totalizador de juros recebidos (associativa)
+_aStru := {}
+use sindical alias sind new shared
+c_Arqind := CriaTrab(_aStru,.f.)
+inde on PCC_cgc+PCC_EXE to &C_arqind
+dbSelectArea("sind")
+dbGotop()
+ProcRegua(RecCount(),22,05)
+do while !eof() 
+	#IFNDEF WINDOWS
+		IncProc(22,05)
+	#ELSE
+		IncProc(_cTitulo)
+	#ENDIF
+	DBSELEctarea("sa1")
+	dbsetorder(3)
+	dbseek(xfilial()+sind->pcc_cgc)
+	if found()
+		numtit := sa1->A1_cod
+		numcli := sa1->A1_cod
+	else
+		numtit := subs(sind->PCC_CGC,1,6)
+		NUMcli := "999999"
+	endif
+	RecLock("SE1",.T.)
+	SE1->E1_FILIAL   := xFilial()
+	SE1->E1_PREFIXO  := subs(SIND->PCC_EXE,1,2)+"S"
+	SE1->E1_NUM      := NUMTIT
+	SE1->E1_PARCELA  := ""
+	SE1->E1_TIPO     := "DP"
+	SE1->E1_NATUREZ  := "001" //???
+	SE1->E1_CLIENTE  := NUMCLI
+	SE1->E1_CODASSO  := SA1->A1_CODASSO
+	SE1->E1_CGC	     := SIND->PCC_CGC
+	SE1->E1_CATEG1	 := SA1->A1_CATEG1
+	SE1->E1_ERSIN	 := SA1->A1_ERSIN
+	SE1->E1_LOJA     := SA1->A1_LOJA
+	SE1->E1_NOMCLI	 := SA1->A1_NOME
+	SE1->E1_EMISSAO  := SIND->pcc_ven
+	SE1->E1_VENCTO   := SIND->pcc_ven
+	SE1->E1_VENCREA  := SIND->pcc_ven
+	SE1->E1_VALOR    := sind->pcc_tot
+	SE1->E1_EMIS1    := SIND->pcc_ven
+	SE1->E1_SALDO    := sind->pcc_tot
+	SE1->E1_VLCRUZ   := sind->pcc_tot
+//	SE1->E1_VALJUR   := 1
+	SE1->E1_VENCORI  := sind->pcc_ven
+	SE1->E1_MOEDA    := 1
+	SE1->E1_HIST     := "Ref.Contr.Sindical de "+sind->pcc_exe
+	SE1->E1_STATUS  := "B"   
+	SE1->E1_BAIXA   := sind->pcc_dpg
+	SE1->E1_OK       := CHR(69)+CHR (120)
+	MsUnlock()
+	dbselectArea("SE5")
+	recLock("SE5",.T.)
+	SE5->E5_FILIAL  := xFilial()
+	SE5->E5_DATA    := siND->PCC_DPG
+	SE5->E5_TIPO    := "DP"
+	SE5->E5_VALOR   := SIND->PCC_TOT
+	SE5->E5_NATUREZ := "001" //???
+	SE5->E5_BANCO   := "SIN"
+	SE5->E5_AGENCIA := "SIND"
+	SE5->E5_CONTA   := "SIND"
+	SE5->E5_RECPAG  := "R"
+	SE5->E5_BENEF   := SA1->A1_NREDUZ
+	SE5->E5_HISTOR  := "Valor recebido s/ Titulo"
+	SE5->E5_TIPODOC := "VL"
+	SE5->E5_VLMOED2 := SIND->PCC_TOT
+	SE5->E5_LA      := "N"
+	SE5->E5_NUMERO  := SE1->E1_NUM
+	SE5->E5_CLIFOR  := SE1->E1_CLIENTE
+	SE5->E5_LOJA    := SE1->E1_LOJA
+	SE5->E5_DTDIGIT := SIND->PCC_DPG
+	SE5->E5_MOTBX   := "NOR"
+	SE5->E5_SEQ     := "01"
+	SE5->E5_PREFIXO := SE1->e1_prefixo
+	SE5->E5_DTDISPO := se5->e5_pcc_dpg
+	MsUnlock()
+	dbSelectArea("sind")
+	dbskip()
+enddo
+dbSelectArea("sind")
+dbCloseArea()

@@ -1,0 +1,236 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function RFINA17()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,CPERG,_CPATH")
+SetPrvt("_CARQCONTRIB,_CARQASSOCIA,_AESTRUTURA,C_ARQIMP,_CARQUIVO,_NINCLUIDOS")
+SetPrvt("_NALTERADOS,_NINCONSIST,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA17	³ Autor ³ Ricardo K. Yamashiro	³ Data ³ 03/12/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Importa‡„o de Escrit¢rios Cont beis			  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cTitulo   := "Importacao de Escrit¢rios Cont beis"
+n_Opc := 0
+cPerg    := "FINA02"
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis utilizadas para parametros                         ³
+³ mv_par01           // Arquivo a ser Importado(Contribuintes) ³
+³ mv_par02           // Arquivo a ser Importado(Associados)    ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+
+Pergunte(cPerg,.T.)
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Verifica diretorio de busca de arquivo para importacao      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+
+dbSelectArea("SX6")  //Parametros
+dbSetOrder(1)
+dbSeek(xFilial("SX6")+"MV_DIR_IMP")
+_cPath := AllTrim(SX6->X6_CONTEUD)+Space(50-Len(AllTrim(SX6->X6_CONTEUD)))
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,022,079)
+   SetColor("B/BG,N/W")
+
+   @ 011,010 Say "Este programa fara a importacao de Escrit¢rios Cont beis "
+   @ 012,010 Say "tipo DBF, incluindo Clientes "
+
+   SetColor("B/BG,W/N")
+
+   @ 019,010 Say "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS"
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Parametros","Abandona"},22,04,"b/w,w+/n,r/w","CPA","",2)
+
+      If n_Opc == 3 .or. Lastkey()==27
+         Return
+      Endif
+
+      If n_Opc == 2
+         Pergunte(cPerg,.T.)
+         Loop
+      Endif
+
+      Exit
+   End
+   Importar()   
+#ELSE
+   @ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 TO 100,222
+   @ 023,014 SAY "Este programa fara a importacao de Escrit¢rio Cont beis   "
+   @ 033,014 SAY "tipo DBF, incluindo Clientes "
+
+
+   @ 086,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+Return
+
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Iniciar
+Static Function Iniciar()
+*-----------------*
+Close(oDlg1)
+Processa( {|| Importar() })// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Processa( {|| Execute(Importar) })
+Return
+
+*------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Importar
+Static Function Importar()
+*------------------*
+
+_cArqContrib := mv_par01
+_cArqAssocia := mv_par02
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Verificando se o arquivo a ser importado existe             ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+
+If !File(AllTrim(_cArqContrib))
+   Help(" ",1,"ARRVAZ")
+   Return
+endif
+
+If !File(AllTrim(_cArqAssocia))
+   Help(" ",1,"ARRVAZ")
+   Return
+endif
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Criando Arquivo para Inconsistencia.                         ³ 
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+_aEstrutura := {}
+AADD(_aEstrutura,{"DESCR","C",70,0})
+c_ArqImp := CriaTrab(_aEstrutura,.t.)
+dbUseArea(.t.,,c_ArqImp,"IMP",.T.)
+dbSelectArea("IMP")
+
+_cArquivo := alltrim(_cArqContrib)
+
+Use (_cArquivo) ALIAS "TMP" NEW 
+
+dbGotop()
+
+ProcRegua(RecCount(),22,05)
+
+_nIncluidos := 0
+_nAlterados := 0
+_nInconsist := 0
+
+Do While !Eof() 
+
+    #IFNDEF WINDOWS
+       IncProc(22,05)
+    #ELSE
+       IncProc(_cTitulo)
+    #ENDIF
+
+   dbSelectArea("SZC")
+   dbSetOrder(1)	 //Pesquisa por C¢digo
+   dbSeek( xFilial("SA1") + STRZERO(TMP->CODIGO,3) )
+
+   If eof()
+
+      RecLock("SZC",.T.)
+      SZC->ZC_FILIAL  := xFilial("SZC")
+
+      SZC->ZC_CODIGO  := strzero(TMP->CODIGO,3)
+      SZC->ZC_NOMESC  := TMP->NOME
+      SZC->ZC_END     := TMP->ENDERECO
+      SZC->ZC_CEP     := TMP->CEP
+      SZC->ZC_BAIRRO  := TMP->BAIRRO
+      SZC->ZC_MUN     := TMP->CIDADE
+      SZC->ZC_EST     := TMP->UF
+      SZC->ZC_FONE    := TMP->FONE
+      SZC->ZC_FAX     := TMP->FAX
+      SZC->ZC_EMAIL   := TMP->E_MAIL
+
+      dbcommit()
+     _nIncluidos := _nIncluidos + 1
+   else
+      RecLock("SA1",.f.)
+
+      SZC->ZC_CODIGO  := strzero(TMP->CODIGO,3)
+      SZC->ZC_NOMESC  := TMP->NOME
+      SZC->ZC_END     := TMP->ENDERECO
+      SZC->ZC_CEP     := TMP->CEP
+      SZC->ZC_BAIRRO  := TMP->BAIRRO
+      SZC->ZC_MUN     := TMP->CIDADE
+      SZC->ZC_EST     := TMP->UF
+      SZC->ZC_FONE    := TMP->FONE
+      SZC->ZC_FAX     := TMP->FAX
+      SZC->ZC_EMAIL   := TMP->E_MAIL
+
+      dbcommit()
+     _nAlterados := _nAlterados +1
+
+   Endif
+   MsUnLock()
+
+   dbSelectArea("TMP")
+   dbSkip()
+Enddo
+
+dbSelectArea("TMP")
+dbCloseArea()
+
+Tone(800,2)
+Tone(1500,2)
+
+#IFNDEF WINDOWS
+   DrawAdvWindow("Termino de Importacao",010,010,021,069)
+   SetColor("B/BG,N/W")
+   @ 12,14 SAY "Escrit¢rios Inclu¡dos"
+   @ 12,37 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   @ 14,14 SAY "Escrit¢rios Alterados"
+   @ 14,37 GET _nAlterados PICTURE "@E 999,999" WHEN .F.
+   READ
+   @ 19,19 SAY "Pressione Qualquer Tecla para Continuar"
+   Inkey(0)
+#ELSE
+   @ 96,42 TO 290,405 DIALOG oDlg1 TITLE "Termino de Importacao"
+   @ 8,10 TO 68,170
+   @ 23,22 SAY "Escrit¢rios Inclu¡dos"
+   @ 23,95 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   @ 33,22 SAY "Escrit¢rios Alterados"
+   @ 33,95 GET _nAlterados PICTURE "@E 999,999" WHEN .F.
+   @ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg1)
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder)
+
+Return
+

@@ -1,0 +1,29 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function LIMPAE1()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+dbselectarea("se1")
+dbsetorder(11)
+DBSEEK(XFILIAL()+"02042")
+DO WHILE !EOF() .AND. SUBS(SE1->E1_CONFED,1,5)=="02042"
+   IF  SE1->E1_VENCTO == CTOD("30/11/04")
+        RECLOCK("SE1",.F.)
+        DBDELETE()
+        MSUNLOCK()
+   ENDIF
+   DBSKIP()
+ENDDO
+
+DBSEEK(XFILIAL()+"2204")
+DO WHILE !EOF() .AND. SUBS(SE1->E1_CONFED,1,4)=="2204"
+   IF  SE1->E1_VENCTO == CTOD("30/11/04")
+        RECLOCK("SE1",.F.)
+        DBDELETE()
+        MSUNLOCK()
+   ENDIF
+   DBSKIP()
+ENDDO
+
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

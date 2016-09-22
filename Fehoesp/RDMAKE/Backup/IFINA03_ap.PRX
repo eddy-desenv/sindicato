@@ -1,0 +1,331 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function IFINA03()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,CPERG,_CPATH")
+SetPrvt("_CARQSIND,_AESTRUTURA,C_ARQIMP,_CARQUIVO,CARQSA1,_NINCLUIDOS")
+SetPrvt("_NINCONSIST,_CEMIS,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ iFINA03  ³ Autor ³ Andreia dos Santos    ³ Data ³ 15/06/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Importacao de Contribuicoes Associativa                    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cTitulo   := "Importacao de Contribuicao Associativa"
+n_Opc := 0
+cPerg    := "FINA03"
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis utilizadas para parametros                         ³
+³ mv_par01           // Arquivo a ser Importado                ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+
+Pergunte(cPerg,.T.)
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Verifica diretorio de busca de arquivo para importacao      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+
+dbSelectArea("SX6")  //Parametros
+dbSetOrder(1)
+dbSeek(xFilial("SX6")+"MV_DIR_IMP")
+_cPath := AllTrim(SX6->X6_CONTEUD)+Space(50-Len(AllTrim(SX6->X6_CONTEUD)))
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,022,079)
+   SetColor("B/BG,N/W")
+
+   @ 011,010 Say "Este programa fara a importacao das Contribuicoes Associativa"
+   @ 012,010 Say ""
+
+   @ 014,010 Say "Caminho - Conforme Parametro MV_DIR_IMP "
+   @ 015,010 Say _cPath       PICTURE "@!"
+   SetColor("B/BG,W/N")
+
+   @ 019,010 Say "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS"
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Parametros","Abandona"},22,04,"b/w,w+/n,r/w","CPA","",2)
+
+      If n_Opc == 3 .or. Lastkey()==27
+         Return
+      Endif
+
+      If n_Opc == 2
+         Pergunte(cPerg,.T.)
+         Loop
+      Endif
+
+      Exit
+   End
+   Importar()   
+#ELSE
+   @ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 TO 100,222
+   @ 023,014 SAY "Este programa fara a importacao das Contribuicoes Associativa"
+   @ 033,014 SAY ""
+
+   @ 053,014 Say "Caminho - Conforme Parametro MV_DIR_IMP "
+   @ 063,014 Get _cPath  PICTURE "@S30" WHEN .f.
+
+   @ 086,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+Return
+
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Iniciar
+Static Function Iniciar()
+*-----------------*
+Close(oDlg1)
+Processa( {|| Importar() })// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Processa( {|| Execute(Importar) })
+Return
+
+*------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Importar
+Static Function Importar()
+*------------------*
+
+_cArqSind  := mv_par01
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Verificando se o arquivo a ser importado existe             ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+
+If !File(AllTrim(_cPath)+AllTrim(_cArqSind))
+   Help(" ",1,"ARRVAZ")
+   Return
+endif
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Criando Arquivo para Inconsistencia.                         ³ 
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+_aEstrutura := {}
+AADD(_aEstrutura,{"DESCR","C",90,0})
+
+c_ArqImp := CriaTrab(_aEstrutura,.t.)
+
+dbUseArea(.t.,,c_ArqImp,"IMP",.T.)
+dbSelectArea("IMP")
+  
+
+_cArquivo := alltrim(_cPath) + alltrim(_cArqSind)
+Use (_cArquivo) ALIAS "TMP" NEW
+dbGotop()
+
+dbSelectArea("SA1")
+//cArqSA1 := criatrab("",.f.)
+//IndRegua("SA1",cArqSA1,"A1_CODASSO",,,"Selecionando Registros...")
+//dbSetIndex(cArqSA1)
+dbsetOrder(4)
+
+dbSelectArea("TMP")
+ProcRegua(RecCount(),22,05)
+
+_nIncluidos := 0
+_nInconsist := 0
+
+Do While !Eof() 
+
+    #IFNDEF WINDOWS
+       IncProc(22,05)
+    #ELSE
+       IncProc(_cTitulo)
+    #ENDIF
+
+    if !empty(TMP->DATA_PAGTO)
+       if YEAR(TMP->DATA_PAGTO) < 1990
+          dbSelectArea("IMP")
+          RecLock("IMP",.T.)
+          IMP->DESCR := "CODIGO: "+TMP->CODIGO +" Parcela: "+substr(TMP->PARCELA,1,2)+"/"+substr(TMP->PARCELA,3,2)+" Vencimento: "+dtoc(TMP->DATA_VECT)+"Data Pgto < 1990 "
+          MsUnLock()
+          _nInconsist := _nInconsist + 1
+          dbSelectArea("TMP")
+          dbskip()
+          loop()
+       endif
+    endif
+
+    dbSelectArea("SA1")
+    dbSeek( xfilial("SA1")+TMP->CODIGO ) //BUSCAR CODIGO DO ASSOCIADO
+
+    If Found()
+       dbSelectArea("SE1")
+
+       if !dbseek(xFilial()+SUBSTR(TMP->PARCELA,3,2)+substr(SA1->A1_CODASSO,3,4))
+          RecLock("SE1",.T.)
+          SE1->E1_FILIAL   := xFilial()
+          SE1->E1_PREFIXO  := SUBSTR(TMP->PARCELA,3,2)
+          SE1->E1_NUM      := SUBSTR(TMP->PARCELA,1,2)+substr(SA1->A1_CODASSO,3,4)
+          SE1->E1_PARCELA  := ""
+          SE1->E1_TIPO     := "DP"
+          SE1->E1_NATUREZ  := "001"  //VERIFICAR
+          SE1->E1_CLIENTE  := SA1->A1_COD
+          SE1->E1_LOJA     := SA1->A1_LOJA
+          SE1->E1_NOMCLI   := SA1->A1_NOME
+          SE1->E1_VENCTO   := TMP->DATA_VECT
+          SE1->E1_VENCREA  := DataValida( TMP->DATA_VECT,.t.)
+          SE1->E1_SITUACA  := "1"
+          SE1->E1_SALDO    := if(!empty(TMP->DATA_PAGTO),0,TMP->VLR_MENSAL)
+          SE1->E1_VLCRUZ   := TMP->VLR_MENSAL
+          SE1->E1_VALOR    := TMP->VLR_MENSAL
+          SE1->E1_JUROS    := TMP->VLR_JUROS
+          SE1->E1_VALLIQ   := TMP->VLR_COBRAD
+          SE1->E1_VALJUR   := 0
+          SE1->E1_VENCORI  := TMP->DATA_VECT
+          SE1->E1_MOEDA    := 1
+          SE1->E1_HIST     := "Ref.Contr.Assoc. "+strzero(month(TMP->DATA_VECT),2)+"/"+SUBSTR(TMP->PARCELA,3,2)
+          SE1->E1_ORIGEM   := "FINA040"
+          SE1->E1_STATUS   := "B"
+          SE1->E1_BAIXA    := TMP->DATA_PAGTO
+          SE1->E1_OK       := CHR(69)+CHR (120)
+          _cEmis := "05/"+strzero(month(TMP->DATA_VECT),2)+"/"+strzero(val(substr(str(year(TMP->DATA_VECT),4),3,2)),2)
+          SE1->E1_EMISSAO  := CTOD(_cEmis)
+          SE1->E1_EMIS1    := CTOD(_cEmis)
+          SE1->E1_MOVIMEN  := TMP->DATA_VECT
+          SE1->E1_DTIMPOR  := dDatabase
+          SE1->E1_CGC      := SA1->A1_CGC
+          SE1->E1_CODASSO  := SA1->A1_CODASSO
+    
+     //   dbcommit()
+          _nIncluidos := _nIncluidos + 1
+          MsUnLock()
+          if !empty(TMP->DATA_PAGTO)
+             dbselectArea("SE5")
+
+             if TMP->VLR_JUROS > 0
+                recLock("SE5",.T.)
+                SE5->E5_FILIAL  := xFilial()
+                SE5->E5_DATA    := TMP->DATA_PAGTO
+                SE5->E5_TIPO    := "DP"
+                SE5->E5_VALOR   := TMP->VLR_JUROS
+                SE5->E5_NATUREZ := "001"
+                SE5->E5_BANCO   := "356"
+                SE5->E5_AGENCIA := "1874"
+                SE5->E5_CONTA   := "7710534"
+                SE5->E5_RECPAG  := "R"
+                SE5->E5_BENEF   := SA1->A1_NREDUZ
+                SE5->E5_HISTOR  := "Juros s/Receb.Titulo"
+                SE5->E5_TIPODOC := "JR"
+                SE5->E5_VLMOED2 := TMP->VLR_JUROS
+                SE5->E5_LA      := "N"
+                SE5->E5_PREFIXO := SUBSTR(TMP->PARCELA,3,2)
+                SE5->E5_NUMERO  := SUBSTR(TMP->PARCELA,1,2)+substr(SA1->A1_CODASSO,3,4)
+                SE5->E5_PARCELA := ""
+                SE5->E5_CLIFOR  := SA1->A1_COD
+                SE5->E5_LOJA    := SA1->A1_LOJA
+                SE5->E5_DTDIGIT := TMP->DATA_PAGTO
+                SE5->E5_MOTBX   := "NOR"
+                SE5->E5_SEQ     := "01"
+                SE5->E5_DTDISPO := TMP->DATA_PAGTO
+             endif
+             recLock("SE5",.T.)
+             SE5->E5_FILIAL  := xFilial()
+             SE5->E5_DATA    := TMP->DATA_PAGTO
+             SE5->E5_TIPO    := "DP"
+             SE5->E5_VALOR   := TMP->VLR_COBRAD
+             SE5->E5_NATUREZ := "001"
+             SE5->E5_BANCO   := "356"
+             SE5->E5_AGENCIA := "1874"
+             SE5->E5_CONTA   := "7710534"
+             SE5->E5_RECPAG  := "R"
+             SE5->E5_BENEF   := SA1->A1_NREDUZ
+             SE5->E5_HISTOR  := "Valor recebido s/ Titulo"
+             SE5->E5_TIPODOC := "VL"
+             SE5->E5_VLMOED2 := TMP->VLR_COBRAD
+             SE5->E5_LA      := "N"
+             SE5->E5_PREFIXO := SUBSTR(TMP->PARCELA,3,2)
+             SE5->E5_NUMERO  := SUBSTR(TMP->PARCELA,1,2)+substr(SA1->A1_CODASSO,3,4)
+             SE5->E5_PARCELA := ""
+             SE5->E5_CLIFOR  := SA1->A1_COD
+             SE5->E5_LOJA    := SA1->A1_LOJA
+             SE5->E5_DTDIGIT := TMP->DATA_PAGTO
+             SE5->E5_MOTBX   := "NOR"
+             SE5->E5_SEQ     := "01"
+             SE5->E5_DTDISPO := TMP->DATA_PAGTO
+             MsUnlock()
+          endif
+       else
+         _nInconsist := _nInconsist + 1
+         dbSelectArea("IMP")
+         RecLock("IMP",.T.)
+         IMP->DESCR := "CODIGO: "+TMP->CODIGO +" Parcela: "+substr(TMP->PARCELA,1,2)+"/"+substr(TMP->PARCELA,3,2)+" Vencimento: "+dtoc(TMP->DATA_VECT)+"Titulo ja incluido"
+         MSuNLOCK()
+       endif
+
+    else
+      _nInconsist := _nInconsist + 1
+      dbSelectArea("IMP")
+      RecLock("IMP",.T.)
+      IMP->DESCR := "CODIGO: "+TMP->CODIGO +" Parcela: "+substr(TMP->PARCELA,1,2)+"/"+substr(TMP->PARCELA,3,2)+" Vencimento: "+dtoc(TMP->DATA_VECT)+"Codigo Associado nao encontrado"
+      MSUNLOCK()
+    endif
+    dbSelectArea("TMP")
+    dbSkip()
+Enddo
+
+Tone(800,2)
+Tone(1500,2)
+
+#IFNDEF WINDOWS
+   DrawAdvWindow("Termino de Importacao",010,010,021,069)
+   SetColor("B/BG,N/W")
+   @ 12,14 SAY "Titulos Incluidos"
+   @ 12,37 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   @ 14,14 SAY "Titulos Inconsistentes"
+   @ 14,37 GET _nInconsist PICTURE "@E 999,999" WHEN .F.
+   READ
+   @ 19,19 SAY "Pressione Qualquer Tecla para Continuar"
+   Inkey(0)
+#ELSE
+   @ 96,42 TO 290,405 DIALOG oDlg1 TITLE "Termino de Importacao"
+   @ 8,10 TO 68,170
+   @ 23,22 SAY "Titulos Incluidos"
+   @ 23,95 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   @ 25,14 SAY "Titulos Inconsistentes"
+   @ 25,37 GET _nInconsist PICTURE "@E 999,999" WHEN .F.
+   @ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg1)
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+dbSelectArea("TMP")
+dbCloseArea()
+/*
+If File(c_ArqTmp+".DBF")
+   Ferase(c_ArqTmp+".DBF")
+EndIf
+*/
+
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder)
+
+
+Return
+

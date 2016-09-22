@@ -1,0 +1,150 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function CONV_NX()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_CALIAS,_NORDEM,_NREGISTRO,_NCBEM,_CBEM,_NTXD1")
+
+_cAlias := dbselectarea()
+_nOrdem := IndexOrd()
+_nRegistro := recno()
+
+/* use SN1010 new alias sn1
+zap
+use SN2010 new alias sn2
+zap
+use SN3010 new alias sn3
+zap
+use SN4010 new alias sn4
+zap
+use SN5010 new alias sn5
+zap */
+
+dbselectarea("SZB")
+dbgotop()
+
+_ncbem:= 1
+while !eof()
+  _cbem := szb->zb_bem
+
+  if _ncbem == 1
+     dbselectarea("SN1")
+     reclock("SN1",.t.)
+     SN1->N1_FILIAL := "01"
+     SN1->N1_CBASE  := SZB->ZB_BEM
+     SN1->N1_ITEM   := SZB->ZB_ITEM
+     SN1->N1_AQUISIC:= SZB->ZB_AQUISIC
+     SN1->N1_DESCRIC:= SZB->ZB_DESC1
+     SN1->N1_QUANTD := SZB->ZB_QTDE
+     SN1->N1_CHAPA  := SZB->ZB_PLAQUET
+     SN1->N1_PATRIM := "N"
+
+     dbselectarea("SN3")
+     reclock("SN3",.t.)
+     SN3->N3_FILIAL := "01"
+     SN3->N3_CBASE  := SZB->ZB_BEM
+     SN3->N3_ITEM   := SZB->ZB_ITEM
+     SN3->N3_TIPO   := "01"
+     SN3->N3_BAIXA  := "0"
+     SN3->N3_HISTOR := SZB->ZB_DESC1
+     SN3->N3_CCONTAB:= SZB->ZB_CBEM
+     SN3->N3_CCUSTO := SZB->ZB_CUSTO
+     SN3->N3_CDEPREC:= SZB->ZB_DESP
+     SN3->N3_CCDEPR := SZB->ZB_ACUMUL
+     SN3->N3_DINDEPR:= SZB->ZB_INICIAL
+     SN3->N3_VORIG1 := SZB->ZB_REAL
+     SN3->N3_TXDEPR1:= SZB->ZB_TAXA
+     SN3->N3_VORIG3 := SZB->ZB_UFIR
+     SN3->N3_TXDEPR3:= SZB->ZB_TAXA
+     SN3->N3_AQUISIC:= SZB->ZB_AQUISIC
+
+     _ntxd1:= SZB->ZB_TAXA
+
+     dbselectarea("SN5")
+     reclock("SN5",.t.)
+     SN5->N5_FILIAL := "01"
+     SN5->N5_CONTA  := SZB->ZB_CBEM
+     SN5->N5_DATA   := SZB->ZB_AQUISIC
+     SN5->N5_TIPO   := "1"
+     SN5->N5_VALOR1 := SZB->ZB_REAL
+     SN5->N5_VALOR3 := SZB->ZB_UFIR
+
+     dbselectarea("SN4")
+     reclock("SN4",.t.)
+     SN4->N4_FILIAL := "01"
+     SN4->N4_CBASE  := SZB->ZB_BEM
+     SN4->N4_ITEM   := SZB->ZB_ITEM
+     SN4->N4_TIPO   := "01"
+     SN4->N4_OCORR  := "05"
+     SN4->N4_CONTA  := SZB->ZB_CBEM
+     SN4->N4_DATA   := SZB->ZB_AQUISIC
+     SN4->N4_QUANTD := 1
+     SN4->N4_VLROC1 := SZB->ZB_REAL
+     SN4->N4_VLROC3 := SZB->ZB_UFIR
+
+  elseif _ncbem == 2 .and. szb->zb_qtde == 0
+
+     dbselectarea("SN3")
+     reclock("SN3",.t.)
+     SN3->N3_FILIAL := "01"
+     SN3->N3_CBASE  := SZB->ZB_BEM
+     SN3->N3_ITEM   := SZB->ZB_ITEM
+     SN3->N3_TIPO   := "02"
+     SN3->N3_BAIXA  := "0"
+     SN3->N3_HISTOR := SZB->ZB_DESC1
+     SN3->N3_CCONTAB:= SZB->ZB_CBEM
+     SN3->N3_CCUSTO := SZB->ZB_CUSTO
+     SN3->N3_CDEPREC:= SZB->ZB_DESP
+     SN3->N3_CCDEPR := SZB->ZB_ACUMUL
+     SN3->N3_DINDEPR:= SZB->ZB_INICIAL
+     SN3->N3_VORIG1 := SZB->ZB_REAL
+     SN3->N3_TXDEPR1:= _ntxd1
+     SN3->N3_VORIG3 := SZB->ZB_UFIR
+     SN3->N3_TXDEPR3:= _ntxd1
+     SN3->N3_AQUISIC:= SZB->ZB_AQUISIC
+
+     dbselectarea("SN5")
+     reclock("SN5",.t.)
+     SN5->N5_FILIAL := "01"
+     SN5->N5_CONTA  := SZB->ZB_CBEM
+     SN5->N5_DATA   := SZB->ZB_AQUISIC
+     SN5->N5_TIPO   := "3"
+     SN5->N5_VALOR1 := SZB->ZB_REAL
+     SN5->N5_VALOR3 := SZB->ZB_UFIR
+
+     dbselectarea("SN4")
+     reclock("SN4",.t.)
+     SN4->N4_FILIAL := "01"
+     SN4->N4_CBASE  := SZB->ZB_BEM
+     SN4->N4_ITEM   := SZB->ZB_ITEM
+     SN4->N4_TIPO   := "02"
+     SN4->N4_OCORR  := "05"
+     SN4->N4_CONTA  := SZB->ZB_CBEM
+     SN4->N4_DATA   := SZB->ZB_AQUISIC
+     SN4->N4_QUANTD := 1
+     SN4->N4_VLROC1 := SZB->ZB_REAL
+     SN4->N4_VLROC3 := SZB->ZB_UFIR
+
+  endif
+
+  dbselectarea("SZB")
+  dbskip()
+
+  if szb->zb_bem == _cbem
+     _ncbem:= _ncbem + 1
+  else
+     _ncbem:= 1
+  endif
+
+enddo
+
+
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

@@ -1,0 +1,230 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+#IFNDEF WINDOWS
+   #DEFINE PSAY SAY
+#ENDIF
+
+User Function ASSOCIA()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_COLDALIAS,CSTRING,CSAVCOR,NOMEPROG,NLASTKEY,_AREGISTRO")
+SetPrvt("_AESTR,LEND,LI,_NTOTAL,_NTOTTIT,_CERSIN")
+SetPrvt("_CCIDADE,_NTOTMES,_NTIT,CABEC1,_CMES,")
+
+#IFNDEF WINDOWS
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 22/12/04 ==>    #DEFINE PSAY SAY
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ RASSOC01 ³ Autor ³ Andreia dos Santos    ³ Data ³ 10.08.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Exportacao da movimentacao do contas a receber ASSOCIATIVAS³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+_cOldAlias := alias()
+cString :="SE1"
+cSavCor :=SetColor()
+nomeprog :="RASSOC1"
+nLastKey := 0
+
+dbSelectArea("SE1")
+dbSetorder(1)  
+DbGoTop()
+
+_aRegistro := {}
+
+AADD(_aRegistro,
+
+
+
+
+If nLastKey == 27
+   Return
+Endif
+
+
+If nLastKey == 27
+   SetColor(cSavCor)
+   Return
+Endif
+
+_aEstr := {}
+AADD(_aEstr,{"ERSIN"  ,"C",02,0})
+AADD(_aEstr,{"CODIG"  ,"C",06,0})
+AADD(_aEstr,{"NOME"   ,"C",45,0})
+AADD(_aEstr,{"PARCELA","C",05,0})
+AADD(_aEstr,{"VALOR"  ,"N",17,2})
+AADD(_aEstr,{"VENC"   ,"C",07,0})
+AADD(_aEstr,{"CIDADE" ,"C",15,0})
+
+IndRegua("IMP",cArqIND,"ERSIN+CIDADE+VENC+NOME",,,"Selecionando Registros...")
+
+
+SetRegua(RecCount())
+lEnd := .f.
+
+while !eof() .and. SE1->E1_VENCTO <= mv_par02
+
+   #IFNDEF WINDOWS
+      Inkey()
+      If LastKey() ==286
+	 lEnd := .t.
+      End
+   #ENDIF
+
+   If lEnd
+      @Prow()+1,1 PSAY "Cancelado pelo operador"
+      Exit
+   EndIF
+
+   IncRegua()
+
+   if !empty( SE1->E1_BAIXA )
+      dbskip()
+      loop
+   endif
+
+   if SE1->E1_NATUREZ < mv_par05 .or. SE1->E1_NATUREZ > mv_par06
+      dbskip()
+      loop
+   endif
+
+
+   dbSelectArea("SA1")
+   dbSetOrder(1)
+   dbseek(xfilial()+SE1->E1_CLIENTE )
+
+   if SA1->A1_ERSIN < mv_par03 .or. SA1->A1_ERSIN > mv_par04
+      dbSelectArea("SE1")
+      dbskip()
+      loop
+   endif
+
+   if !empty(mv_par07) .and. SA1->A1_CODESCC #mv_par07
+      dbSelectArea("SE1")
+      dbskip()
+      loop
+   endif
+
+   dbSelectArea("IMP")
+   RecLock("IMP",.T.)
+   IMP->ERSIN := SA1->A1_ERSIN
+   IMP->CODIG := SA1->A1_CODASSO
+   IMP->NOME  := SA1->A1_NOME
+   IMP->PARCELA := strzero(month(SE1->E1_VENCTO),2)+'/'+;
+                   substr(strzero(year(SE1->E1_VENCTO),5),4,2)
+   IMP->VALOR := SE1->E1_VALOR
+   IMP->VENC  := str(month(SE1->E1_VENCTO),2)+"/"+str(year(SE1->E1_VENCTO),4)
+   IMP->CIDADE:= SA1->A1_MUN
+
+   dbSelectArea("SE1")
+   dbskip()
+end
+
+
+dbSelectArea("IMP")
+dbGotop()
+
+li := 80
+
+_nTotal  := 0
+_nTotTit := 0
+while !eof()
+   _cERSIN := IMP->ERSIN
+   _cCIDADE:= IMP->CIDADE
+   _nTotMes:= 0
+   _nTit   := 0
+//   Cabec1  := "MES : "+ mesExtenso(val(substr(IMP->VENC,1,2)))+"/"+substr(IMP->VENC,6,2)
+//   Cabec1  := Cabec1 + " Cidade: " + _cCIDADE
+//   cabec1 := "CODIGO NOME                                          PARCELA         VALOR "
+   cabec(titulo,cabec1,cabec2,nomeprog,tamanho,18)
+   @prow()+1,000 PSAY "ERSIN: "+_cERSIN + "  " + _cCIDADE
+
+
+   while !eof() .and. IMP->ERSIN+IMP->CIDADE == _cERSIN+_cCIDADE
+
+       _cMes   := IMP->VENC
+
+       while !eof() .and. IMP->VENC == _cMes
+          IF li > 58
+             cabec(titulo,cabec1,cabec2,nomeprog,tamanho,18)
+             @prow()+1,000 PSAY "ERSIN: "+_cERSIN + "  " + _cCIDADE
+          EndIF
+
+          @ li, 000 PSAY IMP->CODIG
+          @ li, 007 PSAY IMP->NOME
+          @ li, 054 PSAY IMP->PARCELA
+          @ li, 061 PSAY IMP->VALOR picture "@e 999,999,999,999.99"
+
+          li := li+1
+          _nTotMes := _nTotMes+ IMP->VALOR
+          _nTit    := _nTit + 1
+          _nTotal  := _nTotal+ IMP->VALOR
+          _nTotTit := _nTotTit+1
+          dbskip()
+       end
+   end
+   li := li+1
+   @ LI,000 PSAY replicate("-",80)
+   li := li+1
+   If _nTit == 1
+       @ li,008 PSAY "Total no Mes : " + transform(_nTit,"@e 999,999") + " TITULO "
+       ElseIf _nTit >= 2
+          @ li,008 PSAY "Total no Mes : " + transform(_nTit,"@e 999,999") + " TITULOS "
+   EndIf
+   @ li,061 PSAY _nTOTMes picture "@e 999,999,999,999.99"
+     li := li+1
+   @li,000 PSAY replicate("-",80)
+
+end
+
+if _nTotal > 0
+   li := li+1
+   @ LI,000 PSAY replicate("-",80)
+   li := li+1
+   @ li,008 PSAY "Total no Periodo : " + transform(_nTotTit,"@e 999,999")
+   @ li,061 PSAY _nTOTAL picture "@e 999,999,999,999.99"
+   li := li+1
+   @ LI,000 PSAY replicate("-",80)
+endif
+
+if li <> 80
+   roda(cbcont,cbtxt,TAMANHO)
+endif
+
+
+Set Device To Screen
+dbSelectArea("SE1")
+dbSetOrder(1)
+Set Filter To
+
+If aReturn[5] == 1
+   Set Printer To
+   dbCommit()
+   ourspool(wnrel)                                  
+Endif
+
+MS_FLUSH()
+
+dbSelectArea("IMP")
+dbCloseArea()
+
+
+dbSelectArea(_cOldAlias)
+
+Return

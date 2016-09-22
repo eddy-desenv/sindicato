@@ -1,0 +1,116 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function CHECACLI()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("NUMCLI,CATEG,FILANT,INATIVO,ESCRIT,ENTIDADE")
+SetPrvt("PGASSIST,PGCONFED,")
+
+numcli  :=0
+categ   :=0
+filant  :=0
+inativo :=0
+ESCRIT  :=0
+ENTIDADE:= 0
+pgassist:= 0
+pgconfed:= 0
+dbselectarea("sa1")
+dbgotop()
+do while !eof()
+  numcli :=numcli+1
+  if !EMPTY(SA1->A1_INAT)
+        INATIVO:= inativo+1
+        RECLOCK("SA1",.F.)
+        SA1->A1_INAT:="X"
+        MSUNLOCK()
+  elseif sa1->a1_filant == "X"
+        filant := filant +1
+  ELSEIF SA1->A1_CAteg1>="12000"
+        categ := categ +1
+  elseif EMPTY(SA1->A1_ESCCONT)
+        ENTIDAde:= entidade +1
+  elseif !EMPTY(SA1->A1_ESCCONT)
+        Escrit:= escrit +1
+  endif
+/*
+  dbSelectArea("SE1")
+  Dbsetorder(1)
+  Dbseek( xFilial()+"04 "+SA1->A1_COD+"1"+"DP")
+  IF FOUND()
+     IF ALLTRIM(SE1->E1_NATUREZ)== "0301"
+        dbSelectArea("SA1")
+        PGASSIST :=PGASSIST+1                
+        dbskip()
+        loop
+     endif
+  endif
+  dbSelectArea("SE1")
+  Dbsetorder(1)
+  dbseek( xFilial()+"04E"+SA1->A1_COD+"1"+"DP")
+  IF FOUND()
+     IF ALLTRIM(SE1->E1_NATUREZ)== "0301"
+        dbSelectArea("SA1")
+        PGASSIST :=PGASSIST+1
+        dbskip()
+        loop
+     endif
+  endif
+  dbSelectArea("SE1")
+  Dbsetorder(1)
+  dbseek( xFilial()+"04A"+SA1->A1_COD+"1"+"DP")
+  IF FOUND()
+    IF ALLTRIM(SE1->E1_NATUREZ)== "0301"
+       dbSelectArea("SA1")
+       PGASSIST :=PGASSIST+1
+       dbskip()
+       loop
+    endif
+   endif
+   dbSelectArea("SE1")
+   Dbsetorder(1)
+   dbseek( xFilial()+"04 "+SA1->A1_COD+"2"+"DP")
+   IF FOUND()
+     dbSelectArea("SA1")
+     PGCONFED :=PGCONFED+1
+     dbskip()
+     loop
+   endif
+   dbSelectArea("SE1")
+   Dbsetorder(1)
+   dbseek( xFilial()+"04E"+SA1->A1_COD+"2"+"DP")
+   IF FOUND()
+     dbSelectArea("SA1")
+     PGCONFED :=PGCONFED+1
+     dbskip()
+     loop
+   endif
+   dbSelectArea("SE1")
+   Dbsetorder(1)
+   dbseek( xFilial()+"04A"+SA1->A1_COD+"2"+"DP")
+   IF FOUND()
+      dbSelectArea("SA1")
+      PGCONFED :=PGCONFED+1
+      dbskip()
+      loop
+   endif
+   */
+   dbSelectArea("SA1")
+  dbskip()
+enddo
+alert("Clientes: "+str(numcli))
+alert("Inativos: "+str(inativo))
+alert("Filantropicos: "+str(filant))
+alert("Categoria: "+str(categ))
+alert("Escritorio: "+str(escrit))
+alert("Entidade: "+str(entidade))
+//alert("Assistencial: "+str(pgassist))
+//alert("Confederativa: "+str(pgconfed))
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

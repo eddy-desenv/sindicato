@@ -1,0 +1,102 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function FA080PE()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CNUMERO,CPREFIXO,CPARCELA,_CBUSCA,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ FA080PE  ³ Autor ³ Elanie Cavalheiro     ³ Data ³ 28.05.96 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Tratamento de Movimentacao do caixa e Liberacao de Cheques ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Alterado  ³ Andreia dos Santos 02.06.98                                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+/*/
+
+cNumero := SE2->E2_NUM
+cPrefixo:= SE2->E2_PREFIXO
+cParcela:= SE2->E2_PARCELA
+If SE2->E2_PORTADO == "CX"
+   If SE5->E5_TIPODOC == "BA"
+      Reclock("SE5",.F.)
+      SE5->E5_TIPODOC := "VL"
+      MsUnlock()
+   Endif
+else
+   dbSelectArea("SEF")
+   dbSetOrder(3)
+   dbseek( xFilial() +SE2->E2_PREFIXO+SE2->E2_NUM+SE2->E2_PARCELA+SE2->E2_TIPO)
+   _cBusca := SEF->EF_BANCO+SEF->EF_AGENCIA+SEF->EF_CONTA+SEF->EF_NUM
+
+   dbSelectArea("SE5")
+   RECLOCK("SE5",.T.)  //LIBERACAO DE CHEQUE
+
+   SE5->E5_FILIAL  := xFilial()
+   SE5->E5_DATA    := SE2->E2_BAIXA
+   SE5->E5_VALOR   := SE2->E2_VALLIQ
+   SE5->E5_NATUREZ := SE2->E2_NATUREZ
+   SE5->E5_BANCO   := SEF->EF_BANCO
+   SE5->E5_AGENCIA := SEF->EF_AGENCIA
+   SE5->E5_CONTA   := SEF->EF_CONTA
+   SE5->E5_NUMCHEQ := SEF->EF_NUM
+   SE5->E5_RECPAG  := "P"
+   SE5->E5_BENEF   := SEF->EF_BENEF
+   SE5->E5_HISTOR  := SEF->EF_HIST
+   SE5->E5_TIPODOC := "CH"
+   SE5->E5_LA      := "SS"
+   SE5->E5_CLIFOR  := SEF->EF_FORNECE
+   SE5->E5_DTDIGIT := dDataBase
+   SE5->E5_DTDISPO := dDataBase
+   MsUnlock()
+
+   dbSelectArea("SEF")
+   dbSetOrder(1)
+   dbseek( xFilial() +_cBusca )
+   while !eof() .and. xFilial()+SEF->EF_BANCO+SEF->EF_AGENCIA+SEF->EF_CONTA+SEF->EF_NUM ==;
+                      xFilial()+ _cBusca
+      RecLock("SEF",.F.)
+      SEF->EF_LIBER := "S"
+      MsUnlock()
+      dbskip()
+   end
+
+   dbSelectArea("SA6")
+   if dbseek( xFilial()+_cBusca )
+      RecLock("SA6",.f.)
+      SA6->A6_SALATU := SA6->A6_SALATU - SE2->E2_VALLIQ
+      MsUnlock()
+   endif
+
+   dbSelectArea("SE8")
+   if dbseek( xFilial()+SA6->A6_COD+SA6->A6_AGENCIA+SA6->A6_NUMCON+dtos(SE2->E2_BAIXA) )
+      RecLock("SE8",.F.)
+      SE8->E8_SALATUA := SE8->E8_SALATUA - SE2->E2_VALLIQ
+      MsUnlock()
+   else
+      RecLock("SE8",.T.)
+      SE8->E8_FILIAL  := xFilial()
+      SE8->E8_BANCO   := SA6->A6_COD
+      SE8->E8_AGENCIA := SA6->A6_AGENCIA
+      SE8->E8_CONTA   := SA6->A6_NUMCON
+      SE8->E8_DTSALAT := SE2->E2_BAIXA
+      SE8->E8_SALATUA := SE8->E8_SALATUA - SE2->E2_VALLIQ
+      MsUnlock()
+
+   endif
+   
+Endif
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> __Return(.T.)
+Return(.T.)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04

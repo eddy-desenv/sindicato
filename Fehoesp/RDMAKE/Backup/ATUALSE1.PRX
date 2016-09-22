@@ -1,0 +1,17 @@
+* ATUALSE1.PRX
+
+cls
+dbselectarea("SE1")
+dbgotop()
+while !eof()
+   SA1->(dbseek(xFilial("SA1") + se1->e1_cliente))
+   reclock("SE1",.F.)
+   SE1->E1_CGC	  := SA1->A1_CGC
+   SE1->E1_CODASSO:= SA1->A1_CODASSO
+   SE1->E1_CATEG1 := SA1->A1_CATEG1
+
+   msunlock()
+   dbskip()
+end
+
+

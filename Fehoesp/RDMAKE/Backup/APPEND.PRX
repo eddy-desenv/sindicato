@@ -1,0 +1,6 @@
+
+DbSelectArea("SZM")
+DbSetOrder(1)
+
+APPEND FROM SE1 WHILE !EOF()
+

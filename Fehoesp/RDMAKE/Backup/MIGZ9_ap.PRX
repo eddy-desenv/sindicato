@@ -1,0 +1,20 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function MIGZ9()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+use sindescr alias sind new shared
+dbgotop()
+do while !eof()
+    dbSelectArea("SZ9")
+    Reclock("SZ9",.T.)
+    SZ9->Z9_FILIAL := xFilial("SZ9")
+    SZ9->Z9_TITULO := sind->num_guia
+    SZ9->Z9_CGC    := sind->cnpj
+    SZ9->Z9_VENCTO := ctod("31/01/04")
+    msUnlock()
+    dbselectarea("sind")
+    dbskip()
+enddo
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

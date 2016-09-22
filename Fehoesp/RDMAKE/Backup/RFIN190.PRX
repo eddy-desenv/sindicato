@@ -1,0 +1,646 @@
+#IFNDEF WINDOWS
+    #DEFINE PSAY SAY
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³ FINR190  ³ Autor ³ Wagner Xavier         ³ Data ³ 05.10.92 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Rela‡„o das baixas                                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ FINR190(void)                                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ Nao Tem                                                    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Gen‚rico                                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Rdmake   ³ Autor  ³ Luiz Carlos Vieira              ³ Data ³ 16/09/97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Alteracao³ Autor  ³ Andreia dos Santos              ³ Data ³ 10/06/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel   := ""
+aOrd    := {"Por Data","Por Banco","Por Natureza","Alfab‚tica","Dt.Digita‡„o"}
+cDesc1  := "Este programa ir  emitir a rela‡„o dos t¡tulos baixados."
+cDesc2  := "Poder  ser emitido por data, banco, natureza ou alfab‚tica"
+cDesc3  := "de cliente ou fornecedor e data da digita‡„o."
+tamanho := "G"
+limite  := 220
+cString := "SE5"
+
+titulo  := "Rela‡„o de Baixas"
+cabec1  := ""
+cabec2  := ""
+cNomeArq:= ""
+aReturn := { "Zebrado", 1,"Administra‡„o", 1, 2, 1, "",1 }
+nomeprog:= "FINR190"
+aLinha  := { }
+nLastKey:= 0
+cPerg   := "FIN190"
+lEnd    := .F.
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("FIN190",.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                     ³
+//³ mv_par01            // da data da baixa                  ³
+//³ mv_par02            // at‚ a data da baixa               ³
+//³ mv_par03            // do banco                          ³
+//³ mv_par04            // at‚ o banco                       ³
+//³ mv_par05            // da natureza                       ³
+//³ mv_par06            // at‚ a natureza                    ³
+//³ mv_par07            // do c¢digo                         ³
+//³ mv_par08            // at‚ o c¢digo                      ³
+//³ mv_par09            // da data de digita‡„o              ³
+//³ mv_par10            // ate a data de digita‡„o           ³
+//³ mv_par11            // Tipo de Carteira (R/P)            ³
+//³ mv_par12            // Moeda                             ³
+//³ mv_par13            // Hist¢rico: Baixa ou Emiss„o       ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a fun‡„o SETPRINT                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel := "FINR190"            //Nome Default do relat¢rio em Disco
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,aOrd,,Tamanho)
+
+If nLastKey == 27
+   Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey == 27
+   Return
+Endif
+
+#IFDEF WINDOWS
+   RptStatus({|| Execute(Fa190Imp) },Titulo)
+#ELSE
+   fa190Imp()
+#ENDIF
+Return
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³ FA190Imp ³ Autor ³ Wagner Xavier         ³ Data ³ 05.10.92 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Rela‡„o das baixas                                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ FA190Imp(lEnd,wnRel,cString)                               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ lEnd    - A‡Æo do Codeblock                                ³±±
+±±³          ³ wnRel   - T¡tulo do relat¢rio                              ³±±
+±±³          ³ cString - Mensagem                                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Gen‚rico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+Function FA190Imp
+
+CbTxt     := 0
+CbCont    := 0
+nValor    := 0
+nDesc     := 0
+nJuros    := 0
+nCM       := 0
+nMulta    := 0
+dData     := CTOD("")
+nTotValor := 0
+nTotDesc  := 0
+nTotJuros := 0
+nTotMulta := 0
+nTotCm    := 0
+nTotOrig  := 0
+nGerValor := 0
+nGerDesc  := 0
+nGerJuros := 0
+nGerMulta := 0
+nGerCm    := 0
+nGerOrig  := 0
+cBanco    := ""
+cNatureza := ""
+cAnterior := ""
+cCliFor   := ""
+nCT       := 0
+dDigit    := CTOD("")
+cLoja     := ""
+lContinua := .T.
+cCheque   := ""
+tamanho   := "G"
+aCampos   := {}
+cNomArq1  := ""
+nVlr      := 0
+xFilial   := ""
+cLinha    := ""
+lOriginal := .T.
+nAbat     := 0
+nTotAbat  := 0
+nGerAbat  := 0
+cMotBxImp := " "
+cHistorico:= ""
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Vari veis utilizadas para Impress„o do Cabe‡alho e Rodap‚    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cbtxt    := SPACE(10)
+cbcont   := 0
+li       := 80
+m_pag    := 1
+nOrdem   := aReturn[8]
+cSuf     := STR(mv_par12,1)
+cMoeda   := "MV_MOEDA"+cSuf
+cMoeda   := &cMoeda
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Defini‡„o dos cabe‡alhos       ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+IF mv_par11 == 1
+   titulo := "Relacao dos Titulos Recebidos em " + cMoeda
+   cabec1 := "Prf Numero P TP Client Nome Cliente       Natureza    Vencto  Historico       Dt Baixa  Valor Original     Tx Permanen          Multa       Correcao      Descontos      Abatimentos     Total Rec. Bco Dt Digit. Mot. Baixa"
+Else
+   titulo := "Relacao dos Titulos Pagos em " + cMoeda
+   cabec1 := "Prf Numero P TP Client Nome Cliente       Natureza    Vencto  Historico                                                     Dt Baixa      Total Pago  Bco Dt Digit. Mot. Baixa"
+End
+cabec2 := ""
+
+*Prf Numero P TP Client Nome Cliente       Natureza    Vencto  Historico                                                     Dt Baixa      Total Pago  Bco Dt Digit. Mot. Baixa"
+*123 123456 1 12 123456 123456789012345678  1234567890 99/99/99 123456789012345678901234567890123456789012345678901234567890 99/99/99  123,456,789.00  123 99/99/99 1234567890
+*0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+*          10        20        30        40        50        60        70        80        90        100       110       120       130       140       150       160       170       180       190       200       210        
+
+dbSelectArea("SE5")
+cFilSE5 :=           'E5_RECPAG == '+IIF(mv_par11 == 1,'"R"','"P"')+' .and. '
+cFilSE5 := cFilSE5 + 'E5_DATA >= '+'"'+dtos(mv_par01)+'"'+' .and. E5_DATA <= '+'"'+dtos(mv_par02)+'" .and. '
+cFilSE5 := cFilSE5 + 'E5_NATUREZ >= '+'"'+mv_par05+'"'+' .and. E5_NATUREZ <= '+'"'+mv_par06+'" .and. '
+cFilSE5 := cFilSE5 + 'E5_CLIFOR >= '+'"'+mv_par07+'"'+' .and. E5_CLIFOR <= '+'"'+mv_par08+'" .and. '
+cFilSE5 := cFilSE5 + 'E5_DTDIGIT >= '+'"'+dtos(mv_par09)+'"'+' .and. E5_DTDIGIT <= '+'"'+dtos(mv_par10)+'"'
+IF nOrdem == 1
+    cCondicao:= "E5_DATA >= mv_par01 .and. E5_DATA <= mv_par02"
+    cCond2   := "E5_DATA"
+    titulo   := titulo + " por data de pagamento"
+    #IFDEF AS400
+      Set Filter to &cFilSE5
+    #ENDIF
+    dbSetOrder(1)
+    dbSeek(xFilial()+Dtos(mv_par01),.T.)
+    xFilial := SM0->M0_CODFIL
+Elseif nOrdem == 2
+    cCondicao:= "E5_BANCO >= mv_par03 .and. E5_BANCO <= mv_par04"
+    cCond2   := "E5_BANCO"
+    titulo   := titulo + " por Banco"
+    #IFDEF AS400
+       Set Filter to &cFilSE5
+    #ENDIF
+    dbSetOrder(3)
+    dbSeek(xFilial()+mv_par03,.T.)
+    xFilial:=SM0->M0_CODFIL
+Elseif nOrdem == 3
+    cCondicao:= "E5_NATUREZ >= mv_par05 .and. E5_NATUREZ <= mv_par06"
+    cCond2   := "E5_NATUREZ"
+    titulo   := titulo + " por Natureza"
+    #IFDEF AS400
+       Set Filter to &cFilSE5
+    #ENDIF
+    dbSetOrder(4)
+    dbSeek(xFilial()+mv_par05,.T.)
+    xFilial:= SM0->M0_CODFIL
+Elseif nOrdem == 4
+    cCondicao:=".T."
+    cCond2   :="E5_CLIFOR"
+    titulo   := titulo + " Alfabetica"
+    cNomeArq := CriaTrab("",.f.)
+    dbSelectArea("SE5")
+    xFilial:=SM0->M0_CODFIL
+    dbSetOrder(0)
+    #IFNDEF AS400
+       IndRegua("SE5",cNomeArq,"E5_FILIAL+E5_BENEF+DTOS(E5_DATA)+E5_PREFIXO+E5_NUMERO+E5_PARCELA",,,"Selecionando Registros...")
+    #ELSE
+       IndRegua("SE5",cNomeArq,"E5_FILIAL+E5_BENEF+DTOS(E5_DATA)+E5_PREFIXO+E5_NUMERO+E5_PARCELA",,cFilSE5,"Selecionando Registros...")
+    #ENDIF
+    dbSeek(xFilial(),.T.)
+Else				//Ordem 5 (Digitacao)
+    cCondicao:=".T."
+    cCond2   :="E5_DTDIGIT"
+    titulo   := titulo + " Por Data de Digitacao"
+    cNomeArq := CriaTrab("",.f.)
+    dbSelectArea("SE5")
+    xFilial:=SM0->M0_CODFIL
+    #IFNDEF AS400
+       IndRegua("SE5",cNomeArq,"E5_FILIAL+DTOS(E5_DTDIGIT)+E5_PREFIXO+E5_NUMERO+E5_PARCELA+DTOS(E5_DATA)",,,"Selecionando Registros...")
+    #ELSE
+       IndRegua("SE5",cNomeArq,"E5_FILIAL+DTOS(E5_DTDIGIT)+E5_PREFIXO+E5_NUMERO+E5_PARCELA+DTOS(E5_DATA)",,cFilSE5,"Selecionando Registros...")
+    #ENDIF  
+    dbSeek(xFilial(),.T.)
+EndIF
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define array para arquivo de trabalho    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+AADD(aCampos,{"LINHA","C",80,0 } )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Cria arquivo de Trabalho   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cNomArq1 := CriaTrab(aCampos)
+dbUseArea( .T.,, cNomArq1, "TRB", if(.F. .OR. .F., !.F., NIL), .F. )
+IndRegua("TRB",cNomArq1,"LINHA",,,"Selecionando Registros...")
+
+dbSelectArea("SE5")
+
+SetRegua(RecCount())
+
+While !Eof() .And. SE5->E5_FILIAL==xFilial("SE5") .And. lContinua .And. &cCondicao
+
+    #IFNDEF WINDOWS
+        If LastKey() == 286
+            lEnd := .t.
+        End
+    #ENDIF
+
+    IF lEnd
+       @PROW()+1,001 PSAY "CANCELADO PELO OPERADOR"
+       lContinua := .F.
+       Exit
+    End
+
+    IncRegua()
+
+    IF Empty(SE5->E5_NUMERO) .or. SE5->E5_SITUACA == "C"
+       dbSkip()
+       Loop
+    End
+
+    IF mv_par11 == 1 .and. SE5->E5_RECPAG == "P"      //Nao ‚ recebimento
+       dbSkip()
+       Loop
+    EndIF
+
+    IF mv_par11 == 2 .and. SE5->E5_RECPAG == "R"      //Nao ‚ pagamento
+       dbSkip()
+       Loop
+    EndIF
+
+    If SE5->E5_RECPAG == "R"
+       If SE5->E5_TIPO == "RA " .and. SE5->E5_MOTBX == "CMP"
+          dbSkip()
+          LOOP
+       End
+    End
+
+    If SE5->E5_RECPAG == "P"
+       If SE5->E5_TIPO == "PA " .and. SE5->E5_MOTBX == "CMP"
+          dbSkip()
+          LOOP
+       End
+    End
+
+    cAnterior := &cCond2
+    nTotValor := 0
+    nTotDesc  := 0
+    nTotJuros := 0
+    nTotMulta := 0
+    nTotCM    := 0
+    nCT       := 0
+    nTotOrig  := 0
+    nTotAbat  := 0 
+
+    While !EOF() .and. SE5->E5_FILIAL=xFilial("SE5") .and. lContinua .and. &cCond2==cAnterior
+
+        #IFNDEF WINDOWS
+            If LastKey() == 286
+               lEnd := .t.
+            End
+        #ENDIF
+
+        IF lEnd
+           @PROW()+1,001 PSAY "CANCELADO PELO OPERADOR"
+           lContinua:=.F.
+           Exit
+        End
+        dbSelectArea("SE5")
+        cNumero    := SE5->E5_NUMERO
+        cPrefixo   := SE5->E5_PREFIXO
+        cParcela   := SE5->E5_PARCELA
+        dBaixa     := SE5->E5_DATA
+        cBanco     := SE5->E5_BANCO
+        cNatureza  := SE5->E5_NATUREZ
+        cCliFor    := SE5->E5_BENEF
+        cLoja      := SE5->E5_LOJA
+        If Empty(cCliFor) .And. !Empty(SE5->E5_CLIFOR)
+           If SE5->E5_RECPAG == "R"
+              dbSelectArea("SA1")
+              If dbSeek(xFilial("SA1")+SE5->E5_CLIFOR+SE5->E5_LOJA)
+                 cCliFor := SA1->A1_NREDUZ
+              End
+           Else
+              dbSelectArea( "SA2")
+              If dbSeek(xFilial("SA2")+SE5->E5_CLIFOR+SE5->E5_LOJA)
+                 cCliFor := SA2->A2_NREDUZ
+              End
+           End
+        End
+        dbSelectArea("SE5")
+        cCheque    := SE5->E5_NUMCHEQ
+        cTipo      := SE5->E5_TIPO
+        cFornece   := SE5->E5_CLIFOR
+        dDigit     := SE5->E5_DTDIGIT
+
+        If mv_par11==1
+           dbSelectArea("SE1")
+           dbSeek(xFilial()+cPrefixo+cNumero+cParcela+cTipo)
+           cCond3:="SE5->E5_PREFIXO+SE5->E5_NUMERO+SE5->E5_PARCELA+SE5->E5_TIPO+DtoS(SE5->E5_DATA)==cPrefixo+cNumero+cParcela+cTipo+DtoS(dBaixa)"
+           nDesc := 0
+           nJuros:= 0
+           nValor:= 0
+           nMulta:= 0
+           nCM   := 0
+        Else
+           dbSelectArea("SE2")
+           dbSeek(xFilial()+cPrefixo+cNumero+cParcela+cTipo+cFornece+cLoja)
+           cCond3:="SE5->E5_PREFIXO+SE5->E5_NUMERO+SE5->E5_PARCELA+SE5->E5_TIPO+SE5->E5_CLIFOR+DtoS(SE5->E5_DATA)==cPrefixo+cNumero+cParcela+cTipo+cFornece+DtoS(dBaixa)"
+           nDesc := 0
+           nJuros:= 0
+           nValor:= 0
+           nMulta:= 0
+           nCM   := 0
+        end
+        dbSelectArea("SE5")
+        IncRegua()
+        While !Eof( ) .and. lContinua .and. &cCond3
+
+            cMotBx     := SE5->E5_MOTBX
+            cHistorico := SE5->E5_HISTOR
+
+            #IFNDEF WINDOWS
+                If LastKey() == 286
+                   lEnd := .t.
+                End
+            #ENDIF
+
+            IF lEnd
+               @PROW()+1,001 PSAY "CANCELADO PELO OPERADOR"
+               lContinua:=.F.
+               Exit
+            End
+
+            IncRegua()
+
+            If Empty(SE5->E5_NUMERO) .or. SE5->E5_SITUACA == "C" .or. SE5->E5_LOJA != cLoja
+               dbSkip()
+               Loop
+            End
+
+            IF mv_par11 == 1 .and. SE5->E5_RECPAG == "P"      //Nao ‚ recebimento
+               dbSkip()
+               Loop
+            End
+	
+            If SE5->E5_RECPAG == "R"
+               If SE5->E5_TIPO == "RA " .and. SE5->E5_MOTBX == "CMP"
+                  dbSkip()
+                  LOOP
+               End
+            End
+
+            If SE5->E5_RECPAG == "P"
+               If SE5->E5_TIPO == "PA " .and. SE5->E5_MOTBX == "CMP"
+                  dbSkip()
+                  LOOP
+               End
+            End
+
+            IF mv_par11 == 2 .and. SE5->E5_RECPAG == "R"      //Nao ‚ pagamento
+               dbSkip()
+               Loop
+            End
+
+            //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+            //³ Verifica se est  dentro dos parƒmetros       ³
+            //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+            IF SE5->E5_DATA   < mv_par01 .Or. SE5->E5_DATA    > MV_PAR02 .Or. ;
+               SE5->E5_BANCO  < mv_par03 .Or. SE5->E5_BANCO   > MV_PAR04 .Or. ;
+               SE5->E5_NATUREZ< mv_par05 .Or. SE5->E5_NATUREZ > MV_PAR06 .Or. ;
+               SE5->E5_CLIFOR < mv_par07 .Or. SE5->E5_CLIFOR  > MV_PAR08 .Or. ;
+               SE5->E5_DTDIGIT< mv_par09 .Or. SE5->E5_DTDIGIT > MV_PAR10
+               dbSkip()
+               Loop
+            End
+
+            dbSelectArea("SM2")
+            dbSeek(SE5->E5_DATA)
+            dbSelectArea("SE5")
+
+            Do Case
+	
+            Case SE5->E5_TIPODOC $ "DC/D2"
+                 nDesc  := nDesc  + Iif(mv_par12==1,SE5->E5_VALOR,xMoeda(SE5->E5_VALOR,1,mv_par12,SE5->E5_DATA))
+            Case SE5->E5_TIPODOC $ "JR/J2"
+                 nJuros := nJuros + Iif(mv_par12==1,SE5->E5_VALOR,xMoeda(SE5->E5_VALOR,1,mv_par12,SE5->E5_DATA))
+            Case SE5->E5_TIPODOC $ "VL/V2/BA/RA/PA/CP"
+                 nValor := nValor + Iif(mv_par12==1,SE5->E5_VALOR,xMoeda(SE5->E5_VALOR,1,mv_par12,SE5->E5_DATA))
+            Case SE5->E5_TIPODOC $ "MT/M2"
+                 nMulta := nMulta + Iif(mv_par12==1,SE5->E5_VALOR,xMoeda(SE5->E5_VALOR,1,mv_par12,SE5->E5_DATA))
+            Case SE5->E5_TIPODOC $ "CM/C2"
+                 nCM    := nCM    + Iif(mv_par12==1,SE5->E5_VALOR,xMoeda(SE5->E5_VALOR,1,mv_par12,SE5->E5_DATA))
+            EndCase
+            dbSkip()
+        End
+
+        If (nDesc+nValor+nJuros+nCM+nMulta) > 0
+            //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+            //³ C lculo do Abatimento        ³
+            //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+            If mv_par11 == 1
+               dbSelectArea("SE1")
+               nRecno := Recno()
+               nAbat  := SomaAbat(cPrefixo,cNumero,cParcela,"R",mv_par12)
+               dbSelectArea("SE1")
+               dbGoTo(nRecno)
+            Else
+               dbSelectArea("SE2")
+               nRecno := Recno()
+               nAbat  := SomaAbat(cPrefixo,cNumero,cParcela,"P",mv_par12)
+               dbSelectArea("SE2")
+               dbGoTo(nRecno)
+            End
+
+            If li > 55
+               cabec(titulo,cabec1,cabec2,nomeprog,tamanho,15)
+            End
+
+            @li, 0 PSAY cPrefixo
+            @li, 4 PSAY cNumero
+            @li,11 PSAY cParcela
+            @li,13 PSAY cTipo
+
+            dbSelectArea("TRB")
+            dbSeek(cPrefixo+cNumero+cParcela+Iif(mv_par11==1,SE1->E1_CLIENTE,SE2->E2_FORNECE))
+            lOriginal := .T.
+            If Found()
+               nVlr     := 0
+               nAbat    := 0
+               lOriginal:= .F.
+            Else
+               nVlr :=Iif(mv_par11==1,SE1->E1_VLCRUZ,SE2->E2_VLCRUZ)
+               If mv_par12 > 1
+                  If mv_par11 == 1
+                     nVlr := xMoeda(SE1->E1_VALOR,SE1->E1_MOEDA,mv_par12,SE1->E1_EMISSAO)
+                  Else
+                     nVlr := xMoeda(SE2->E2_VALOR,SE2->E2_MOEDA,mv_par12,SE2->E2_EMISSAO)
+                  End
+               End
+               nVlr := NoRound(nVlr)
+               RecLock("TRB",.T.)
+               TRB->LINHA := cPrefixo+cNumero+cParcela+Iif(mv_par11==1,SE1->E1_CLIENTE,SE2->E2_FORNECE)
+               MsUnlock()
+            End
+            IF mv_par11 == 1
+               If mv_par13 == 1  // Utilizar o Hist¢rico da Baixa ou Emiss„o
+                  cHistorico := Iif(Empty(cHistorico), SE1->E1_HIST, cHistorico )
+               Else
+                  cHistorico := Iif(Empty(SE1->E1_HIST), cHistorico, SE1->E1_HIST )
+               Endif
+               @li, 16 PSAY SE1->E1_CLIENTE
+               @li, 23 PSAY SubStr(cCliFor,1,18)
+               @li, 43 PSAY cNatureza
+               @li, 54 PSAY SE1->E1_VENCREA
+               @li, 63 PSAY cHistorico 
+               @li,124 PSAY dBaixa
+            Else
+               If mv_par13 == 1  // Utilizar o Hist¢rico da Baixa ou Emiss„o
+                  cHistorico := Iif(Empty(cHistorico), SE2->E2_HIST, cHistorico )
+               Else
+                  cHistorico := Iif(Empty(SE2->E2_HIST), cHistorico, SE2->E2_HIST )
+               End
+               @li, 16 PSAY SE2->E2_FORNECE
+               @li, 23 PSAY SubStr(cCliFor,1,18)
+               @li, 43 PSAY cNatureza
+               @li, 54 PSAY SE2->E2_VENCREA
+               If !Empty(cCheque)
+                  @li, 63 PSAY TRIM(cCheque)+"/"+TRIM(cHistorico)
+               ELSE
+                  @li, 63 PSAY Trim(cHistorico)
+               End
+               @li,124 PSAY dBaixa
+            End
+            nCT := nCT + 1
+            @li,134 PSAY nValor     PicTure tm(nValor,15)
+            @li,150 PSAY cBanco
+            @li,154 PSAY dDigit
+
+            If cMotBx == "NOR"
+               cMotBxImp := "NORMAL"
+            ElseIf cMotBx == "DEV"
+               cMotBxImp := "DEVOLUCAO"
+            ElseIf cMotBx == "DAC"
+               cMotBxImp := "DACAO"
+            ElseIf cMotBx == "VDR"
+               cMotBxImp := "VENDOR"
+            ElseIf cMotBx == "CMP"
+               cMotBxImp := "COMPENSAC"
+            End
+
+            @li,163 PSAY cMotBxImp
+            nTotOrig  := nTotOrig  + Iif(lOriginal,nVlr,0)
+            nTotValor := nTotValor + Iif(cMotBx!="NOR",0,nValor)
+            nTotDesc  := nTotDesc  + nDesc
+            nTotJuros := nTotJuros + nJuros
+            nTotMulta := nTotMulta + nMulta
+            nTotCM    := nTotCM    + nCM
+            nTotAbat  := nTotAbat  + nAbat
+            nDesc     := 0
+            nJuros    := 0
+            nValor    := 0
+            nMulta    := 0
+            nCM       := 0
+            nAbat     := 0
+            li := li + 1
+        End
+
+        dbSelectArea("SE5")
+
+    End
+
+    If (nTotValor+nDesc+nJuros+nCM+nTotMulta+nTotOrig)>0
+        li := li + 1
+        IF li > 55
+           cabec(titulo,cabec1,cabec2,nomeprog,tamanho,15)
+        End
+        If nCT > 0
+           IF nOrdem == 1 .or. nOrdem == 5
+              @li, 0 PSAY "Sub Total : " + DTOC(cAnterior)
+           Elseif nOrdem == 2 .or. nOrdem == 4
+              @li, 0 PSAY "Sub Total : "+cAnterior
+              If nOrdem == 4
+                 If mv_par11 == 1
+                    dbSelectArea("SA1")
+                    dbSeek(xFilial()+cAnterior)
+                    cLinha:=TRIM(SA1->A1_NOME)+"  "+SA1->A1_CGC
+                 Else
+                    dbSelectArea("SA2")
+                    dbSeek(xFilial()+cAnterior)
+                    cLinha:=TRIM(SA2->A2_NOME)+"  "+SA2->A2_CGC
+                 End
+                 @li,20 PSAY cLinha
+              End
+           Elseif nOrdem == 3
+              dbSelectArea("SED")
+              dbSeek(xFilial()+cAnterior)
+              @li, 0 PSAY "SubTotal : " + cAnterior + " "+SED->ED_DESCRIC
+           End
+           @li,134 PSAY nTotValor      PicTure tm(nTotValor,15)
+           li := li + 2
+           dbSelectArea("SE5")
+        End
+    End
+    nGerOrig  := nGerOrig  + nTotOrig
+    nGerValor := nGerValor + nTotValor
+    nGerDesc  := nGerDesc  + nTotDesc
+    nGerJuros := nGerJuros + nTotJuros
+    nGerCM    := nGerCM    + nTotCM
+    nGerMulta := nGerMulta + nTotMulta
+    nGerAbat  := nGerAbat  + nTotAbat
+End
+
+If li != 80
+   li := li + 1
+   @li,  0 PSAY "Total Geral : "
+   @li,134 PSAY nGerValor      PicTure tm(nGerValor,15)
+   roda(cbcont,cbtxt,"G")
+End
+
+dbSelectArea("TRB")
+dbCloseArea()
+Ferase(cNomArq1+".DBF")
+dbSelectArea("SE5")
+RetIndex("SE5")
+Set Filter to
+If nOrdem == 4 .or. nOrdem == 5
+   Ferase(cNomeArq+OrdBagExt())
+End
+Set Filter to
+dbSetOrder(1)
+Set Device To Screen
+
+If aReturn[5] == 1
+   Set Printer to
+   dbCommit()
+   OurSpool(wnrel)
+End
+MS_FLUSH()
+Return

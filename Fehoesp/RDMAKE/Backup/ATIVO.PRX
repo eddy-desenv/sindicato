@@ -1,0 +1,67 @@
+_cAlias := dbselectarea()
+_nOrdem := IndexOrd()
+_nRegistro := recno()
+
+use bem alias bem new
+dbgotop()
+
+while eof() == .f.
+        _cCodigo := bem
+        _nValor :=val(valor2)
+        if val(substr(data,4,2)) <= 95
+           _dData := ctod('01/01/96')
+        else
+           _dDia := '01'
+           _dMes := val(substr(data,1,2))+1
+           _dAno := val(substr(data,4,2))+1
+
+           if _dMes >= 13
+              _dMes := 01
+              _dAno := _dAno + 1
+           endif
+
+           _dMes := strzero(_dMes,2)
+           _dAno := strzero(_dAno,2)
+
+           _dData := ctod(_dDia+'/'+_dMes+'/'+_dAno)
+        endif
+
+        aDescri := {}
+
+        while eof() == .f. .and. bem == _cCodigo
+           aadd(aDescri,descricao)
+
+           dbselectarea('bem')
+           dbskip()
+       enddo
+
+       dbselectarea('szb')
+       dbsetorder(1)
+       reclock('szb',.t.)
+		
+                replace zb_filial       with space(02)
+                replace zb_bem          with _cCodigo 
+                replace zb_item         with '0001'
+
+                for a:=1 to len(aDescri)
+                        if a==1
+                                replace zb_desc1        with aDescri[1]
+                        elseif a==2
+                               replace zb_desc1        with aDescri[2]
+                        endif
+                next
+
+                replace zb_aquisic      with _dData
+                replace zb_plaquet      with _cCodigo
+                replace zb_inicial      with ctod('01/06/98')
+                replace zb_real         with _nValor
+     
+                dbunlock()
+
+       dbselectarea('bem')
+enddo
+
+dbselectarea('bem')
+dbclosearea()
+
+return

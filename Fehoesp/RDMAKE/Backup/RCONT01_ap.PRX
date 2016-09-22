@@ -1,0 +1,290 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function RCONT01()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("_OLDAREA,_OLDORDER,_CTITULO,N_OPC,CPERG,_CPATH")
+SetPrvt("_CARQPLANO,_AESTRUTURA,C_ARQTMP,_NINCLUIDOS,_CREST,_NVEZ")
+SetPrvt("_CPOS1,_N,_I,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RCONT01  ³ Autor ³ Andreia dos Santos    ³ Data ³ 07/04/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Importacao do Plano de Contas                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cTitulo   := "Importacao do Plano de Contas"
+n_Opc := 0
+cPerg    := "FINA03"
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis utilizadas para parametros                         ³
+³ mv_par01         // Arquivo a ser Importado(Plano de Contas) ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+
+Pergunte(cPerg,.T.)
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Verifica diretorio de busca de arquivo para importacao      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+
+dbSelectArea("SX6")  //Parametros
+dbSetOrder(1)
+dbSeek(xFilial("SX6")+"MV_DIR_IMP")
+_cPath := AllTrim(SX6->X6_CONTEUD)+Space(50-Len(AllTrim(SX6->X6_CONTEUD)))
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,022,079)
+   SetColor("B/BG,N/W")
+
+   @ 011,010 Say "Este programa fara a importacao do Plano de contas"
+   @ 012,010 Say "de um arquivo tipo TXT"
+
+   @ 014,010 Say "Caminho - Conforme Parametro MV_DIR_IMP "
+   @ 015,010 Say _cPath       PICTURE "@!"
+   SetColor("B/BG,W/N")
+
+   @ 019,010 Say "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS"
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Parametros","Abandona"},22,04,"b/w,w+/n,r/w","CPA","",2)
+
+      If n_Opc == 3 .or. Lastkey()==27
+         Return
+      Endif
+
+      If n_Opc == 2
+         Pergunte(cPerg,.T.)
+         Loop
+      Endif
+
+      Exit
+   End
+   Importar()   
+#ELSE
+   @ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 TO 100,222
+   @ 023,014 SAY "Este programa fara a importacao do Plando de Contas"
+   @ 033,014 SAY "de um arquivo tipo TXT"
+
+   @ 053,014 Say "Caminho - Conforme Parametro MV_DIR_IMP "
+   @ 063,014 Get _cPath  PICTURE "@S30" WHEN .f.
+
+   @ 086,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Iniciar()// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==>    @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+Return
+
+*-----------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Iniciar
+Static Function Iniciar()
+*-----------------*
+Close(oDlg1)
+Processa( {|| Importar() })// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Processa( {|| Execute(Importar) })
+Return
+
+*------------------*
+// Substituido pelo assistente de conversao do AP6 IDE em 22/12/04 ==> Function Importar
+Static Function Importar()
+*------------------*
+
+_cArqPlano  := mv_par01
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Verificando se o arquivo a ser importado existe             ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+
+If !File(AllTrim(_cPath)+AllTrim(_cArqPlano))
+   Help(" ",1,"ARRVAZ")
+   Return
+endif
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Criando estrutura para arquivo temporario                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+_aEstrutura := {}  
+
+AADD( _aEstrutura,{"PLA_CODIGO" , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"PLA_DIGITO" , "C" , 01 , 0 } )
+AADD( _aEstrutura,{"PLA_DESCRI" , "C" , 40 , 0 } )
+AADD( _aEstrutura,{"PLA_DESCR1" , "C" , 40 , 0 } )
+AADD( _aEstrutura,{"PLA_AUXILI" , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"PLA_TIPO"   , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"PLA_DEPANO" , "N" , 06 , 2 } )
+AADD( _aEstrutura,{"PLA_MOEDA"  , "N" , 02 , 0 } )
+AADD( _aEstrutura,{"PLA_TEMCC"  , "l" , 01 , 0 } )
+AADD( _aEstrutura,{"PLA_CCINIC" , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"PLA_CCGINI" , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"PLA_GRUPO"  , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"PLA_ORIGEM" , "C" , 10 , 0 } )
+AADD( _aEstrutura,{"PLA_INDEXA" , "L" , 01 , 0 } )
+AADD( _aEstrutura,{"PLA_INICIO" , "D" , 08 , 0 } )
+AADD( _aEstrutura,{"PLA_BALANC" , "L" , 01 , 0 } )
+AADD( _aEstrutura,{"PLA_DEMO"   , "L" , 01 , 0 } )
+AADD( _aEstrutura,{"PLA_BALSEQ" , "C" , 05 , 0 } )
+AADD( _aEstrutura,{"PLA_DEMSEQ" , "C" , 05 , 0 } )
+AADD( _aEstrutura,{"PLA_FASB"   , "L" , 01 , 0 } )
+AADD( _aEstrutura,{"PLA_INDEX"  , "N" , 01 , 0 } )
+AADD( _aEstrutura,{"PLA_RESULT" , "C" , 15 , 0 } )
+AADD( _aEstrutura,{"PLA_ORCAME" , "L" , 01 , 0 } )
+AADD( _aEstrutura,{"PLA_CCOBRI" , "L" , 01 , 0 } )
+AADD( _aEstrutura,{"PLA_FORMUL" , "M" , 10 , 0 } )
+AADD( _aEstrutura,{"EMP_FILIAL" , "C" , 05 , 0 } )
+AADD( _aEstrutura,{"PLA_CCGOBR" , "L" , 01 , 0 } )
+
+
+c_ArqTmp := CriaTrab(_aEstrutura,.t.)
+dbUseArea(.t.,,c_ArqTmp,"TMP")
+dbSelectArea("TMP")
+
+Append From &(AllTrim(_cPath)+AllTrim(_cArqPlano)) SDF
+
+dbGotop()
+
+
+ProcRegua(RecCount(),22,05)
+
+_nIncluidos := 0
+
+Do While !Eof()
+
+    #IFNDEF WINDOWS
+       IncProc(22,05)
+    #ELSE
+       IncProc(_cTitulo)
+    #ENDIF
+
+
+    dbSelectArea("SI1")
+    dbSetOrder(1)
+
+    RecLock("SI1",.T.)
+    SI1->I1_FILIAL  := xFilial("SI1")
+    SI1->I1_CODIGO  := TMP->PLA_CODIGO
+    SI1->I1_DESC    := TMP->PLA_DESCRI
+    SI1->I1_CLASSE  := upper(Substr(TMP->PLA_TIPO,1,1))
+    if len(alltrim(TMP->PLA_CODIGO) ) == 1
+       SI1->I1_NIVEL   := "1"
+    elseif len(alltrim(TMP->PLA_CODIGO) ) == 2
+       SI1->I1_NIVEL   := "2"
+    elseif len(alltrim(TMP->PLA_CODIGO) ) == 3
+       SI1->I1_NIVEL   := "3"
+    elseif len(alltrim(TMP->PLA_CODIGO) ) == 4
+       SI1->I1_NIVEL   := "4"
+    elseif len(alltrim(TMP->PLA_CODIGO) ) == 6
+       SI1->I1_NIVEL   := "5"
+    else
+       SI1->I1_NIVEL   := "6"
+    endif
+
+    SI1->I1_RES     := if(empty(TMP->PLA_AUXILI),"",strzero(val(TMP->PLA_AUXILI),4))
+    SI1->I1_NORMAL  := upper(Substr(TMP->PLA_ORIGEM,1,1))
+//  SI1->I1_ESTADO  := 0
+   
+    _cRest := 0
+    _nVez  := 1
+    _cPos1 := 0
+    for _n := 1 to len( RTRIM( TMP->PLA_CODIGO ) )
+
+       for _i := 9 to 2 step -1
+           if _n > len( RTRIM( TMP->PLA_CODIGO ) )
+              exit
+           endif
+           _cPos1 :=_cPos1+ _i*( Val( Subs(TMP->PLA_CODIGO,_n,1 ) ) )
+           _n := _n+1
+       next
+   next
+
+   _cRest := MOD(_cPos1,11)
+
+   If _cRest > 0
+      _cRest:=11-_cRest
+   End
+
+    SI1->I1_DC      := Str(_cRest,1)
+
+
+
+
+//    SI1->I1_HP      :=  // Codigo do Historico
+//    SI1->I1_CTAVM   :=  // Conta de Variacao Monetaria
+//    SI1->I1_NCUSTO  :=  // Digitos do centro de custo
+    SI1->I1_CV2     := "D"
+    SI1->I1_CV3     := "D"
+    SI1->I1_CV4     := "D"
+    SI1->I1_CV5     := "D"
+//    SI1->I1_CC      :=  // codigo do centro de custo
+//    SI1->I1_CCOBRIG :=  // utiliza centro de custos extra
+//    SI1->I1_CTARED  :=  // Cta.Redutora Variac.Monet
+//    SI1->I1_DESCEST :=  // Descricao Estrangeira
+
+   dbcommit()
+   _nIncluidos := _nIncluidos + 1
+   MsUnLock()
+
+   dbSelectArea("TMP")
+   dbSkip()
+Enddo
+
+Tone (800,2)
+Tone (1500,2)
+#IFNDEF WINDOWS
+   DrawAdvWindow("Termino de Importacao",010,010,021,069)
+   SetColor("B/BG,N/W")
+   @ 12,14 SAY "Contas Incluidas"
+   @ 12,37 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   READ
+   @ 19,19 SAY "Pressione Qualquer Tecla para Continuar"
+   Inkey(0)
+#ELSE
+   @ 96,42 TO 290,405 DIALOG oDlg1 TITLE "Termino de Importacao"
+   @ 8,10 TO 68,170
+   @ 23,22 SAY "Contas Incluidas"
+   @ 23,95 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+   @ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg1)
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+dbSelectArea("TMP")
+dbCloseArea()
+
+If File(c_ArqTmp+".DBF")
+   Ferase(c_ArqTmp+".DBF")
+   Ferase(c_ArqTmp+".NTX")
+   Ferase(c_ArqTmp+".DBT")
+EndIf
+
+dbSelectArea("SI1")
+dbSetOrder(1)        
+
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder)
+
+
+Return

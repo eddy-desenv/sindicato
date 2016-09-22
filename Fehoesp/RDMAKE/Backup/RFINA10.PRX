@@ -1,0 +1,818 @@
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA10  ³ Autor ³ Luiz Eduardo D. da Roz³ Data ³ 11/07/01 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Envio Especial (2) Contribuicoes associativas              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±³          ³ H:\BCOREAL\ASSOMMAA.txt (arquivo para envio)               ³±±
+±±³          ³ Preparacao de arquivo bancario referente a titulos extras  ³±±
+±±³          ³ com valor total dos mesmos somando titulos em aberto       ³±±
+±±³          ³ de JUL/2000 a JUL/2001                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Obs.:     ³ E' atualizado os arquivo SE1, SEA.                         ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cTitulo   := "Cobranca Associativa Especial"
+
+n_Opc := 0
+cPerg := "FINA10"
+
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis utilizadas para parametros                                       ³
+³ mv_par01   // Mes para envio                                               ³
+³ mv_par02   // ano para envio                                               ³
+³ mv_par03   // Data de vencimento                                           ³
+³ mv_par04   // Data de Emissao                                              ³
+³ mv_par05   // Sequencia                                                    ³
+³ mv_par06   // Nao usado                                                    ³
+³ mv_par07   // arquivo de saida := "H:\BCOREAL\ASSOC"+strzero(MES,2)+".txt" ³
+³ mv_par08   // codigo do Banco                                              ³
+³ mv_par09   // codigo da agencia                                            ³
+³ mv_par10   // codigo da conta                                              ³
+³ mv_par11   // codigo da subconta                                           ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+*/
+
+Pergunte(cPerg,.T.)
+C_BORDERO := ""
+_cNUMBORR := val( getMV("MV_NUMBORR")) +1
+C_BORDERO := strzero(_cNUMBORR,6)
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,017,079)
+   SetColor("B/BG,N/W")
+
+   @ 011,010 Say "Este programa fara a geracao de Arquivo para cobranca da "
+   @ 012,010 Say "Contribuicao Associativa - Boleto Especial"
+   @ 013,010 Say "BORDERO : " + C_BORDERO
+
+   SetColor("B/BG,W/N")
+
+   @ 014,010 Say "CONFIRME PARA INICIAR A GERACAO DE DADOS"
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Parametros","Abandona"},17,04,"b/w,w+/n,r/w","CPA","",2)
+
+      If n_Opc == 3 .or. Lastkey()==27
+         Return
+      Endif
+
+      If n_Opc == 2
+         Pergunte(cPerg,.T.)
+         Loop
+      Endif
+
+      Exit
+   End
+   Gerar()   
+#ELSE
+   @ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 TO 100,222
+   @ 022,014 SAY "Este programa fara a geracao de Arquivo para cobranca da "
+   @ 030,014 SAY "Contribuicao Associativa - BOLETO ESPECIAL"
+   @ 043,014 SAY "BORDERO : " + C_BORDERO
+   @ 063,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,168 BMPBUTTON TYPE 5 ACTION Pergunte(cPerg,.T.)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+Return
+
+
+*-----------------*
+Function Iniciar
+*-----------------*
+Close(oDlg1)
+Processa( {|| Execute(Gerar) })
+Return
+
+*------------------*
+Function Gerar
+*------------------*
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Criando estrutura para arquivo temporario                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+_aStru := {}    //REGISTRO HEADER
+
+    AADD( _aStru, { "COD_REGIST"  , "C" , 001 , 0 } )
+    AADD( _aStru, { "CONSTANTE"   , "C" , 025 , 0 } )
+    AADD( _aStru, { "ZERO"        , "C" , 001 , 0 } )
+    AADD( _aStru, { "AGE_CEDENT"  , "C" , 004 , 0 } )
+    AADD( _aStru, { "ZERO2"       , "C" , 001 , 0 } )
+    AADD( _aStru, { "CTA_CEDENTE" , "C" , 007 , 0 } )
+    AADD( _aStru, { "VAGO"        , "C" , 007 , 0 } )
+    AADD( _aStru, { "NOME_CEDENT" , "C" , 030 , 0 } )
+    AADD( _aStru, { "IDENT_BANCO" , "C" , 003 , 0 } )
+    AADD( _aStru, { "NOME_BANCO"  , "C" , 015 , 0 } )
+    AADD( _aStru, { "DATA_PROCE"  , "C" , 006 , 0 } )
+    AADD( _aStru, { "CONSTANTE2"  , "C" , 008 , 0 } )
+    AADD( _aStru, { "VAGO2"       , "C" , 282 , 0 } )
+    AADD( _aStru, { "SEQUENC_MOV" , "C" , 004 , 0 } )
+    AADD( _aStru, { "NUM_SEQUEN"  , "C" , 006 , 0 } )
+
+c_ArqTmp := CriaTrab(_aStru,.t.)
+dbUseArea(.t.,,c_ArqTmp,"HEAD")
+dbSelectArea("HEAD")
+
+_aStru1 := {}  //REGISTRO TRAILLER
+
+    AADD( _aStru1, { "COD_REGIS"  , "C" , 001 , 0 } )
+    AADD( _aStru1, { "QUANT_REG"  , "C" , 006 , 0 } )
+    AADD( _aStru1, { "VLR_TOTAL"  , "C" , 013 , 0 } )
+    AADD( _aStru1, { "VAGO"       , "C" , 374 , 0 } )
+    AADD( _aStru1, { "NUM_SEQUEN" , "C" , 006 , 0 } )
+
+c_ArqTmp1 := CriaTrab(_aStru1,.t.)
+dbUseArea(.t.,,c_ArqTmp1,"TRAI")
+dbSelectArea("TRAI")
+
+_aStru2 := {}
+    AADD( _aStru2, { "COD_REGIST"  , "C" , 001 , 0 } )
+    AADD( _aStru2, { "COD_INSCRI"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "CGC_SDHOSP"  , "C" , 014 , 0 } )
+    AADD( _aStru2, { "ZERO_1"      , "C" , 001 , 0 } )
+    AADD( _aStru2, { "AG_CEDENTE"  , "C" , 004 , 0 } )
+    AADD( _aStru2, { "ZERO_2"      , "C" , 001 , 0 } )
+    AADD( _aStru2, { "CT_CEDENTE"  , "C" , 007 , 0 } )
+    AADD( _aStru2, { "VAGO_1"      , "C" , 032 , 0 } )
+    AADD( _aStru2, { "ZERO_3"      , "C" , 002 , 0 } )
+    AADD( _aStru2, { "NUMTIT_BAN"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "VAGO_2"      , "C" , 031 , 0 } )
+    AADD( _aStru2, { "COD_OCORRE"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "VAGO_3"      , "C" , 010 , 0 } )                                  
+    AADD( _aStru2, { "DATA_VENC"   , "C" , 006 , 0 } )
+    AADD( _aStru2, { "VLR_TITULO"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "IDENT_BANC"  , "C" , 003 , 0 } )
+    AADD( _aStru2, { "VAGO_4"      , "C" , 005 , 0 } )                                   
+    AADD( _aStru2, { "ESP_TITULO"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "VAGO_5"      , "C" , 001 , 0 } )                                   
+    AADD( _aStru2, { "DATA_EMISS"  , "C" , 006 , 0 } )
+    AADD( _aStru2, { "VAGO_6"      , "C" , 004 , 0 } )
+    AADD( _aStru2, { "JUROS_MORA"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "DATA_DESCO"  , "C" , 006 , 0 } )
+    AADD( _aStru2, { "VLR_DESCON"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "VLR_IOC"     , "C" , 013 , 0 } )
+    AADD( _aStru2, { "VLR_ABATIM"  , "C" , 013 , 0 } )
+    AADD( _aStru2, { "CPF_OU_CGC"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "CGC_SACADO"  , "C" , 014 , 0 } )
+    AADD( _aStru2, { "NOME_SACAD"  , "C" , 040 , 0 } )
+    AADD( _aStru2, { "END_SACADO"  , "C" , 040 , 0 } )
+    AADD( _aStru2, { "BAIRRO_SAC"  , "C" , 012 , 0 } )
+    AADD( _aStru2, { "CEP_SACADO"  , "C" , 008 , 0 } )
+    AADD( _aStru2, { "CIDADE_SAC"  , "C" , 015 , 0 } )
+    AADD( _aStru2, { "ESTADO_SAC"  , "C" , 002 , 0 } )
+    AADD( _aStru2, { "SACADOR"     , "C" , 040 , 0 } )
+    AADD( _aStru2, { "VAGO_7"      , "C" , 001 , 0 } )
+    AADD( _aStru2, { "VLR_MOEDA"   , "C" , 001 , 0 } )
+    AADD( _aStru2, { "TIPO_MOEDA"  , "C" , 001 , 0 } )
+    AADD( _aStru2, { "NUM_SEQUEN"  , "C" , 006 , 0 } )
+
+c_ArqTmp2 := CriaTrab(_aStru2,.t.)
+dbUseArea(.t.,,c_ArqTmp2,"DETA")
+dbSelectArea("DETA")
+
+_aStru3 := {}  //ARQUIVO FINAL
+    AADD( _aStru3, { "REGISTRO"  , "C" , 400 , 0 } )
+
+c_ArqTmp3 := CriaTrab(_aStru3,.t.)
+dbUseArea(.t.,,c_ArqTmp3,"REGI")
+dbSelectArea("REGI")
+
+_aStru4 := {}  //REGISTRO MENSAGENS
+
+    AADD( _aStru4, { "COD_REGIS"  , "C" , 001 , 0 } )
+    AADD( _aStru4, { "SEQ_REGMSG" , "C" , 001 , 0 } )
+    AADD( _aStru4, { "AG_CEDENTE" , "C" , 004 , 0 } )
+    AADD( _aStru4, { "CT_CEDENTE" , "C" , 007 , 0 } )
+    AADD( _aStru4, { "ZERO_1"     , "C" , 002 , 0 } )
+    AADD( _aStru4, { "NUMTIT_BAN" , "C" , 013 , 0 } )
+
+    AADD( _aStru4, { "MENSAGEM_1" , "C" , 069 , 0 } )
+    AADD( _aStru4, { "CODLOCAL_1" , "C" , 001 , 0 } )
+
+    AADD( _aStru4, { "MENSAGEM_2" , "C" , 069 , 0 } )
+    AADD( _aStru4, { "CODLOCAL_2" , "C" , 001 , 0 } )
+
+    AADD( _aStru4, { "MENSAGEM_3" , "C" , 069 , 0 } )
+    AADD( _aStru4, { "CODLOCAL_3" , "C" , 001 , 0 } )
+
+    AADD( _aStru4, { "MENSAGEM_4" , "C" , 069 , 0 } )
+    AADD( _aStru4, { "CODLOCAL_4" , "C" , 001 , 0 } )
+
+    AADD( _aStru4, { "MENSAGEM_5" , "C" , 069 , 0 } )
+    AADD( _aStru4, { "CODLOCAL_5" , "C" , 001 , 0 } )
+
+    AADD( _aStru4, { "VAGO"       , "C" , 016 , 0 } )
+    AADD( _aStru4, { "NUM_SEQUEN" , "C" , 006 , 0 } )
+
+c_ArqTmp4 := CriaTrab(_aStru4,.t.)
+dbUseArea(.t.,,c_ArqTmp4,"MSG")
+dbSelectArea("MSG")
+
+_DVenc := strzero(day(mv_par03),2)+strzero(month(mv_par03),2)+strzero(val(substr(str(year(mv_par03),4),3,2)),2)
+_Demis := strzero(day(mv_par04),2)+strzero(month(mv_par04),2)+strzero(val(substr(str(year(mv_par04),4),3,2)),2)
+
+dbSelectArea("HEAD")  //GERANDO REGISTRO HEADER
+
+RecLock("HEAD",.T.)
+HEAD->COD_REGIST  := "0"
+HEAD->CONSTANTE   := "1REMESSA01COBRANCA"
+HEAD->ZERO        := "0"
+HEAD->AGE_CEDENT  := "1874"
+HEAD->ZERO2       := "0"
+HEAD->CTA_CEDENTE := "7710534"
+HEAD->NOME_CEDENT := "SINDHOSP-SIND.HOSPITAIS EST SP"
+HEAD->IDENT_BANCO := "356"
+HEAD->NOME_BANCO  := "BANCO REAL S.A."
+HEAD->DATA_PROCE  := _Demis
+HEAD->CONSTANTE2  := "01600BPI"
+HEAD->SEQUENC_MOV := strzero(val(MV_PAR05),4)
+HEAD->NUM_SEQUEN  := "000001"
+DBCOMMIT()
+MsUnLock()
+
+dbSelectArea("HEAD")
+COPY TO HEAD.txt SDF
+
+dbSelectArea("REGI")	      // Gera Header
+Append From HEAD.TXT SDF
+
+_cPeriodo := substr(_DVenc,5,2) + substr(_DVenc,3,2)
+
+dbSelectArea("SA1")
+dbGotop()
+
+ProcRegua(RecCount(),18,05)
+
+_nRegistros := 0
+_nIncluidos := 0
+
+_cTitulo := "Gerando Arq. Bancario - Associativa (BOLETO ESPECIAL)"
+
+_NSEQ := "000002"
+
+_nValTot := 0
+_cNUMBORR := val( getMV("MV_NUMBORR")) + 1
+
+_nPARCESP := "13"  // Numero para boleto especial
+
+Do While !Eof()
+
+//While !Eof()
+    #IFNDEF WINDOWS
+       IncProc(22,05)
+    #ELSE
+       IncProc(_cTitulo)
+    #ENDIF
+
+    dbSelectArea("SA1")
+
+    If empty(SA1->A1_CODASSO) 
+       dbskip()
+       Loop
+    Endif
+
+&&    if SA1->A1_SITUAC <> "AS" .and. SA1->A1_SITUAC <> "SS" 
+    if SA1->A1_SITUAC <> "SS" 
+       dbskip()
+       Loop
+    Endif
+
+    If !empty(SA1->A1_DTFIMAS)
+       dbskip()
+       Loop
+    Endif
+
+    if val(SA1->A1_CATLEIT) <= 0
+       dbskip()
+       Loop
+    Endif
+
+    if val( TABELA("90",SA1->A1_CATLEIT) ) <= 0
+       dbskip()
+       Loop
+    Endif
+
+    dbSelectArea("SE1")  //GERANDO Contas a receber
+    dbseek(xFilial()+strzero(MV_PAR02,2)+" "+_nPARCESP+substr(SA1->A1_CODASSO,3,4))
+    if !eof()
+       dbSelectArea("SA1")
+       dbskip()
+       Loop
+    Endif
+
+    _nValTit := 0
+    Calc_Valor()
+
+    if _nValTit<=0
+       dbSelectArea("SA1")
+       dbskip()
+       Loop
+    EndIf
+
+    dbSelectArea("DETA")  //GERANDO REGISTRO DETALHE
+
+    RecLock("DETA",.T.)
+    DETA->COD_REGIST := "1"        
+    DETA->COD_INSCRI := "02"
+    DETA->CGC_SDHOSP := "47436373000173"
+    DETA->ZERO_1     := "0"
+    DETA->AG_CEDENTE := "1874"
+    DETA->ZERO_2     := "0"
+    DETA->CT_CEDENTE := "7710534"
+    DETA->ZERO_3     := "00"
+
+    //NOSSO NUMERO
+    DETA->NUMTIT_BAN := strzero(MV_PAR02,2)+"0"+_nPARCESP+substr(SA1->A1_CODASSO,3,4)+"0000"
+
+    DETA->COD_OCORRE := "01"
+    DETA->DATA_VENC  := _DVenc
+
+    DETA->VLR_TITULO := strzero(_nValTit*100,13)
+
+&&    DETA->VLR_TITULO := strzero(val( TABELA("90",SA1->A1_CATLEIT) )*100,13)
+
+    DETA->IDENT_BANC := "356"
+    DETA->ESP_TITULO := "01"
+    DETA->DATA_EMISS := _Demis
+
+    DETA->JUROS_MORA := "0000000000100"
+    DETA->DATA_DESCO := "000000"
+    DETA->VLR_DESCON := "0000000000000"
+    DETA->VLR_IOC    := "0000000000000"
+    DETA->VLR_ABATIM := "0000000000000"
+    DETA->CPF_OU_CGC := "02"
+    DETA->CGC_SACADO := SA1->A1_CGC
+    Ver_Ascii()
+    DETA->SACADOR    := "SINDICATO DOS HOSPITAIS DO EST.SAO PAULO"
+    DETA->VLR_MOEDA  := "7"
+    DETA->TIPO_MOEDA := "7"
+    DETA->NUM_SEQUEN := _nseq     //Sequencia
+
+    dbcommit()
+    MsUnlock()
+
+    _nValTot := _nValTot + val( TABELA("90",SA1->A1_CATLEIT) )
+    _nRegistros := _nRegistros + 1
+    _nseq := strzero((val(_nSeq)+1),6)
+
+    dbSelectArea("MSG")  //GERANDO REGISTRO MENSAGEM
+
+    RecLock("MSG",.T.)
+
+    MSG->COD_REGIS  := "7"
+    MSG->SEQ_REGMSG := "1"
+    MSG->AG_CEDENTE := "1874"
+    MSG->CT_CEDENTE := "7710534"
+    MSG->ZERO_1     := "00"
+    MSG->NUMTIT_BAN := strzero(MV_PAR02,2)+"0"+_nPARCESP+substr(SA1->A1_CODASSO,3,4)+"0000"
+    MSG->MENSAGEM_1 := "Ref. mensalidades em atraso"
+    MSG->CODLOCAL_1 := "3"
+    MSG->MENSAGEM_2 := " "
+    MSG->CODLOCAL_2 := "3"
+    MSG->MENSAGEM_3 := " CONTRIBUICAO ASSOCIATIVA "
+    MSG->CODLOCAL_3 := "3"
+    MSG->MENSAGEM_4 := " "
+    MSG->CODLOCAL_4 := "3"
+    MSG->MENSAGEM_5 := " "
+    MSG->CODLOCAL_5 := "3"
+    MSG->NUM_SEQUEN := _nseq     //Sequencia
+
+    dbcommit()
+    MsUnlock()
+
+    Do While ! (MSG->NUMTIT_BAN == strzero(MV_PAR02,2)+"0"+_nPARCESP+substr(SA1->A1_CODASSO,3,4)+"0000"	)
+    EndDo
+
+    _nRegistros := _nRegistros + 1
+    _nseq := strzero((val(_nSeq)+1),6)
+
+    dbSelectArea("SE1")  //GERANDO Contas a receber
+    dbseek(xFilial()+strzero(MV_PAR02,2)+" "+_nPARCESP+substr(SA1->A1_CODASSO,3,4))
+    if eof()
+       RecLock("SE1",.T.)
+       SE1->E1_FILIAL   := xFilial()
+       SE1->E1_PREFIXO  := strzero(MV_PAR02,2)+" "
+       SE1->E1_NUM      := _nPARCESP + substr(SA1->A1_CODASSO,3,4)
+       SE1->E1_PARCELA  := "E"
+       SE1->E1_TIPO     := "DP"
+       SE1->E1_NATUREZ  := "001"  
+       SE1->E1_CLIENTE  := SA1->A1_COD
+       SE1->E1_LOJA     := SA1->A1_LOJA
+       SE1->E1_NOMCLI   := SA1->A1_NREDUZ
+       SE1->E1_EMISSAO  := mv_par04
+       SE1->E1_VENCTO   := mv_par03
+       SE1->E1_VENCREA  := DataValida( mv_par03,.t.)
+       SE1->E1_VALOR    := _nValTit
+       SE1->E1_EMIS1    := mv_par04
+       SE1->E1_SITUACA  := "0"
+       SE1->E1_SALDO    := _nValTit
+       SE1->E1_VLCRUZ   := _nValTit
+       SE1->E1_VALJUR   := 0
+       SE1->E1_VENCORI  := mv_par03
+       SE1->E1_MOEDA    := 1
+       SE1->E1_HIST     := "Ref.Contr.Assoc. Especial de "+strzero(mv_par02,2)
+       //APOS BORDERO
+       SE1->E1_PORTADO := "356"
+       SE1->E1_AGEDEP  := "1874"
+       SE1->E1_CONTA   := "7710534"
+
+       SE1->E1_NUMBOR  :=  strzero(_cNUMBORR,6)  //NUMERO DO BORDERO
+       C_BORDERO       :=  strzero(_cNUMBORR,6)  //NUMERO DO BORDERO
+       SE1->E1_DATABOR :=  DDatabase //DATA DO BORDERO
+       SE1->E1_MOVIMEN :=  DDatabase
+       SE1->E1_SITUACA := "1"
+       SE1->E1_OCORREN := "01"
+       SE1->E1_ORIGEM  := "FINA040"
+       SE1->E1_STATUS  := "A" 
+       SE1->E1_OK      := CHR(56)+CHR (121)
+       SE1->E1_CGC     := SA1->A1_CGC
+       SE1->E1_CODASSO := SA1->A1_CODASSO
+       SE1->E1_CATEG1  := SA1->A1_ATIVIDA
+       SE1->E1_ERSIN   := SA1->A1_ERSIN
+       SE1->E1_BASE    := SA1->A1_BASE
+
+       //APOS GERACAO
+   //    SE1->E1_NUMBCO := //NOSSO NUMERO
+
+       _nIncluidos := _nIncluidos+1
+       dbcommit()
+       MsUnlock()
+
+       //ATUALIZA-SE O SEA
+       dbSelectArea("SEA")  //GERANDO Contas a receber
+       RecLock("SEA",.T.)
+       SEA->EA_FILIAL  := xFilial()
+       SEA->EA_PREFIXO := strzero(MV_PAR02,2)+" "
+       SEA->EA_PARCELA := "E"
+       SEA->EA_NUM     := _nPARCESP + substr(SA1->A1_CODASSO,3,4)
+       SEA->EA_PORTADO := "356"
+       SEA->EA_AGEDEP  := "1874"
+       SEA->EA_NUMCON  := "7710534"
+       SEA->EA_NUMBOR  := strzero(_cNUMBORR,6)
+       SEA->EA_DATABOR :=  dDatabase
+       SEA->EA_TIPO    := "DP"
+       SEA->EA_CART    := "R"
+       SEA->EA_SITUACA := "1"
+       //APOS GERAR ARQUIVO
+       SEA->EA_TRANSF := "S"
+       dbcommit()
+       MsUnlock()
+
+       RecLock("SA1",.F.)
+       SA1->A1_MCOMPRA := SA1->A1_MCOMPRA + _nValTit
+//val( TABELA("90",SA1->A1_CATLEIT) )
+       SA1->A1_SALDUP  := SA1->A1_SALDUP + _nValTit
+//val( TABELA("90",SA1->A1_CATLEIT) )
+       SA1->A1_PRICOM  := if(empty(SA1->A1_PRICOM),mv_par04,SA1->A1_PRICOM)
+       SA1->A1_ULTCOM  := mv_par04
+       dbcommit()
+       MsUnlock()
+    ENDIF
+
+    dbSelectArea("SA1")
+    dbskip()
+
+End
+
+
+* Nao Contabilzar
+
+*dbselectArea("SI2")
+*dbsetorder(3)
+*dbseek( xFilial() + dtos(mv_par04) + "7500" )
+
+*if _nvalTot > 0 .and. eof()
+
+*   recLock("SI2",.T.)
+
+*   SI2->I2_FILIAL := "01"
+*   SI2->I2_NUM	   := "7500001"
+*   SI2->I2_LINHA  := "01"
+*   SI2->I2_DATA   := mv_par03
+*   SI2->I2_DC	   := "X"
+*   SI2->I2_MOEDAS := "SNNNN"
+*   SI2->I2_VALOR  := _nvalTot
+*   SI2->I2_DTVENC := mv_par03
+*   SI2->I2_ROTINA := "RFINA07"
+*   SI2->I2_PERIODO:= _cPeriodo
+*   SI2->I2_ORIGEM := "L.GER P/RFINA07"
+*   SI2->I2_FILORIG:= "01"
+
+*   SI2->I2_DEBITO := "3111040001"
+*   SI2->I2_CREDITO:= "1123010001"
+*   SI2->I2_HIST   := "PROVISAO REFERENTE AO MES " + strzero(mv_par01) + "/" + strzero(mv_par02)
+*   MsUnlock()
+
+*endif
+
+DbSelectArea("SX6")
+dbseek(xfilial()+"MV_NUMBORR")
+
+if !eof()
+    reclock("SX6",.F.)
+    SX6->X6_CONTEUD :=  strzero(_cNUMBORR,6)
+    MSunlock()
+endif
+
+//ATUALIZA-SE O SEE
+dbSelectArea("SEE")  //GERANDO Contas a receber
+//dbseek(xFilial()+"3561874 7710534   "+"001")
+if dbseek( xFilial()+MV_PAR08+MV_PAR09+MV_PAR10+MV_PAR11 )
+   RecLock("SEE",.F.)
+   SEE->EE_ULTDSK := strzero(val(SEE->EE_ULTDSK)+1,6)
+ //SEE->EE_FAXATU := strzero(val(SEE->EE_FAXATU)+1,10)
+   dbcommit()
+   MsUnlock()
+Endif
+
+dbSelectArea("TRAI")  //GERANDO REGISTRO TRAILLER
+
+dbSelectArea("TRAI")  //GERANDO REGISTRO TRAILLER
+
+RecLock("TRAI",.T.)
+TRAI->COD_REGIS := "9"
+TRAI->QUANT_REG := Strzero( _nRegistros,6 )
+TRAI->VLR_TOTAL := substr(strzero(_nValTot,13,2),1,10)+ ;
+                   substr(strzero(_nValTot,13,2),12,2)
+TRAI->NUM_SEQUEN := strzero(val(_nSeq),6) //INCREMENTA()
+dbcommit()
+MsUnlock()
+
+dbSelectArea("TRAI")
+COPY TO TRAI.TXT SDF
+
+
+dbSelectArea("DETA")
+DbGotop()
+
+dbSelectArea("MSG")
+DbGotop()
+
+Do While !(MSG->(eof()))
+
+   dbSelectArea("DETA")
+   COPY NEXT 1 TO DETA.TXT SDF
+
+   dbSelectArea("MSG")
+   COPY NEXT 1 TO MSG.TXT SDF
+
+   dbSelectArea("REGI")	  // Gera Detalhes e Mensagem
+
+   Append From DETA.TXT SDF
+   Append From MSG.TXT SDF
+
+   dbSelectArea("DETA")
+   DbSkip()
+
+   dbSelectArea("MSG")
+   DbSkip()
+
+EndDo
+
+dbSelectArea("REGI")	    // Gera Trailler
+Append From TRAI.TXT SDF
+
+COPY TO &MV_PAR07 SDF	    // Copia arq. definitivo
+
+Tone(800,2)
+Tone(1500,2)
+
+#IFNDEF WINDOWS
+   DrawAdvWindow("Termino da Geracao",010,010,021,069)
+   SetColor("B/BG,N/W")
+   @ 12,14 SAY "Registros Gerados"
+   @ 12,37 GET _nRegistros PICTURE "@E 999,999" WHEN .F.
+
+   @ 14,14 SAY "Registros Incluidos"
+   @ 14,37 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+
+   @ 16,14 SAY "Numero do Bordero "
+   @ 16,37 GET C_BORDERO  PICTURE "@E 999999" WHEN .F.
+
+   READ
+   @ 19,19 SAY "Pressione Qualquer Tecla para Continuar"
+   Inkey(0)
+#ELSE
+   @ 96,42 TO 290,405 DIALOG oDlg1 TITLE "Termino da Geracao"
+   @ 8,10 TO 68,170
+   @ 23,22 SAY "Registros Gerados"
+   @ 23,95 GET _nRegistros PICTURE "@E 999,999" WHEN .F.
+
+   @ 27,22 SAY "Registros Incluidos"
+   @ 27,95 GET _nIncluidos PICTURE "@E 999,999" WHEN .F.
+
+   @ 31,14 SAY "Numero do Bordero "
+   @ 31,37 GET C_BORDERO  PICTURE "@E 999999" WHEN .F.
+
+   @ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg1)
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+dbSelectArea("HEAD")
+dbCloseArea()
+
+If File(c_ArqTmp+".DBF")
+   Ferase(c_ArqTmp+".DBF")
+EndIf
+
+dbSelectArea("TRAI")
+dbCloseArea()
+
+If File(c_ArqTmp1+".DBF")
+   Ferase(c_ArqTmp1+".DBF")
+EndIf
+
+dbSelectArea("DETA")
+dbCloseArea()
+
+If File(c_ArqTmp2+".DBF")
+   Ferase(c_ArqTmp2+".DBF")
+EndIf
+
+If File("HEAD.TXT")
+   Ferase("HEAD.TXT")
+EndIf
+If File("DETA.TXT")
+   Ferase("DETA.TXT")
+EndIf
+If File("TRAI.TXT")
+   Ferase("TRAI.TXT")
+EndIf
+
+dbSelectArea("REGI")
+dbCloseArea()
+
+If File(c_ArqTmp3+".DBF")
+   Ferase(c_ArqTmp3+".DBF")
+EndIf
+
+dbSelectArea("SA1")
+dbSetOrder(1)        
+
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder)
+return
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³                                                              ³
+//³                   FUNCOES ESPECIFICAS                        ³
+//³                                                              ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³Calc_Valor³ Autor ³Luiz Eduardo D. da Roz ³ Data ³ 11/12/00 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Calcula valor do titulo a ser enviado:                     ³±±
+±±³          ³ (Soma das parcelas em Aberto JUL/2000 - JUL/2001)/2        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ CNAB - A RECEBER                                           ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+*-------------------------*
+FUNCTION Calc_Valor
+*-------------------------*
+_Ver_Valo:=0
+
+_Anoi:=00
+_Mesi:=07
+
+Do While .t.
+
+   if _Anoi==01 .and. _Mesi>07
+      exit
+   endif
+
+   dbSelectArea("SE1")  //GERANDO Contas a receber
+   dbseek( xFilial()+strzero( _Anoi,2)+" "+strzero( _Mesi,2 )+substr(SA1->A1_CODASSO,3,4)+" "+"DP")
+   if !(eof())
+      if ! (SE1->E1_STATUS == "B")
+	 _Ver_Valo:=_Ver_Valo + SE1->E1_VALOR
+      EndIf
+
+   EndIf
+
+   _Mesi:=_Mesi + 1
+   if _Mesi>12
+      _Mesi:=01
+      _Anoi:=01
+   Endif
+
+EndDo
+ 
+_Ver_Valo:= _Ver_Valo / 2
+_nValTit:=_Ver_Valo
+
+if _Ver_Valo<SA1->A1_VALASSO	   && Somento o mes corrente esta em aberto !
+   _nValTit:=0
+Endif
+
+Return
+
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ Ver_Ascii³ Autor ³   Andreia Santos      ³ Data ³ 18/03/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Verifica caracteres com acentuacao e faz a troca por       ³±±
+±±³          ³ caracteres nao acentuados                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ CNAB - A RECEBER                                           ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+*-------------------------*
+FUNCTION Ver_Ascii
+*-------------------------*
+
+_cTexto := SA1->A1_NOME
+for w := 1 to len(_cTexto)
+   if !(substr(_cTexto,w,1) >= "0" .and. substr(_cTexto,w,1) <= "Z") .and. ;
+      !(substr(_cTexto,w,1) >= "a" .and. substr(_cTexto,w,1) <= "z") .and. ;
+       !substr(_cTexto,w,1) == " "
+      _cTexto := strtran(_cTexto,substr(_cTexto,w,1)," ")
+   endif
+next w
+DETA->NOME_SACAD := _cTexto
+
+_cTexto := SA1->A1_END
+for w := 1 to len(_cTexto)
+   if !(substr(_cTexto,w,1) >= "0" .and. substr(_cTexto,w,1) <= "Z") .and. ;
+      !(substr(_cTexto,w,1) >= "a" .and. substr(_cTexto,w,1) <= "z") .and. ;
+       !substr(_cTexto,w,1) == " "
+      _cTexto := strtran(_cTexto,substr(_cTexto,w,1)," ")
+   endif
+next w
+DETA->END_SACADO := _cTexto
+
+_cTexto := SA1->A1_CEP
+for w := 1 to len(_cTexto)
+   if !(substr(_cTexto,w,1) >= "0" .and. substr(_cTexto,w,1) <= "Z") .and. ;
+      !(substr(_cTexto,w,1) >= "a" .and. substr(_cTexto,w,1) <= "z") .and. ;
+       !substr(_cTexto,w,1) == " "
+      _cTexto := strtran(_cTexto,substr(_cTexto,w,1)," ")
+   endif
+next w
+DETA->CEP_SACADO := _cTexto
+
+_cTexto := SA1->A1_MUN
+for w := 1 to len(_cTexto)
+   if !(substr(_cTexto,w,1) >= "0" .and. substr(_cTexto,w,1) <= "Z") .and. ;
+      !(substr(_cTexto,w,1) >= "a" .and. substr(_cTexto,w,1) <= "z") .and. ;
+       !substr(_cTexto,w,1) == " "
+      _cTexto := strtran(_cTexto,substr(_cTexto,w,1)," ")
+   endif
+next w
+DETA->CIDADE_SAC := _cTexto
+
+_cTexto := SA1->A1_EST
+for w := 1 to len(_cTexto)
+   if !(substr(_cTexto,w,1) >= "0" .and. substr(_cTexto,w,1) <= "Z") .and. ;
+      !(substr(_cTexto,w,1) >= "a" .and. substr(_cTexto,w,1) <= "z") .and. ;
+       !substr(_cTexto,w,1) == " "
+      _cTexto := strtran(_cTexto,substr(_cTexto,w,1)," ")
+   endif
+next w
+DETA->ESTADO_SAC := _cTexto
+
+return 
+
+/**************************************************************************
+*  Fun‡„o    :                                                           *
+*  Parametros:                                                           *
+*  Retorna   :                                                           *
+*  Descri‡„o :                                                           *
+**************************************************************************
+FUNCTION Data( dData )
+LOCAL Mes  := MONTH(dData )
+LOCAL aMes := {"JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"}
+RETURN ( aMes[Mes] )
+*/
+

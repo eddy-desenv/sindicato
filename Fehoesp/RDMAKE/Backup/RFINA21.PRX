@@ -1,0 +1,139 @@
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RFINA21  ³ Autor ³ Luiz Eduardo D. Roz   ³ Data ³ 10/10/01 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Exclusao Titulos avulso Inadimplentes Confederativa        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Excl. Tit. Avulsos Confed. sem baixa e vencidos a + 30 dias³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+_oldArea  := alias()
+_oldOrder := indexord()
+
+_cTitulo   := "Exclusao Titulos Inadimplentes Confederativa"
+n_Opc := 0
+
+
+#IFNDEF WINDOWS
+   DrawAdvWindow(_cTitulo,008,000,022,079)
+   SetColor("B/BG,N/W")
+   @ 011,010 Say "Rotina para exclusao de titulos avulsos da"
+   @ 012,010 Say "Contribuicao Confederativa nao pagos"
+   @ 013,010 Say "e Vencidos a mais de 30 dias."
+   SetColor("B/BG,W/N")
+
+   @ 019,010 Say "CONFIRME PARA INICIAR A EXCLUSAO"
+
+   While .T.
+      n_Opc := Menuh({"Confirma","Abandona"},22,04,"b/w,w+/n,r/w","CPA","",2)
+
+      If n_Opc == 2 .or. Lastkey()==27
+         Return
+      Endif
+
+
+      Exit
+   End
+   Exclui_Calote()   
+#ELSE
+   @ 096,042 TO 375,505 DIALOG oDlg1 TITLE _cTitulo
+   @ 008,010 TO 100,222
+
+   @ 011,010 Say "Rotina para exclusao de titulos avulsos da"
+   @ 012,010 Say "Contribuicao Confederativa nao pagos"
+   @ 013,010 Say "e Vencidos a mais de 30 dias."
+
+   @ 023,014 SAY "Rotina para exclusao de titulos avulsos da"
+   @ 033,014 SAY "Contribuicao Confederativa nao pagos"
+   @ 043,014 Say "e Vencidos a mais de 30 dias."
+
+   @ 086,014 SAY "CONFIRME PARA INICIAR A IMPORTACAO DE DADOS         "
+
+   @ 110,138 BMPBUTTON TYPE 1 ACTION Execute(Iniciar)
+   @ 110,198 BMPBUTTON TYPE 2 ACTION Close(oDlg1)
+
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+Return
+
+*-----------------*
+Function Iniciar
+*-----------------*
+Close(oDlg1)
+Processa( {|| Execute(Exclui_Calote) })
+Return
+
+*------------------*
+Function Exclui_Calote
+*------------------*
+
+dbSelectArea("SE1")  //Selecionando Contas a receber
+dbSetOrder(3)
+dbseek( xFilial()+"002")     && Seleciona Confederativa
+
+ProcRegua(RecCount(),22,05)
+
+_nExcluidos := 0
+
+Do While !Eof()
+
+    #IFNDEF WINDOWS
+       IncProc(22,05)
+    #ELSE
+       IncProc(_cTitulo)
+    #ENDIF
+
+    if alltrim(SE1->E1_NATUREZ)<>"002"
+       exit
+    endif
+
+    if SE1->E1_VENCREA<(date()-30)       			         && Sem Baixa e 
+       if empty(SE1->E1_BAIXA) .and. substr(SE1->E1_PREFIXO,3,1)<>"T" ;  && Avulso
+          .and. len(alltrim(SE1->E1_CONFED))>2
+	  dbSelectArea("SZ9")
+	  if .not. ( dbseek( xFilial()+SE1->E1_CONFED ) ) 
+             dbSelectArea("SE1")
+             RecLock("SE1",.F.)
+             DBDELETE()
+             _nExcluidos := _nExcluidos + 1
+          endif
+       Endif
+    Endif
+
+   dbSelectArea("SE1")
+   dbSkip()
+Enddo
+
+Tone (800,2)
+Tone (1500,2)
+#IFNDEF WINDOWS
+   DrawAdvWindow("Termino da Selecao",010,010,021,069)
+   SetColor("B/BG,N/W")
+   @ 12,14 SAY "Titulos Excluidos"
+   @ 12,37 GET _nExcluidos PICTURE "@E 999,999" WHEN .F.
+   READ
+   @ 19,19 SAY "Pressione Qualquer Tecla para Continuar"
+   Inkey(0)
+#ELSE
+   @ 96,42 TO 290,405 DIALOG oDlg1 TITLE "Termino da Selecao"
+   @ 8,10 TO 68,170
+   @ 23,22 SAY "Titulos Excluidos"
+   @ 23,95 GET _nExcluidos PICTURE "@E 999,999" WHEN .F.
+   @ 77,078 BMPBUTTON TYPE 1 ACTION Close(oDlg1)
+   ACTIVATE DIALOG oDlg1 CENTERED
+#ENDIF
+
+dbSelectArea("SZ9")
+dbSetOrder(1)        
+
+dbSelectArea(_oldArea)
+dbSetOrder(_oldOrder)
+
+
+Return
+

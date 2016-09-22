@@ -1,0 +1,557 @@
+#IFNDEF WINDOWS
+    #DEFINE PSAY SAY
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ RASSOC06 ³ Autor ³ Luiz E. D. da Roz     ³ Data ³ 05.03.02 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Impressao de Clientes com pgtos associativa quitados       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 := "Este programa ir  imprimir a relacao de Associados"
+cDesc2 := "em dia com as mensalidades - Associativa (RASSOC6.PRX)"
+cDesc3 := ""
+cString := "SE1"
+tamanho := "G"
+tipo := 15
+limite := 220
+
+cabec1 := "CODIGO NOME                                           CNPJ                       ENDERECO                                   CIDADE"+REPL(" ",11) + "CEP       TELEFONE SITUACAO"
+cabec2 := ""																		       
+
+	//	     1	       2	 3	   4	     5	       6	 7	   8	     9	      10	11	  12	    13	      14	15	  16	    17
+	// 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+	// 123456 123456789012345678901234567890123456789012345  12.345.678/9012-34    12   1234 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 99.999,99
+	// XXXXXXXXXXXXXXXXXX(40)XXXXXXXXXXXXXXXXXX XXXXX(15)XXXXXX XXXXXXX(15)XXXX
+	//
+
+aReturn := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog := "RASSOC6"
+nLastkey := 0
+cPerg := "ASSOC6"
+m_pag := 1
+li := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+pergunte(cPerg,.f.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01                    // Parcela Inicial MM/AAAA       ³
+//³ mv_par02                    // Parcela Inicial MM/AAAA       ³
+//³ mv_par03                    // Do ERSIN                      ³
+//³ mv_par04                    // Ate o ERSIN                   ³
+//³ mv_par05                    // Inclui Da Categoria           ³
+//³ mv_par06                    // Inclui Ate a Categoria        ³
+//³ mv_par07                    // Inclui Da Categoria (interv2) ³
+//³ mv_par08                    // Inclui Ate a Categoria (int2) ³
+//³ mv_par09                    // Situacao                      ³
+//³                             // 1=Todas, 2=AS/CT, 3=SS, 4=IS  ³
+//³ mv_par10                    // Data limite para Associacao   ³
+//³ mv_par11                    // Exclui Da Categoria           ³
+//³ mv_par12                    // Exclui Ate a Categoria        ³
+//³ mv_par13                    // Quebra por ERSIN              ³
+//³                             // 1=SIM, 2=NAO                  ³
+//³ mv_par14                    // Inclui Todas Filantropicas    ³
+//³                             // 1=SIM, 2=NAO                  ³
+//³ mv_par15                    // Ordem de EmissÆo              ³
+//³                             // 1=NOME, 2=CEP, 3=CNPJ         ³
+//³ Data Limite para Pagto = "31/12/2001" (Financeiro) p/ IBGE   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+mv_Limite:=ctod("31/12/2001")
+
+titulo := "CONTRIB. ASSOC. - PAGANTES EM DIA / Periodo " + mv_par01 + " a " + mv_par02 
+
+if .not. (mv_par10 == ctod(SPACE(8)))  
+   titulo := titulo + " / Data Limite Associacao: " + dtoc(mv_par10)
+EndIf
+
+titulo := titulo + " / Data Limite p/ Pagtos: " + dtoc(mv_Limite)
+
+wnrel := "RASSOC6"            //Nome Default do relatorio em Disco
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastkey == 27
+    return
+endif
+
+SetDefault(aReturn,cString)
+if nLastkey == 27
+   return
+endif
+
+/*/
+PCIni:=val(substr(mv_par01,1,2))
+ANOIni:=val(substr(mv_par01,4,4))
+/*/
+
+PCFim:=val(substr(mv_par02,1,2))
+ANOFim:=val(substr(mv_par02,4,4))
+
+PCIni:=val(substr(mv_par01,1,2))
+ANOIni:=val(substr(mv_par01,4,4))
+
+#IFDEF WINDOWS
+    RptStatus({|| Execute(imprime) },titulo)  // Chamada do Relatorio
+    return
+#else
+    imprime()
+    return
+#endif
+
+*------------------------------------------------------------------------*
+ function Imprime
+*------------------------------------------------------------------------*
+
+_aEstr := {}
+AADD(_aEstr,{"ERSIN"    , "C" , 02 , 0})
+AADD(_aEstr,{"CODIGO"   , "C" , 06 , 0})
+AADD(_aEstr,{"NOME"     , "C" , 45 , 0})
+AADD(_aEstr,{"ANO"      , "C" , 04 , 0})
+AADD(_aEstr,{"MES"      , "C" , 02 , 0})
+AADD(_aEstr,{"VALOR"    , "N" , 17 , 2})
+AADD(_aEstr,{"CEP"      , "C" , 08 , 2})
+AADD(_aEstr,{"CNPJ"     , "C" , 14 , 0})
+
+c_ArqImp := CriaTrab(_aEstr,.t.)
+
+dbusearea(.t.,,c_ArqImp,"IMP",.T.)
+dbselectarea("imp")
+
+cArqIND := criatrab("",.f.)
+
+//³ mv_par15                    // Ordem de EmissÆo              ³
+//³                             // 1=NOME, 2=CEP, 3=CNPJ         ³
+
+if mv_par13==2
+
+   if mv_par15==1
+      IndRegua("IMP",cArqIND,"NOME",,,"Selecionando Registros...")
+   endif
+   if mv_par15==2
+      IndRegua("IMP",cArqIND,"CEP + NOME",,,"Selecionando Registros...")
+   endif
+   if mv_par15==3
+      IndRegua("IMP",cArqIND,"CNPJ",,,"Selecionando Registros...")
+   endif
+
+else
+
+   if mv_par15==1
+      IndRegua("IMP",cArqIND,"ERSIN + NOME",,,"Selecionando Registros...")
+   endif
+   if mv_par15==2
+      IndRegua("IMP",cArqIND,"ERSIN + CEP",,,"Selecionando Registros...")
+   endif
+   if mv_par15==3
+      IndRegua("IMP",cArqIND,"ERSIN + CNPJ",,,"Selecionando Registros...")
+   endif
+
+endIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Inicia a selecao dos titulos em aberto, somento dos          ³
+//³ associados                                                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+dbselectarea('sa1')
+dbsetorder(4)
+dbseek( xFilial() + "000001" , .t. )
+
+SetRegua(RecCount())
+
+while !eof()
+    IncRegua()
+
+    *-----------------------------------------------*
+    * Seleciona somente o que esta dentro dos parametros
+    *-----------------------------------------------*
+
+    VerCateg:=.t.	    && Validar categoria adiante
+
+    if mv_par14==1  	    && Verifica se ‚ Filantropico
+       if a1_filant=="X" 
+ 	  VerCateg:=.f.	    && Imprime Filantropico e nao valida Categoria
+       endif
+    endif
+
+    if mv_par14==2  	    && Verifica se ‚ NAO Filantropico
+       if a1_filant=="X" 
+          dbselectarea('sa1')
+          dbsetorder(4)
+          dbskip()
+          loop
+       endif
+    endif
+
+    if a1_situac=="IS"     && Apenas Inativos                                                                                                                                                                                                                
+       dbselectarea('sa1')
+       dbsetorder(4)
+       dbskip()
+       loop
+    endif
+
+    if mv_par09==2
+
+       if a1_situac<>"AS" .and. a1_situac<>"CT"   && Apenas ativos
+          dbselectarea('sa1')
+          dbsetorder(4)
+          dbskip()
+          loop
+       endif
+
+    endif
+
+    if mv_par09==3
+       if a1_situac<>"SS"     && Apenas Suspensos                                                                                                                                                                                                                
+          dbselectarea('sa1')
+          dbsetorder(4)
+          dbskip()
+          loop
+       endif
+    endif
+
+    if mv_par09==4
+       if a1_situac<>"IS"     && Apenas Inativos                                                                                                                                                                                                                
+          dbselectarea('sa1')
+          dbsetorder(4)
+          dbskip()
+          loop
+       endif
+    endif
+
+    if a1_ersin >= mv_par03 .and. a1_ersin <= mv_par04
+    else
+         dbselectarea('sa1')
+         dbsetorder(4)
+         dbskip()
+         loop
+    endif
+
+    if VerCateg   && Validar Categorias
+
+       if .not. ( a1_categ1 >= mv_par05 .and. a1_categ1<=mv_par06 )  .and. ;  && 1o. Intervalo
+          .not. ( a1_categ1 >= mv_par07 .and. a1_categ1<=mv_par08 )           && 2o. Intervalo
+          dbselectarea('sa1')
+          dbsetorder(4)
+          dbskip()
+          loop
+       endif
+
+       if val(mv_par11)>0     && Intervalo para desconsiderar CATEGORIAS
+          if a1_categ1 >= mv_par11 .and. a1_categ1 <= mv_par12
+             dbselectarea('sa1')
+             dbsetorder(4)
+             dbskip()
+             loop
+          EndIf
+       endif
+
+    EndIf
+
+    if .not. (mv_par10 == ctod(SPACE(8)))  
+       if a1_dtinass > mv_par10 
+          dbselectarea('sa1')
+          dbsetorder(4)
+          dbskip()
+          loop
+       endif
+    endif
+
+    _cCliente := a1_cod+a1_loja
+    _cCodigo  := a1_codasso
+    _cErsin   := a1_ersin
+    _cNome    := a1_nome
+    _cCep     := a1_cep
+    _cCNPJ    := a1_cgc
+
+    dbselectarea("se1")
+    dbsetorder(2)
+    dbseek(alltrim(xFilial('SE1')+_cCliente))
+    if found() == .f.
+         dbselectarea('sa1')
+         dbsetorder(4)
+         dbskip()
+         loop
+    endif
+
+    while eof() == .f. .and. (e1_cliente+e1_loja) == _cCliente
+
+
+&&         if e1_vencto >= mv_par01 .and. e1_vencto <= mv_par02
+&&         else
+&&              dbselectarea('se1')
+&&              dbsetorder(2)
+&&              dbskip()
+&&              loop
+&&         endif
+
+         if alltrim(se1->e1_naturez) # '001'      // associativa
+              dbselectarea('se1')
+              dbsetorder(2)
+              dbskip()
+              loop
+         endif
+
+         if alltrim(substr(SE1->E1_PREFIXO,3,1)) == "T"	   // Termo Acordo
+
+            dbselectarea('se1')
+            dbsetorder(2)
+            dbskip()
+            loop
+
+         endif
+				     
+
+	 PCAtu:=val(substr(SE1->E1_NUM,1,2))
+	 AnoAtu:= (substr(alltrim(SE1->E1_PREFIXO),1,2))
+	 if val(AnoAtu)<10
+	    AnoAtu:=val("20"+AnoAtu)
+	 else
+	    AnoAtu:=Val("19"+AnoAtu)
+	 EndIf
+
+         if PcAtu==13 .or. SE1->E1_PARCELA=="E"  && Parcela Especial
+            dbselectarea('se1')
+            dbsetorder(2)
+            dbskip()
+            loop
+         endif
+
+	 && Verfifica se Parcela Atual esta dentro de intervalo
+
+         if (AnoAtu>AnoIni .and. AnoAtu<AnoFim) .or. ;
+            (AnoAtu=AnoFim .and. PcAtu<=PcFim)	.or. ;
+            (AnoAtu=AnoIni .and. PcAtu>=PcIni)
+         else
+              dbselectarea('se1')
+              dbsetorder(2)
+              dbskip()
+              loop
+         endif
+
+	 && Se houver d‚bitos no Periodo
+
+	 EmDia:=.t.
+         if (se1->e1_baixa == ctod('//') .or. ;
+            se1->e1_baixa > mv_Limite) .and. ;	 // Se baixa ate a Data Limite de Pagamento 
+            SE1->E1_VALOR > 1.00      // Se nao for Baixa por Termo de Acordo
+	    EmDia:=.f.
+         endif
+
+         dbselectarea("imp")
+         reclock("imp",.t.)
+
+         imp->ersin     := _cErsin
+         imp->codigo    := _cCodigo
+         imp->nome      := _cNome
+         imp->cep       := _cCep
+         imp->cnpj      := _cCnpj
+         imp->ano       := str(AnoAtu,4)
+         imp->mes       := strzero(PCAtu,2)
+
+	 if .Not. EmDia
+            imp->valor  := -1	  && Em Debito no Periodo
+	 Else
+            imp->valor  := se1->e1_valor
+	 EndIf
+
+	 MSUNLOCK()
+
+         dbselectarea("se1")
+         dbsetorder(2)
+         dbskip()
+    enddo
+
+    dbselectarea('sa1')
+    dbsetorder(4)
+    dbskip()
+enddo
+
+dbselectarea("imp")
+dbgotop()
+
+nLinha := 80
+nCliente := 0
+
+nTotErs:=0
+nErsAnt:=IMP->ERSIN
+
+while eof() == .f.
+
+    _cCliente := IMP->codigo
+    _cErsin   := IMP->Ersin
+
+    EmDia:=.t.
+
+    while eof() == .f. .and. IMP->codigo == _cCliente
+
+	 if IMP->VALOR==-1     && Debito no periodo
+            EmDia:=.f.
+	 endif
+
+         dbskip()
+
+    enddo
+
+    if .not. EmDia
+       loop
+    End If
+
+    SA1->(dbsetorder(4))
+    SA1->( dbseek( xFilial() + _cCliente ) )
+    if SA1->(eof())
+       loop
+    EndIf
+
+    if mv_par13==1 
+
+       if nErsAnt<>_cErsin 
+          if nTotErs>0
+             @nLinha,00 PSAY replicate("-",limite)
+
+             nLinha := nLinha + 1
+
+             @nLinha,35 PSAY "ASSOCIADOS NO ERSIN  : "
+             @nLinha,60 PSAY nTotErs picture '@e 999,999'
+
+             nLinha := nLinha + 1
+
+             @nLinha,00 PSAY replicate("-",limite)
+
+	     nTotErs:=0
+	     nLinha := 60
+	  EndIf
+	  nErsAnt:=IMP->ERSIN
+       EndIf
+
+       if nTotErs==0
+
+          if nLinha >= 55
+             cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+             nLinha := prow() + 1
+          endif
+
+          @nLinha,00 PSAY replicate("-",limite)
+
+          nLinha := nLinha + 1
+
+          @nLinha,35 PSAY 'ERSIN: '	       
+          @nLinha,45 PSAY _cErSin + " - " + TABELA("91",STRZERO(VAL(_cErSin),2)) 
+
+          nLinha := nLinha + 1
+          @nLinha,00 PSAY replicate("-",limite)
+          nLinha := nLinha + 1
+
+       EndIf
+
+    EndIf
+
+    if nLinha >= 55
+         cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+         nLinha := prow() + 1
+    endif
+
+    nCliente := nCliente + 1
+    nTotErs  := nTotErs + 1
+
+    nLinha := nLinha + 1
+    nLinha := nLinha + 1
+
+    @nLinha,000 PSAY SA1->A1_CODASSO
+    @nLinha,007 PSAY SA1->A1_NOME
+    @nLinha,054 PSAY SA1->A1_CGC PICTURE "@R 99.999.999/9999-99"
+    @nLinha,081 PSAY SA1->A1_END
+    @nLinha,124 PSAY SA1->A1_MUN
+    @nLinha,140 PSAY SA1->A1_CEP PICTURE "@R 99999-999"
+    @nLinha,150 PSAY SA1->A1_TEL
+    @nLinha,162 PSAY SA1->A1_SITUAC
+    @nLinha,170 PSAY REPL("_",40)
+    nLinha := nLinha + 1
+
+enddo
+
+if mv_par13==1 .and. nTotErs>0
+
+   @nLinha,00 PSAY replicate("-",limite)
+   nLinha := nLinha + 1
+
+   @nLinha,35 PSAY "ASSOCIADOS NO ERSIN  : "			       
+   @nLinha,60 PSAY nTotErs picture '@e 999,999'
+   nLinha := nLinha + 1
+   @nLinha,00 PSAY replicate("-",limite)
+
+   nLinha := nLinha + 1
+   nLinha := nLinha + 1
+
+EndIf
+
+if nLinha >= 55
+   cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+   nLinha := prow() + 1
+endif
+
+nLinha := nLinha + 1
+
+@nLinha,00 PSAY replicate("-",limite)
+
+nLinha := nLinha + 1
+
+@nLinha,35 PSAY 'TOTAL ASSOCIADOS: '			       
+@nLinha,55 PSAY nCliente picture '@e 999,999'
+
+nLinha := nLinha + 1
+
+@nLinha,00 PSAY replicate("-",limite)
+
+if nLinha <> 80
+    roda(cbcont,cbtxt,tamanho)
+else
+    eject
+endif
+
+set device to screen
+
+if aReturn[5] == 1
+   set printer to
+   dbcommit()
+   ourspool(wnrel)                                  
+endif
+
+MS_FLUSH()
+
+dbselectarea("imp")
+dbclosearea()
+
+if file(c_ArqImp+".DBF") == .t.
+  ferase(c_ArqImp+".DBF")
+  ferase(c_ArqImp+ordbagext())
+endif
+
+dbselectarea(_cAlias)
+
+return
+

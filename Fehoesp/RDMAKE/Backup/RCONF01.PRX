@@ -1,0 +1,468 @@
+#IFNDEF WINDOWS
+    #DEFINE PSAY SAY
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ RCONF01  ³ Autor ³ Luiz E. D. da Roz     ³ Data ³ 22.05.01 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Impressao de pgtos confederativa quitados                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 := "Este programa ir  imprimir a relacao de pagamentos"
+cDesc2 := "confederativs (RCONF01.PRX)"
+cDesc3 := ""
+cString := "SE1"
+tamanho := "G"
+tipo := 15
+limite := 220
+
+titulo := "RELATORIO DOS INADIMPLENTES DA CONTRIBUICAO CONFEDERATIVA"
+cabec1 := "NUMERO NOME                                           CNPJ                ERSIN  ENDERECO                                 CIDADE                                                         TELEFONE        SITUACAO"
+cabec2 := ""
+
+	//	     1	       2	 3	   4	     5	       6	 7	   8	     9	      10	11	  12	    13	      14	15	  16	    17
+	// 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+	// 123456 123456789012345678901234567890123456789012345  12.345.678/9012-34    12   1234 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 999,99 99.999,99
+	// XXXXXXXXXXXXXXXXXX(40)XXXXXXXXXXXXXXXXXX XXXXX(15)XXXXXX XXXXXXX(15)XXXX
+	//
+// cabec2 := " "
+
+aReturn := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog := "RCONF01"
+nLastkey := 0
+cPerg := "CONF01"
+m_pag := 1
+li := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+pergunte(cPerg,.f.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01                    // Data Inicial                  ³
+//³ mv_par02                    // Data Final                    ³
+//³ mv_par03                    // Do ERSIN                      ³
+//³ mv_par04                    // Ate o ERSIN                   ³
+//³ mv_par05                    // Da Categoria                  ³
+//³ mv_par06                    // Ate a Categoria               ³
+//³ mv_par07                    // Da BASE                       ³
+//³ mv_par08                    // Ate a BASE                    ³
+//³ mv_par09                    // Somente Socios                ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+wnrel := "RCONF01"            //Nome Default do relatorio em Disco
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastkey == 27
+    return
+endif
+
+SetDefault(aReturn,cString)
+if nLastkey == 27
+   return
+endif
+
+#IFDEF WINDOWS
+    RptStatus({|| Execute(imprime) },titulo)  // Chamada do Relatorio
+    return
+#else
+    imprime()
+    return
+#endif
+
+*------------------------------------------------------------------------*
+ function Imprime
+*------------------------------------------------------------------------*
+
+_aEstr := {}
+AADD(_aEstr,{"ERSIN"    , "C" , 02 , 0})
+AADD(_aEstr,{"CODIGO"   , "C" , 06 , 0})
+AADD(_aEstr,{"NOME"     , "C" , 45 , 0})
+AADD(_aEstr,{"ANO"      , "C" , 04 , 0})
+AADD(_aEstr,{"PARCELA"  , "C" , 02 , 0})
+AADD(_aEstr,{"VALOR"    , "N" , 17 , 2})
+AADD(_aEstr,{"CNPJ"     , "C" , 15 , 2})
+
+c_ArqImp := CriaTrab(_aEstr,.t.)
+
+dbusearea(.t.,,c_ArqImp,"IMP",.T.)
+dbselectarea("imp")
+
+cArqIND := criatrab("",.f.)
+IndRegua("IMP",cArqIND,"CNPJ+ANO+PARCELA",,,"Selecionando Registros...")
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Inicia a selecao dos titulos em aberto                       ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+
+AnoIni := year(mv_par01)
+AnoFin := year(mv_par02)
+
+PcIni := iif(month(mv_par01)<=6,1,2)
+PcFin := iif(month(mv_par02)<=6,1,2)
+
+iPcIni:=PcIni
+iPcFin:=PcFin
+
+AnoC:=AnoIni
+TotPcPgto := 0   && Conta quantas parcelas devem ser checadas
+
+While AnoC<AnoFin .or. (AnoC=AnoFin .and. iPcIni<=PcFin)
+
+  if AnoC<AnoFin .or. (AnoC=AnoFin .and. iPcIni<=PcFin)
+     TotPcPgto:=TotPcPgto+1  && Parcela a ser considerada
+  endif
+
+  if iPcIni==1 
+      iPcIni:=2
+  else
+      iPcIni:=1
+      AnoC:=AnoC+1
+  Endif
+
+EndDo
+
+
+dbselectarea('sa1')
+dbsetorder(1)
+dbgotop()
+
+SetRegua(RecCount())
+
+while !eof()
+    IncRegua()
+
+    *-----------------------------------------------*
+    * Seleciona somente o que esta dentro dos parametros
+    *-----------------------------------------------*
+    if a1_ersin >= mv_par03 .and. a1_ersin <= mv_par04
+    else
+         dbselectarea('sa1')
+         dbsetorder(1)
+         dbskip()
+         loop
+    endif
+
+    if a1_categ1 >= mv_par05 .and. a1_categ1 <= mv_par06
+    else
+         dbselectarea('sa1')
+         dbsetorder(1)
+         dbskip()
+         loop
+    endif
+
+    if a1_base >= mv_par07 .and. a1_base <= mv_par08
+    else
+         dbselectarea('sa1')
+         dbsetorder(1)
+         dbskip()
+         loop
+    endif
+
+    if (val(a1_codasso) == 0 .or. a1_situac == "IS" .or. a1_situac == "CT") .and. mv_par09==2	 
+       dbselectarea('sa1')
+       dbsetorder(1)
+       dbskip()
+       loop
+    endif
+
+    _cCliente := a1_cod+a1_loja
+    _cNumero  := a1_cod
+    _cErsin   := a1_ersin
+    _cNome    := a1_nome
+    _cCnpj    := a1_cgc
+
+    dbselectarea("se1")
+    dbsetorder(2)
+    dbseek(alltrim(xFilial('SE1')+_cCliente))
+    if found() == .f.
+
+       dbselectarea("imp")
+       reclock("imp",.t.)
+
+       imp->ersin     := _cErsin
+       imp->cnpj      := _cCnpj
+       imp->codigo    := _cNumero
+       imp->nome      := _cNome
+       imp->ano       := STR(year(mv_par01),4)
+       imp->parcela   := STR(iif(month(mv_par01)<=6,1,2),1)
+       imp->valor     := -1	  && Nao existem pagtos para o cliente
+
+       dbselectarea('sa1')
+       dbsetorder(1)
+       dbskip()
+       loop
+    endif
+
+    tempagto:=.f.
+
+    While eof() == .f. .and. (e1_cliente+e1_loja) == _cCliente
+         if e1_vencto >= mv_par01 .and. e1_vencto <= mv_par02
+         else
+              dbselectarea('se1')
+              dbsetorder(2)
+              dbskip()
+              loop
+         endif
+
+         if se1->e1_baixa == ctod('//')  && .and. se1->e1_saldo == 0
+              dbselectarea('se1')
+              dbsetorder(2)
+              dbskip()
+              loop
+         endif
+
+         if alltrim(se1->e1_naturez) # '002' .and. alltrim(se1->e1_naturez) # '0301'     // confed. e assist.
+              dbselectarea('se1')
+              dbsetorder(2)
+              dbskip()
+              loop
+         endif
+
+         dbselectarea("imp")
+         reclock("imp",.t.)
+
+         imp->ersin     := _cErsin
+	 imp->cnpj	:= _cCnpj
+         imp->codigo    := _cNumero
+         imp->nome      := _cNome
+         imp->ano       := substr(strzero(year(se1->e1_vencto),5),2,4)
+         imp->parcela   := STR(iif(month(se1->e1_vencto)<=6,1,2),1)
+         imp->valor     := se1->e1_valor
+
+         tempagto:=.t.	     && Encontrou pagtos
+
+         dbselectarea("se1")
+         dbsetorder(2)
+         dbskip()
+    enddo
+
+    if tempagto == .f.
+
+       dbselectarea("imp")
+       reclock("imp",.t.)
+
+       imp->ersin     := _cErsin
+       imp->cnpj      := _cCnpj
+       imp->codigo    := _cNumero
+       imp->nome      := _cNome
+       imp->ano       := STR(year(mv_par01),4)
+       imp->parcela   := STR(iif(month(mv_par01)<=6,1,2),1)
+       imp->valor     := -1	  && Nao existem pagtos para o Periodo
+
+       dbselectarea('sa1')
+       dbsetorder(1)
+       dbskip()
+       loop
+
+    endif
+
+    dbselectarea('sa1')
+    dbsetorder(1)
+    dbskip()
+enddo
+
+&& Monta cabecalho para ANO/PARCELA
+
+_cDeta := Repl(" ",80) 
+
+AnoIni := year(mv_par01)
+AnoFin := year(mv_par02)
+
+PcIni := iif(month(mv_par01)<=6,1,2)
+PcFin := iif(month(mv_par02)<=6,1,2)
+
+iPcIni:=PcIni
+iPcFin:=PcFin
+
+AnoC:=AnoIni
+
+While AnoC<AnoFin .or. (AnoC=AnoFin .and. iPcIni<=PcFin)
+
+  if AnoC<AnoFin .or. (AnoC=AnoFin .and. iPcIni<=PcFin)
+     _cDeta := _cDeta + str(iPcIni,2)+"/"+str(AnoC,4) + " "
+  endif
+
+  if iPcIni==1 
+      iPcIni:=2
+  else
+      iPcIni:=1
+      AnoC:=AnoC+1
+  Endif
+
+EndDo
+
+&&     "PC/AAAA PC/AAAA"
+
+dbselectarea("imp")
+dbgotop()
+
+nLinha   := 80
+
+nCliente := 0
+
+While eof() == .f.
+
+    _cCliente := codigo
+
+    nCliente := nCliente + 1
+
+    if nLinha >= 60
+       cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+       nLinha := prow() + 1
+    endif
+
+    && Verifica se ‚ inadimplente no periodo
+    TPagtos:=0
+
+    if IMP->valor<>-1
+       Do While IMP->codigo==_cCliente .and. ! eof()
+          TPagtos:=TPagtos+1
+	  IMP->(Dbskip())
+       EndDo
+       if TPagtos>=TotPcPgto	&& Tem todos pagtos no periodo
+	  Loop
+       Endif
+       IMP->(DBSKIP(TPagtos*(-1))) && Volta para comeco pagtos do Cliente
+    EndIf
+
+    SA1->(dbseek( xFilial() + IMP->codigo ) ) 
+
+    @nLinha,000 PSAY codigo
+    @nLinha,007 PSAY nome
+    @nLinha,054 PSAY SA1->A1_CGC PICTURE "@R 99.999.999/9999-99"
+    @nLinha,076 PSAY ersin
+    @nLinha,081 PSAY SA1->A1_END
+    @nLinha,122 PSAY SA1->A1_MUN
+    @nLinha,182 PSAY SA1->A1_TEL
+    @nLinha,203 PSAY SA1->A1_SITUAC
+
+    nLinha := nLinha + 1
+
+    @nLinha,000 PSAY _cDeta
+    nLinha := nLinha + 1
+
+&&    if nLinha >= 60
+&&       cabec(titulo,cabec1,cabec2,nomeprog,tamanho,tipo)
+&&       nLinha := prow() + 1
+&&       @nLinha,000 PSAY _cDeta
+&&    endif
+
+    _nColuna:=84
+
+    iPcIni:=PcIni
+    iPcFin:=PcFin
+
+    AnoC:=AnoIni
+
+    While AnoC<AnoFin .or. (AnoC=AnoFin .and. iPcIni<=PcFin)
+
+       Marca:="N"
+
+       if  (eof() == .f. .and. codigo == _cCliente)
+   
+          if val(Ano)<AnoFin .or. (val(Ano)=AnoFin .and. val(Parcela)<=PcFin)
+ 
+	      if Valor==-1	 && Sem Pagtos
+	         dbskip()
+	      else
+		 if Val(Ano)==AnoC .and. val(Parcela)==iPcIni
+     	            Marca := "P"
+                    dbskip()
+
+	            && Verifica se nao existe pagtos em duplicidade
+		    if (eof() == .f. .and. codigo == _cCliente)
+		       While Val(Ano)==AnoC .and. val(Parcela)==iPcIni .and. (eof() == .f. .and. codigo == _cCliente)
+			 dbskip()
+		       EndDo
+		    Endif
+
+	         Endif
+
+	      EndIf
+
+	  Endif
+
+       Endif
+
+       @nLinha,_nColuna PSAY Marca 
+
+       if iPcIni==1 
+          iPcIni:=2
+       else
+          iPcIni:=1
+          AnoC:=AnoC+1
+       Endif
+
+       _nColuna := _nColuna + 8
+
+    EndDo
+
+    nLinha := nLinha + 1 
+
+enddo
+
+nLinha := nLinha + 2
+
+@nLinha,00 PSAY replicate("-",limite)
+
+nLinha := nLinha + 1
+
+@nLinha,35 PSAY 'CLIENTES: '			       
+@nLinha,45 PSAY nCliente picture '@e 999,999'
+
+nLinha := nLinha + 1
+
+@nLinha,00 PSAY replicate("-",limite)
+
+if nLinha <> 80
+    roda(cbcont,cbtxt,tamanho)
+else
+    eject
+endif
+
+set device to screen
+
+if aReturn[5] == 1
+   set printer to
+   dbcommit()
+   ourspool(wnrel)                                  
+endif
+
+MS_FLUSH()
+
+dbselectarea("imp")
+dbclosearea()
+
+if file(c_ArqImp+".DBF") == .t.
+   ferase(c_ArqImp+".DBF")
+   ferase(c_ArqImp+ordbagext())
+endif
+
+dbselectarea(_cAlias)
+
+return
+

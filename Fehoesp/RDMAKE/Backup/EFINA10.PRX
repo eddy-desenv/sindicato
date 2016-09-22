@@ -1,0 +1,47 @@
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ EFINA10  ³ Autor ³ Jeremias Luna         ³ Data ³ 21.10.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Verifica a conta contabil na inclusao de titulos a pagar   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico SINDHOSP                                        ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+_cAlias := alias()
+_nOrdem := IndexOrd()
+_nRegistro := recno()
+_cConta := ' '
+
+if alltrim(se2->e2_naturez) == 'REQUISICAO'
+        dbselectarea('sed')
+        dbsetorder(1)
+        dbgotop()
+	dbseek(xFilial('SED')+se2->e2_naturez)
+	_cConta := sed->ed_conta
+else
+	if month(se2->e2_vencto) <= month(dDataBase)
+        	dbselectarea('sed')
+        	dbsetorder(1)
+        	dbgotop()
+		dbseek(xFilial('SED')+se2->e2_naturez)
+		_cConta := sed->ed_conta
+	else
+        	dbselectarea('sa2')
+        	dbsetorder(1)
+        	dbgotop()
+        	dbseek(xFilial('SA2')+se2->e2_fornece+se2->e2_loja)
+		_cConta := sa2->a2_conta
+	endif
+endif
+
+dbselectarea(_cAlias)
+dbsetorder(_nOrdem)
+dbgoto(_nRegistro)
+
+__RETURN( _cConta )
+

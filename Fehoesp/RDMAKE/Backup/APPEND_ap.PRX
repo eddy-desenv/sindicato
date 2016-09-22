@@ -1,0 +1,13 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function APPEND()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+
+DbSelectArea("SZM")
+DbSetOrder(1)
+
+APPEND FROM SE1 WHILE !EOF()
+
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

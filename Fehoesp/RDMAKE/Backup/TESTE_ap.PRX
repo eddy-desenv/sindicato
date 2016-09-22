@@ -1,0 +1,8 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+User Function TESTE()        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+
+alert("teste")
+
+Return(nil)        // incluido pelo assistente de conversao do AP6 IDE em 22/12/04
+

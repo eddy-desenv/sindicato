@@ -1,0 +1,363 @@
+#IFNDEF WINDOWS
+    #DEFINE PSAY SAY
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±º Fun‡„o   ³ MALADIR  º Autor ³ Luiz Carlos Vieira º Data ³ 05/09/97    º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDescri‡„o ³ Programa para impressao de etiquetas. Generico.            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Espec¡fico para clientes Microsiga                         º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin  := 00
+cImp  := .T.
+aMala := {'CLIENTES','FORNECEDORES','VENDEDORES','TRANSPORTADORAS'}
+aMala := {'CLIENTES'}
+nFlag := 0
+cOp   := 'CLIENTES'
+cDoCod  := Space(06)
+cAteCod := Repl('Z',6)
+cAssunto:= space(15)
+nQuanti := 1
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Monta Tela                                                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+#IFNDEF WINDOWS
+    DrawAdvWindow(' Emiss„o de Etiquetas ',09,06,17,72)
+    @ 10,07 Say 'Imprimir para: ' Color("W+/BG")
+    @ 12,07 Say 'Do  C¢digo...: ' Color("B/BG")
+    @ 13,07 Say 'At‚ C¢digo...: ' Color("B/BG")
+    @ 14,07 say 'Quantidade ..: ' Color("B/BG")
+    @ 15,07 say 'Assunto......: ' Color("B/BG")
+    While .T.
+        Set Color to W
+	@ 17,07 Say Repl('Û',64)
+        Set Cursor Off
+        nOpc  := Menuh(aMala,10,22,"N/BG,W+/N,R/BG","CFVT","",1)
+        If nOpc == 0
+            Exit
+        End
+        If nFlag == 0
+            cDoCod  := Space(06)
+            cAteCod := Repl('Z',6)
+            nQuanti := 1
+            nFlag   := nFlag + 1
+        End
+        Set Cursor On
+        Cursor := 1
+	@ 12,22 Get cDoCod   Picture '@!K'  Color("W+/BG,W/N")
+	@ 13,22 Get cAteCod  Picture '@!K'  Valid Lastkey() == 5 .Or. (cAteCod >= cDoCod) Color("W+/BG,W/N")
+	@ 14,22 Get nQuanti  Picture '9999' Color("W+/BG,W/N")
+	@ 15,22 Get cAssunto Picture '@!'   Color("W+/BG,W/N")
+        Read
+        Set Color to B/W
+	@ 17,07 Say 'Quanto a Impress„o das Etiquetas?'
+        Set Color to
+        aConf := {"Confirma","Redigita","Abandona"}
+	nImp  := menuh(aConf,17,41,"N/W,W+/N,R/W","CRA","",1)
+        If nImp == 1
+            Continua()
+        Elseif nImp == 3 .Or. nImp == 0
+            Return
+        End
+    EndDo
+#ELSE
+    @ 200,1 TO 400,450 DIALOG oDlg TITLE " Emiss„o de Etiquetas "
+    @ 3,10 TO 95,215
+    @ 16,018 Say "Imprimir para:"
+    @ 16,080 COMBOBOX cOp ITEMS aMala SIZE 50,60
+    @ 34,018 Say "Do C¢digo....:"
+    @ 34,080 Get cDoCod
+    @ 49,018 Say "At‚ o C¢digo.:"
+    @ 49,080 Get cAteCod
+    @ 64,018 Say "Quantidade...:"
+    @ 64,080 Get nQuanti Picture "9999"
+    @ 79,018 Say "Assunto......:"
+    @ 79,080 Get cAssunto Picture "@!"
+    @ 97,158 BMPBUTTON TYPE 01 ACTION Execute(Continua)
+    @ 97,188 BMPBUTTON TYPE 02 ACTION Close(oDlg)
+    Activate Dialog oDlg Centered
+#ENDIF
+
+Return
+
+
+Function Continua
+
+
+_cAlias := alias()
+cbcont := 0
+cbtxt := ""
+wnrel := ""
+cDesc1 :="Este programa ir  imprimir etiquetas de clientes"
+cDesc2 :=""
+cDesc3 :=""
+cString := "SA1"
+tipo := 18
+limite := 80
+tamanho := "P"
+	    
+titulo := "ETIQUETAS DE CLIENTES"
+aReturn  := { "Zebrado", 1,"Administracao", 4, 2, 1, "",1 }
+nomeprog :="MALADIR"
+nLastKey := 0
+cPerg := ""
+M_PAG := 1
+li := 0
+
+wnrel := "ETIQUETA"
+wnrel := SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.F.,,,tamanho)
+if nLastKey == 27
+   return
+endif
+
+SetDefault(aReturn,cString)
+
+if nLastKey == 27
+   return
+endif
+
+#IFDEF WINDOWS
+    RptStatus({|| Execute(IMPR1) },titulo)  // Chamada do Relatorio
+    return
+    function IMPR1
+#ENDIF
+
+#IFDEF WINDOWS
+    Do Case
+    Case cOp == 'CLIENTES'
+        nOpc := 1
+    Case cOp == 'FORNECEDORES'
+        nOpc := 2
+    Case cOp == 'VENDEDORES'
+        nOpc := 3
+    Case cOp == 'TRANSPORTADORAS'
+        nOpc := 4
+    EndCase
+#ENDIF
+
+If nOpc == 1
+    dbSelectArea('SA1')     // Arquivo de Clientes
+    dbSetOrder(1)
+    dbGoTop()
+    xCodigo := 'A1_COD'
+    xMun    := 'A1_MUN'
+    xEstado := 'A1_EST'
+    xAlias  := 'SA1'
+ElseIf nOpc == 2
+    dbSelectArea('SA2')     // Arquivo de Fornecedores
+    dbSetOrder(1)
+    dbGoTop()
+    xCodigo := 'A2_COD'
+    xMun    := 'A2_MUN'
+    xEstado := 'A2_EST'
+    xAlias  := 'SA2'
+ElseIf nOpc == 3
+    dbSelectArea('SA3')     // Arquivo de Vendedores
+    dbSetOrder(1)
+    dbGoTop()
+    xCodigo := 'A3_COD'
+    xMun    := 'A3_MUN'
+    xEstado := 'A3_EST'
+    xAlias  := 'SA3'
+ElseIf nOpc == 4
+    dbSelectArea('SA4')     // Arquivo de Transportadoras
+    dbSetOrder(1)
+    dbGoTop()
+    xCodigo := 'A4_COD'
+    xMun    := 'A4_MUN'
+    xEstado := 'A4_EST'
+    xAlias  := 'SA4'
+End
+If !Empty(cDoCod)
+   dbSeek(xFilial()+cDoCod)
+End
+cImp := .T.
+// TstImp()    // Testa Impressora
+If !cImp
+    Ms_Flush()
+    Return
+End
+
+/* #IFNDEF WINDOWS
+    Set Color to W
+    @ 16,07 Say Repl('Û',64)
+    Set Color to N/W
+    @ 16,07 Say 'Aguarde...   Imprimindo...'
+    Set Color to
+#ENDIF */
+
+Imprime()
+
+#IFNDEF WINDOWS
+    Cursor := 0
+    Set Devi to Screen
+#ENDIF
+
+if aReturn[5] == 1
+   Set Printer To
+   dbCommit()
+   ourspool(wnrel)                                  
+endif
+
+Ms_Flush()
+
+Return
+
+*----------------------------------------------------------------------------*
+*                      FUNCOES UTILIZADAS PELO PROGRAMA                      *
+*----------------------------------------------------------------------------*
+*---------------*
+Function Imprime
+*---------------*
+
+SETPRC(00,00)
+aReg   := {}
+nVezes := 1
+@ nLin,00 PSAY CHR(15)
+While .t.
+      If xAlias == 'SA1'
+	 Aadd(aReg,{A1_COD,A1_NOME,A1_CGC,A1_ERSIN,A1_END,A1_MUN,A1_EST,A1_CEP,A1_CONTATO})
+      ElseIf xAlias == 'SA2'
+	 Aadd(aReg,{A2_COD,A2_NOME,A2_END,A2_MUN,A2_EST,A2_CEP,A2_CONTATO})
+      ElseIf xAlias == 'SA3'
+	 Aadd(aReg,{A3_COD,A3_NOME,A3_END,A3_MUN,A3_EST,A3_CEP})
+      ElseIf xAlias == 'SA4'
+	 Aadd(aReg,{A4_COD,A4_NOME,A4_END,A4_MUN,A4_EST,A4_CEP})
+      End
+
+      If nQuanti > nVezes
+	 nVezes := nVezes + 1
+      Else
+	 nVezes := 1
+	 dbSkip()
+      EndIf
+
+      FIM := (&xCodigo > cAteCod) .or. eof()
+      If Len(aReg) == 3 .Or. (FIM .And. Len(aReg) > 0)
+	 nLin := 0
+	 SETPRC(00,00)
+	 /* @ nLin,01 PSAY "ERSIN: " + aReg[1,4] + " CGC: " + trans(aReg[1,3],"@r 99.999.999/9999-99") + ;
+	   " " + cAssunto // Ersin + CGC + Assunto
+	 If Len(aReg) >= 2
+	    @ nLin,63 PSAY "ERSIN: " + aReg[2,4] + " CGC: " + trans(aReg[2,3],"@r 99.999.999/9999-99") + ;
+	    " " + cAssunto
+	 End
+	 If Len(aReg) >= 3
+	    @ nLin,126 PSAY "ERSIN: " + aReg[3,4] + " CGC: " + trans(aReg[3,3],"@r 99.999.999/9999-99") + ;
+	    " " + cAssunto
+	 End
+
+	 nLin := nLin + 1 */
+	 @ nLin,01 PSAY aReg[1,2]  // Nome
+	 If Len(aReg) >= 2
+	    @ nLin,63 PSAY aReg[2,2]
+	 End
+	 If Len(aReg) >= 3
+	    @ nLin,126 PSAY aReg[3,2]
+	 End
+
+	 nLin := nLin + 1
+	 @ nLin,01 PSAY 'CONTATO: '+ aReg[1,9] // CONTATO
+	 If Len(aReg) >= 2
+	    @ nLin,63 PSAY 'CONTATO: '+ aReg[2,9]
+	 END
+	 If Len(aReg) >= 3
+	    @ nLin,126 PSAY 'CONTATO: '+ aReg[3,9]
+	 END
+
+	 nLin := nLin + 1
+	 @ nLin,01 PSAY aReg[1,5] // ENDERECO
+	 If Len(aReg) >= 2
+	    @ nLin,63 PSAY aReg[2,5]
+	 END
+	 If Len(aReg) >= 3
+	    @ nLin,126 PSAY aReg[3,5]
+	 END
+
+	 nLin := nLin + 1
+	 @ nLin,01 PSAY Alltrim(aReg[1,6])+' - '+aReg[1,7]  // Municipio - Estado
+	 If Len(aReg) >= 2
+	    @ nLin,63 PSAY Alltrim(aReg[2,6])+' - '+aReg[2,7]
+	 End
+	 If Len(aReg) >= 3
+	    @ nLin,126 PSAY Alltrim(aReg[3,6])+' - '+aReg[3,7]
+	 End
+
+	 nLin := nLin + 1
+	 @ nLin,01 PSAY Trans( aReg[1,8] , "@r 99999-999" )
+	 If Len(aReg) >= 2
+	    @ nLin,63 PSAY Trans( aReg[2,8] , "@r 99999-999" )
+	 End
+	 If Len(aReg) >= 3
+	    @ nLin,126 PSAY Trans( aReg[3,8] , "@r 99999-999" )
+	 End
+
+	 nLin := nLin + 2
+	 @ NLIN,00 PSAY " "
+	 //SETPRC(00,00)
+	 aReg := {}
+      End
+      if FIM
+	 exit
+      endif
+End
+
+Set Device to Screen
+
+Return
+
+*---------------*
+Function TstImp
+
+#IFDEF WINDOWS
+    InitPrint()
+#ENDIF
+
+SETPRC(00,00)
+While !Isprinter()
+    #IFNDEF WINDOWS
+        cTela := SaveScreen(09,13,17,66)
+        DrawAdvWindow("PRINTER OFF LINE",10,15,16,65)
+        Set Color to N/BG
+        @ 12,29 Say "Verifique a Impressora."
+        @ 13,27 Say "Pois a mesma n„o responde."
+        Tone(600,2)
+        Set Color to N/W
+        @ 16,16 Say 'Quanto a Impress„o?'
+        Set Color to
+        aConf := {"Tenta Novamente","Abandona"}
+        nOpcP := Menuh(aConf,16,36,"N/W,W+/N,R/W","TA","",1)
+        RestScreen(09,13,17,66,cTela)
+    #ELSE
+        cMens := "Verifique a Impressora. Pois a mesma n„o responde. Tenta novamente?"
+        If MsgYesNo(cMens,"PRINTER OFF LINE")
+            nOpcP := 1
+        Else
+            nOpcP := 2
+        Endif
+    #ENDIF
+	If nOpcP == 1
+		Loop
+	Else
+		cImp := .F.
+		Return
+	End
+End
+cImp := .T.
+Return
+
+
+

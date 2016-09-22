@@ -1,0 +1,40 @@
+                                                                     M 
+Linha:    Column:    Tamanho:  
+
+     
+ 
+ 27/02/2004 PZ ARQ: 03M                      C A I X A  E C O N O M I C A  F E D E R A L                                  PAG -     1
+ 
+ 00:52:01                                SICAS - SISTEMA DE CONTROLE DA ARRECADACAO SINDICAL                             CASSB240-#10
+ 
+ UNIDADE: 0249-SETE DE ABRIL, SP         DEMONSTRATIVO DA DISTRIBUICAO DA ARRECADACAO DIRETA                   DT. MOVTO : 26/02/2004
+ 
+ ------------------------------------------------------------------------------------------------------------------------------------
+ 
+ ENTIDADE:  S - 86276   -   SIN HOSPITAIS CLINICAS CASAS SAUDE LABORAT PESQ ANAL CLIN INSTITUICOES BENEF REL  CGC: 47.436.373/0001-73
+ 
+                            IG FIL EST SP                                                                                            
+ 
+                      END.: R 24 DE MAIO 208 13. AD CENTRO                      MUNICIPIO: SAO PAULO                   CEP: 01041-000
+ 
+                                                                 PERCENTUAL:  60%                         DATA DO CREDITO: 01/03/2004
+ 
+ ------------------------------------------------------------------------------------------------------------------------------------
+ 
+   CONTRIBUINTE     AGEN ARREC      VR. CONTRIB.     ACRESC. LEGAIS         TOTAL GUIA             ESTORNO            CREDITO  EXERC.
+ 
+                                                                                                                                     
+ 
+ 67635748000131        0242                80,20               0,00              80,20                0,00              48,12   2004 
+                                  99999999999        99999999999        99999999999   
+ 95336937000156        0242                80.20               0,00              80,20                0,00              48,12   2004
+ 
+                                                                                                                                     
+ 
+                                                                                                                                     
+ 
+                                                                                                                           VPS: 0249 
+ 
+ 
+
+--------------------------------------------------------------------------------
